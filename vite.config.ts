@@ -8,10 +8,8 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
   tanstackStart: {
-    // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    server: { entry: "server" },
-    // SPA mode: no server rendering; prerender a static shell so the output
-    // under dist/ is a plain static bundle that Capacitor can copy verbatim.
+    // SPA mode: no per-request SSR; prerender a static shell so dist/client/
+    // is a plain static bundle Capacitor can copy verbatim.
     spa: {
       enabled: true,
     },
