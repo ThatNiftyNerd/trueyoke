@@ -18,6 +18,18 @@
  * 2. Register it in @theme inline as --color-<name>: var(--<name>)
  */
 
+/*
+ * Yoked "Grounded Growth" brand tokens.
+ * Values are single-sourced with src/theme/colors.ts — keep in sync.
+ * Never hardcode these hexes anywhere else.
+ */
+@theme {
+  --color-brand-burgundy: #6B1724;
+  --color-brand-sage: #87A987;
+  --color-brand-linen: #F4F1EA;
+  --color-brand-terracotta: #C97B5A;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
