@@ -7,12 +7,12 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  // SPA-only build. No per-request SSR; nitro emits a Node preview entry so
+  // TanStack's prerender step can hit "/" and write dist/client/index.html.
+  // Capacitor only copies dist/client/ into android/app/src/main/assets/public.
+  nitro: { preset: "node-server" },
   tanstackStart: {
-    // SPA mode: no per-request SSR; prerender a static shell so dist/client/
-    // is a plain static bundle Capacitor can copy verbatim.
-    spa: {
-      enabled: true,
-    },
+    spa: { enabled: true },
     pages: [{ path: "/", prerender: { enabled: true, outputPath: "/index.html" } }],
   },
 });
