@@ -1,24 +1,50 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Yoked — Faith-centered relationships" },
+      {
+        name: "description",
+        content:
+          "Yoked helps Church of Christ and conservative Christian singles pursue marriage-minded relationships with accountability.",
+      },
+      { property: "og:title", content: "Yoked — Faith-centered relationships" },
+      {
+        property: "og:description",
+        content:
+          "Yoked helps Church of Christ and conservative Christian singles pursue marriage-minded relationships with accountability.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: Landing,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Landing() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-8 bg-brand-linen px-6 text-center">
+      <div className="max-w-sm space-y-3">
+        <p className="text-sm uppercase tracking-widest text-brand-sage">Yoked</p>
+        <h1 className="text-4xl font-serif font-semibold text-brand-burgundy">
+          Do not be unequally yoked.
+        </h1>
+        <p className="text-brand-burgundy/70">
+          A marriage-minded space for the Lord's church.
+        </p>
+      </div>
+      <div className="flex w-full max-w-sm flex-col gap-3">
+        <Link
+          to="/auth"
+          className="rounded-md bg-brand-burgundy px-6 py-3 text-brand-linen font-medium"
+        >
+          Get started
+        </Link>
+        <Link to="/auth" className="text-sm text-brand-burgundy underline">
+          I already have an account
+        </Link>
+      </div>
+    </main>
   );
 }

@@ -1,0 +1,2 @@
+/** Safety logic. TODO. */
+export {};
