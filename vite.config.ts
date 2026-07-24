@@ -9,7 +9,12 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
     server: { entry: "server" },
+    // SPA mode: no server rendering; prerender a static shell so the output
+    // under dist/ is a plain static bundle that Capacitor can copy verbatim.
+    spa: {
+      enabled: true,
+    },
+    pages: [{ path: "/", prerender: { enabled: true, outputPath: "/index.html" } }],
   },
 });
