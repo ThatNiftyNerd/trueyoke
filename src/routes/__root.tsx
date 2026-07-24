@@ -4,12 +4,10 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
-  HeadContent,
-  Scripts,
+  useMatches,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect } from "react";
 
-import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
@@ -73,52 +71,43 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1, viewport-fit=cover",
-      },
-      { name: "theme-color", content: "#6B1724" },
-      { title: "Yoked — Faith-centered relationships" },
-      {
-        name: "description",
-        content:
-          "Yoked helps Church of Christ and conservative Christian singles pursue marriage-minded relationships with accountability.",
-      },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-    ],
-  }),
-  shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
+/**
+ * SPA document.title sync.
+ *
+ * We keep `head()` metadata on each route (for later portability), but there is
+ * no SSR / <HeadContent /> in SPA-only mode. This effect walks the active
+ * matches and applies the deepest head title to document.title so per-screen
+ * titles still work inside the Capacitor WebView.
+ */
+function useDocumentTitleFromMatches() {
+  const matches = useMatches();
+  useEffect(() => {
+    for (let i = matches.length - 1; i >= 0; i--) {
+      const head = (matches[i] as { meta?: Array<Record<string, unknown>> }).meta;
+      if (!head) continue;
+      const titleEntry = head.find(
+        (m) => typeof (m as { title?: unknown }).title === "string",
+      ) as { title?: string } | undefined;
+      if (titleEntry?.title) {
+        document.title = titleEntry.title;
+        return;
+      }
+    }
+  }, [matches]);
 }
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useDocumentTitleFromMatches();
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      {/* Required: nested routes render here. */}
       <Outlet />
     </QueryClientProvider>
   );
