@@ -1,0 +1,57 @@
+name: Android Build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build static web bundle
+        run: bun run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      # The native Android project is already committed (Lovable manages it
+      # directly), so this syncs the fresh web build into it rather than
+      # regenerating the platform from scratch.
+      - name: Capacitor sync
+        run: bunx cap sync android
+
+      - name: Assemble debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+        # For a signed release build instead, add a signing config here
+        # sourced from GitHub Secrets (keystore, alias, passwords) — never
+        # commit the keystore or its passwords. See docs/YOKED_Build_Directives_v2.md §3.3.
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: yoked-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error

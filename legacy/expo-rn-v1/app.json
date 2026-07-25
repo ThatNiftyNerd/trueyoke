@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "Yoked",
+    "slug": "yoked-mvp",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "yoked",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F4F1EA"
+    },
+    "android": {
+      "package": "com.yoked.mvp",
+      "versionCode": 1,
+      "compileSdkVersion": 35,
+      "targetSdkVersion": 35,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#6B1724"
+      },
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "RECORD_AUDIO",
+        "READ_MEDIA_IMAGES",
+        "CAMERA"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-av",
+      "expo-image-picker",
+      "expo-location"
+    ],
+    "extra": {
+      "eas": { "projectId": "REPLACE_WITH_EAS_PROJECT_ID" }
+    }
+  }
+}
