@@ -1,15 +1,24 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { BottomTabs } from "@/components/app/BottomTabs";
+import { getCurrentSession } from "@/features/auth/api";
+import { getOwnProfile } from "@/features/profile/api";
 
 /**
  * Main app shell with mobile bottom-tab navigation.
  *
- * TODO: Once auth is wired, protect this subtree. On Lovable Cloud the
- * integration-managed `_authenticated` layout is preferred; when we add
- * sign-in logic we'll either move these children under `_authenticated/`
- * or add a `beforeLoad` session check here.
+ * Guards the entire /app/* subtree: requires a session AND a completed
+ * profile. Missing session → /auth. Session but incomplete profile →
+ * /onboarding.
  */
 export const Route = createFileRoute("/app")({
+  beforeLoad: async () => {
+    const session = await getCurrentSession();
+    if (!session) throw redirect({ to: "/auth" });
+    const profile = await getOwnProfile();
+    if (!profile || !profile.profile_complete) {
+      throw redirect({ to: "/onboarding" });
+    }
+  },
   component: AppShell,
 });
 
