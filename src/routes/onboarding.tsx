@@ -1,8 +1,21 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { VOICE_INTRO_MAX_SECONDS } from "@/lib/constants";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { getCurrentSession } from "@/features/auth/api";
+import {
+  getOnboardingProfile,
+  type OnboardingProfile,
+} from "@/features/profile/api";
+import {
+  STEPS,
+  firstIncompleteStepIndex,
+  missingStepTitles,
+} from "@/features/profile/logic";
+import { DemographicsStep } from "@/features/profile/steps/DemographicsStep";
+import { PhotosStep } from "@/features/profile/steps/PhotosStep";
+import { BioStep } from "@/features/profile/steps/BioStep";
+import { FaithStep } from "@/features/profile/steps/FaithStep";
+import { LifeVerseStep } from "@/features/profile/steps/LifeVerseStep";
+import { VoiceIntroStep } from "@/features/profile/steps/VoiceIntroStep";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -20,41 +33,69 @@ export const Route = createFileRoute("/onboarding")({
   component: OnboardingWizard,
 });
 
-interface Step {
-  key: string;
-  title: string;
-  description: string;
-}
-
-const STEPS: readonly Step[] = [
-  {
-    key: "demographics",
-    title: "Demographics",
-    description: "Age, gender, location, and background.",
-  },
-  { key: "photos", title: "Photos", description: "Add photos so people can recognize you." },
-  {
-    key: "bio",
-    title: "Bio & marriage intentions",
-    description: "Share who you are and what you're seeking.",
-  },
-  {
-    key: "faith",
-    title: "Church affiliation & spirituality",
-    description: "Your congregation and the markers of your walk.",
-  },
-  { key: "life-verse", title: "Life verse", description: "A verse that anchors you." },
-  {
-    key: "voice",
-    title: "Voice intro",
-    description: `Record a ${VOICE_INTRO_MAX_SECONDS}-second introduction.`,
-  },
-];
-
 function OnboardingWizard() {
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState<OnboardingProfile | null>(null);
   const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [finishError, setFinishError] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const p = await getOnboardingProfile();
+        setProfile(p);
+        setIndex(firstIncompleteStepIndex(p));
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const applyPatch = (patch: Partial<OnboardingProfile>) => {
+    setProfile((prev) => (prev ? { ...prev, ...patch } : prev));
+  };
+
+  const goNext = async () => {
+    setFinishError(null);
+    if (index < STEPS.length - 1) {
+      setIndex(index + 1);
+      return;
+    }
+    // Last step just saved — refetch to read the DB-generated profile_complete.
+    const fresh = await getOnboardingProfile();
+    setProfile(fresh);
+    if (fresh?.profile_complete) {
+      navigate({ to: "/app/discover" });
+    } else {
+      const missing = missingStepTitles(fresh);
+      setFinishError(
+        missing.length
+          ? `Still needs: ${missing.join(", ")}.`
+          : "Profile not marked complete yet — please try again.",
+      );
+    }
+  };
+
+  const goBack = () => setIndex((i) => Math.max(0, i - 1));
+
+  if (loading || !profile) {
+    return (
+      <main className="flex min-h-[100dvh] items-center justify-center bg-brand-linen">
+        <p className="text-sm text-brand-burgundy/70">Loading…</p>
+      </main>
+    );
+  }
+
   const step = STEPS[index];
-  const isLast = index === STEPS.length - 1;
+  const canGoBack = index > 0;
+  const commonProps = {
+    profile,
+    onSaved: applyPatch,
+    onNext: goNext,
+    onBack: goBack,
+    canGoBack,
+  };
 
   return (
     <main className="flex min-h-[100dvh] flex-col bg-brand-linen px-6 py-8">
@@ -66,38 +107,23 @@ function OnboardingWizard() {
         <p className="mt-1 text-sm text-brand-burgundy/70">{step.description}</p>
       </header>
 
-      <section className="flex-1 rounded-lg border border-brand-burgundy/10 bg-white/50 p-4">
-        {/* TODO: render step-specific fields for `{step.key}`. No persistence yet. */}
-        <p className="text-sm text-brand-burgundy/60">Fields for this step will live here.</p>
-      </section>
+      {step.key === "demographics" && <DemographicsStep {...commonProps} />}
+      {step.key === "photos" && (
+        <PhotosStep onNext={goNext} onBack={goBack} canGoBack={canGoBack} />
+      )}
+      {step.key === "bio" && <BioStep {...commonProps} />}
+      {step.key === "faith" && <FaithStep {...commonProps} />}
+      {step.key === "life-verse" && <LifeVerseStep {...commonProps} />}
+      {step.key === "voice" && <VoiceIntroStep {...commonProps} />}
 
-      <footer className="mt-6 flex items-center justify-between gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          className="border-brand-burgundy/30 text-brand-burgundy"
-          disabled={index === 0}
-          onClick={() => setIndex((i) => Math.max(0, i - 1))}
+      {finishError ? (
+        <p
+          role="alert"
+          className="mt-4 rounded-md border border-brand-terracotta/40 bg-brand-terracotta/10 px-3 py-2 text-sm text-brand-terracotta"
         >
-          Back
-        </Button>
-        {isLast ? (
-          <Link
-            to="/app/discover"
-            className="rounded-md bg-brand-burgundy px-4 py-2 text-sm font-medium text-brand-linen"
-          >
-            Finish
-          </Link>
-        ) : (
-          <Button
-            type="button"
-            className="bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90"
-            onClick={() => setIndex((i) => Math.min(STEPS.length - 1, i + 1))}
-          >
-            Continue
-          </Button>
-        )}
-      </footer>
+          {finishError}
+        </p>
+      ) : null}
     </main>
   );
 }
