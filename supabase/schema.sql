@@ -249,8 +249,31 @@ alter table public.reports  enable row level security;
 alter table public.blocks   enable row level security;
 alter table public.vouchers enable row level security;
 
--- profiles: anyone authed can read (discovery); you may only edit your own.
-create policy "profiles_read"   on public.profiles for select to authenticated using (true);
+-- Mutual-invisibility for blocks: neither party should see the other's
+-- profile once a block exists in either direction. SECURITY DEFINER so the
+-- lookup bypasses blocks_owner's RLS (which only lets a user read block rows
+-- they created) — same pattern as handle_mutual_like().
+create or replace function public.is_blocked(other_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = public, pg_temp
+stable
+as $$
+  select exists (
+    select 1 from public.blocks b
+    where (b.blocker_id = other_id and b.blocked_id = auth.uid())
+       or (b.blocker_id = auth.uid() and b.blocked_id = other_id)
+  );
+$$;
+
+revoke all on function public.is_blocked(uuid) from public;
+grant execute on function public.is_blocked(uuid) to authenticated;
+
+-- profiles: anyone authed can read (discovery) EXCEPT a profile you've
+-- blocked or that has blocked you; you may only edit your own.
+create policy "profiles_read"   on public.profiles for select to authenticated
+  using (id = auth.uid() or not public.is_blocked(id));
 create policy "profiles_insert" on public.profiles for insert to authenticated with check (auth.uid() = id);
 create policy "profiles_update" on public.profiles for update to authenticated using (auth.uid() = id);
 
