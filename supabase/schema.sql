@@ -290,3 +290,47 @@ create policy "blocks_owner"   on public.blocks  for all    to authenticated
 -- vouchers: the match user manages their own voucher requests.
 create policy "vouchers_owner" on public.vouchers for all to authenticated
   using (auth.uid() = match_user_id) with check (auth.uid() = match_user_id);
+
+-- ============================================================================
+-- STORAGE — photo and voice-intro buckets (PRD 3.2 / 3.4)
+-- Applied directly against the project via the Supabase SQL editor; mirrored
+-- here so a fresh environment can reproduce it. Both buckets are PRIVATE —
+-- all access is mediated by the RLS policies below, not a public bucket flag.
+-- Path convention: objects must live under `{auth.uid()}/...` so ownership
+-- can be checked via storage.foldername(name)[1].
+-- ============================================================================
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values
+  ('photos', 'photos', false, 5242880, array['image/jpeg','image/png','image/webp']),
+  ('voice-intros', 'voice-intros', false, 3145728, array['audio/webm','audio/mp4','audio/mpeg','audio/wav','audio/ogg'])
+on conflict (id) do nothing;
+
+-- photos: any authenticated user may read (needed for discovery cards),
+-- but a user may only write/modify/delete inside their own folder.
+create policy "photos_storage_select" on storage.objects for select to authenticated
+  using (bucket_id = 'photos');
+
+create policy "photos_storage_insert_own" on storage.objects for insert to authenticated
+  with check (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "photos_storage_update_own" on storage.objects for update to authenticated
+  using (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text)
+  with check (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "photos_storage_delete_own" on storage.objects for delete to authenticated
+  using (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text);
+
+-- voice-intros: same pattern — readable by any authenticated user, writable
+-- only within the uploader's own folder.
+create policy "voice_storage_select" on storage.objects for select to authenticated
+  using (bucket_id = 'voice-intros');
+
+create policy "voice_storage_insert_own" on storage.objects for insert to authenticated
+  with check (bucket_id = 'voice-intros' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "voice_storage_update_own" on storage.objects for update to authenticated
+  using (bucket_id = 'voice-intros' and (storage.foldername(name))[1] = auth.uid()::text)
+  with check (bucket_id = 'voice-intros' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "voice_storage_delete_own" on storage.objects for delete to authenticated
+  using (bucket_id = 'voice-intros' and (storage.foldername(name))[1] = auth.uid()::text);
