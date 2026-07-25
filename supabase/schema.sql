@@ -144,7 +144,8 @@ create table public.vouchers (
 
 -- (1) Create a match automatically when a like is mutual.
 create or replace function public.handle_mutual_like()
-returns trigger language plpgsql security definer as $$
+returns trigger language plpgsql security definer
+set search_path = public, pg_temp as $$
 declare
   reciprocal boolean;
   a uuid; b uuid;
@@ -178,7 +179,8 @@ create trigger trg_mutual_like
 
 -- (2) Active-chat cap: reject a 4th ACTIVE conversation for either participant.
 create or replace function public.enforce_active_chat_cap()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql
+set search_path = public, pg_temp as $$
 declare
   cap constant int := 3;
   count_a int; count_b int;
@@ -207,7 +209,8 @@ create trigger trg_active_chat_cap
 
 -- (3) Touch last_activity_at on every new message (feeds the 72h expiry sweep).
 create or replace function public.touch_match_activity()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql
+set search_path = public, pg_temp as $$
 begin
   update public.matches
      set last_activity_at = now()
@@ -227,7 +230,8 @@ create trigger trg_touch_activity
 
 -- keep updated_at fresh on profiles
 create or replace function public.touch_updated_at()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql
+set search_path = public, pg_temp as $$
 begin new.updated_at := now(); return new; end; $$;
 create trigger trg_profiles_updated
   before update on public.profiles
