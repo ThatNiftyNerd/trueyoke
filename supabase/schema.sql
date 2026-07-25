@@ -357,3 +357,17 @@ create policy "voice_storage_update_own" on storage.objects for update to authen
 
 create policy "voice_storage_delete_own" on storage.objects for delete to authenticated
   using (bucket_id = 'voice-intros' and (storage.foldername(name))[1] = auth.uid()::text);
+
+-- ============================================================================
+-- REALTIME — enable live updates for chat (PRD: Supabase Realtime)
+-- Applied directly against the project; mirrored here so a fresh environment
+-- reproduces it.
+-- ============================================================================
+alter publication supabase_realtime add table public.messages;
+alter publication supabase_realtime add table public.matches;
+
+-- Full replica identity on matches so Realtime UPDATE payloads (status
+-- flipping to 'expired', last_activity_at ticking) reliably include the
+-- complete new row, not just the primary key. Not needed on messages, which
+-- is only ever listened to for INSERT.
+alter table public.matches replica identity full;
