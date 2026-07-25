@@ -378,7 +378,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_blocked: { Args: { other_id: string }; Returns: boolean }
     }
     Enums: {
       account_type: "match" | "mentor"
