@@ -42,6 +42,7 @@ create table public.profiles (
 
   -- verification (PRD 3.2)
   id_verification_status id_status not null default 'none',
+  id_document_path       text,                 -- Storage path in the id-verification bucket
   church_verified        boolean   not null default false,
 
   -- mentor-only (deferred UI, schema forward-compatible)
@@ -302,7 +303,12 @@ create policy "messages_send" on public.messages for insert to authenticated
       select 1 from public.matches m
       where m.id = messages.match_id
         and m.status = 'active'
-        and (auth.uid() = m.user_a_id or auth.uid() = m.user_b_id)));
+        and (auth.uid() = m.user_a_id or auth.uid() = m.user_b_id)
+        -- a block in either direction also cuts off new messages, not just
+        -- profile visibility.
+        and not public.is_blocked(
+          case when m.user_a_id = auth.uid() then m.user_b_id else m.user_a_id end
+        )));
 
 -- reports / blocks: insert-only by the acting user; read only your own.
 create policy "reports_insert" on public.reports for insert to authenticated with check (auth.uid() = reporter_id);
@@ -371,3 +377,27 @@ alter publication supabase_realtime add table public.matches;
 -- complete new row, not just the primary key. Not needed on messages, which
 -- is only ever listened to for INSERT.
 alter table public.matches replica identity full;
+
+-- ============================================================================
+-- STORAGE — ID verification documents (PRD 3.2)
+-- Strictly private in every direction (unlike photos/voice-intros): this is
+-- sensitive PII, so only the uploader may read their own document. There is
+-- no admin/moderator review UI in this build yet — status stays 'pending'
+-- until that exists.
+-- ============================================================================
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('id-verification', 'id-verification', false, 8388608, array['image/jpeg','image/png','image/webp'])
+on conflict (id) do nothing;
+
+create policy "id_doc_storage_select_own" on storage.objects for select to authenticated
+  using (bucket_id = 'id-verification' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "id_doc_storage_insert_own" on storage.objects for insert to authenticated
+  with check (bucket_id = 'id-verification' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "id_doc_storage_update_own" on storage.objects for update to authenticated
+  using (bucket_id = 'id-verification' and (storage.foldername(name))[1] = auth.uid()::text)
+  with check (bucket_id = 'id-verification' and (storage.foldername(name))[1] = auth.uid()::text);
+
+create policy "id_doc_storage_delete_own" on storage.objects for delete to authenticated
+  using (bucket_id = 'id-verification' and (storage.foldername(name))[1] = auth.uid()::text);
