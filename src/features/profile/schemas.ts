@@ -8,7 +8,7 @@
  */
 import { z } from "zod";
 
-const optString = z.string().trim().max(200).optional().default("");
+const optString = z.string().trim().max(200);
 
 export const demographicsSchema = z.object({
   age: z
@@ -31,14 +31,14 @@ export const INTENT_MAX = 500;
 
 export const bioSchema = z.object({
   bio: z.string().trim().min(1, "Tell us a little about yourself").max(BIO_MAX),
-  marriage_intentions: z.string().trim().max(INTENT_MAX).optional().default(""),
+  marriage_intentions: z.string().trim().max(INTENT_MAX),
 });
 export type BioValues = z.infer<typeof bioSchema>;
 
 export const faithSchema = z.object({
   church_affiliation: optString,
   congregation: optString,
-  spirituality_markers: z.array(z.string()).default([]),
+  spirituality_markers: z.array(z.string()),
 });
 export type FaithValues = z.infer<typeof faithSchema>;
 
