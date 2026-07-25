@@ -26,7 +26,8 @@ export function ReportModal({ open, onOpenChange, reportedName }: ReportModalPro
         <DialogHeader>
           <DialogTitle className="text-brand-burgundy">Report profile</DialogTitle>
           <DialogDescription>
-            Tell us what's wrong with {reportedName ?? "this profile"}. Our team reviews every report.
+            Tell us what's wrong with {reportedName ?? "this profile"}. Our team reviews every
+            report.
           </DialogDescription>
         </DialogHeader>
         {/* TODO: reason picker + optional details textarea */}
@@ -62,7 +63,8 @@ export function BlockModal({ open, onOpenChange, blockedName }: BlockModalProps)
         <DialogHeader>
           <DialogTitle className="text-brand-burgundy">Block profile</DialogTitle>
           <DialogDescription>
-            You won't see {blockedName ?? "this person"} again, and they won't see you. This can't be undone here.
+            You won't see {blockedName ?? "this person"} again, and they won't see you. This can't
+            be undone here.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

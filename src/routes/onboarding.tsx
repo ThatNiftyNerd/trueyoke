@@ -22,9 +22,17 @@ interface Step {
 }
 
 const STEPS: readonly Step[] = [
-  { key: "demographics", title: "Demographics", description: "Age, gender, location, and background." },
+  {
+    key: "demographics",
+    title: "Demographics",
+    description: "Age, gender, location, and background.",
+  },
   { key: "photos", title: "Photos", description: "Add photos so people can recognize you." },
-  { key: "bio", title: "Bio & marriage intentions", description: "Share who you are and what you're seeking." },
+  {
+    key: "bio",
+    title: "Bio & marriage intentions",
+    description: "Share who you are and what you're seeking.",
+  },
   {
     key: "faith",
     title: "Church affiliation & spirituality",
@@ -55,9 +63,7 @@ function OnboardingWizard() {
 
       <section className="flex-1 rounded-lg border border-brand-burgundy/10 bg-white/50 p-4">
         {/* TODO: render step-specific fields for `{step.key}`. No persistence yet. */}
-        <p className="text-sm text-brand-burgundy/60">
-          Fields for this step will live here.
-        </p>
+        <p className="text-sm text-brand-burgundy/60">Fields for this step will live here.</p>
       </section>
 
       <footer className="mt-6 flex items-center justify-between gap-3">

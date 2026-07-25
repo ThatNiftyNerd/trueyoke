@@ -30,9 +30,7 @@ function Landing() {
         <h1 className="text-4xl font-serif font-semibold text-brand-burgundy">
           Do not be unequally yoked.
         </h1>
-        <p className="text-brand-burgundy/70">
-          A marriage-minded space for the Lord's church.
-        </p>
+        <p className="text-brand-burgundy/70">A marriage-minded space for the Lord's church.</p>
       </div>
       <div className="flex w-full max-w-sm flex-col gap-3">
         <Link

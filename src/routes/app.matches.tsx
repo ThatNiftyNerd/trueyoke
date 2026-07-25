@@ -28,9 +28,7 @@ function MatchesScreen() {
       </header>
 
       <div className="mb-6">
-        <h2 className="mb-2 text-xs uppercase tracking-wider text-brand-burgundy/60">
-          Active
-        </h2>
+        <h2 className="mb-2 text-xs uppercase tracking-wider text-brand-burgundy/60">Active</h2>
         <div className="rounded-lg border border-dashed border-brand-burgundy/20 bg-white/40 p-6 text-center text-sm text-brand-burgundy/60">
           {/* TODO: list active matches. Server-side trigger auto-expires after {MATCH_EXPIRY_HOURS}h. */}
           No active matches yet. Matches expire after {MATCH_EXPIRY_HOURS} hours of no activity.
@@ -38,9 +36,7 @@ function MatchesScreen() {
       </div>
 
       <div>
-        <h2 className="mb-2 text-xs uppercase tracking-wider text-brand-burgundy/60">
-          Expired
-        </h2>
+        <h2 className="mb-2 text-xs uppercase tracking-wider text-brand-burgundy/60">Expired</h2>
         <div className="rounded-lg border border-dashed border-brand-burgundy/20 bg-white/40 p-6 text-center text-sm text-brand-burgundy/60">
           {/* TODO: list expired matches */}
           Nothing here.

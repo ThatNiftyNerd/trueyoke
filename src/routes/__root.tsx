@@ -90,9 +90,9 @@ function useDocumentTitleFromMatches() {
     for (let i = matches.length - 1; i >= 0; i--) {
       const head = (matches[i] as { meta?: Array<Record<string, unknown>> }).meta;
       if (!head) continue;
-      const titleEntry = head.find(
-        (m) => typeof (m as { title?: unknown }).title === "string",
-      ) as { title?: string } | undefined;
+      const titleEntry = head.find((m) => typeof (m as { title?: unknown }).title === "string") as
+        | { title?: string }
+        | undefined;
       if (titleEntry?.title) {
         document.title = titleEntry.title;
         return;
