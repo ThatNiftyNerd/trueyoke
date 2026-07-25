@@ -223,4 +223,3 @@ export async function submitIdVerification(file: File): Promise<void> {
     .eq("id", userId);
   if (updErr) throw new Error(updErr.message);
 }
-

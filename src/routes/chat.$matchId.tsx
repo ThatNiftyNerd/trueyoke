@@ -26,7 +26,6 @@ import { BlockModal, ReportModal } from "@/features/safety/ReportBlockModals";
 import { blockProfile, isBlockedWith, reportProfile } from "@/features/safety/api";
 import { formatReason, type ReportReason } from "@/features/safety/logic";
 
-
 export const Route = createFileRoute("/chat/$matchId")({
   head: () => ({
     meta: [
@@ -188,10 +187,7 @@ function ChatScreen() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onSelect={() => setReportOpen(true)}>Report</DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={() => setBlockOpen(true)}
-              className="text-brand-terracotta"
-            >
+            <DropdownMenuItem onSelect={() => setBlockOpen(true)} className="text-brand-terracotta">
               Block
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -231,6 +227,5 @@ function ChatScreen() {
         onConfirm={handleBlock}
       />
     </main>
-
   );
 }

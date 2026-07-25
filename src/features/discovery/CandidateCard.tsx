@@ -20,7 +20,6 @@ interface Props {
 }
 
 export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, busy }: Props) {
-
   return (
     <Card className="w-full max-w-sm overflow-hidden border-brand-burgundy/20 bg-white">
       <div className="relative aspect-[4/5] w-full bg-brand-linen">
@@ -57,7 +56,6 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
           </DropdownMenu>
         </div>
       </div>
-
 
       <div className="space-y-2 p-4">
         <div>
