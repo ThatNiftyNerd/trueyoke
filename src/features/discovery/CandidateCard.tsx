@@ -1,5 +1,12 @@
+import { MoreVertical } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { Candidate } from "./api";
 import { bioExcerpt, cardSubtitle, initialsOf } from "./logic";
 
@@ -7,10 +14,13 @@ interface Props {
   candidate: Candidate;
   onLike: () => void;
   onPass: () => void;
+  onReport: () => void;
+  onBlock: () => void;
   busy: boolean;
 }
 
-export function CandidateCard({ candidate, onLike, onPass, busy }: Props) {
+export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, busy }: Props) {
+
   return (
     <Card className="w-full max-w-sm overflow-hidden border-brand-burgundy/20 bg-white">
       <div className="relative aspect-[4/5] w-full bg-brand-linen">
@@ -27,7 +37,27 @@ export function CandidateCard({ candidate, onLike, onPass, busy }: Props) {
             </span>
           </div>
         )}
+        <div className="absolute right-2 top-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                aria-label="More options"
+                className="rounded-full bg-black/40 p-2 text-white backdrop-blur hover:bg-black/60"
+              >
+                <MoreVertical className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onSelect={onReport}>Report</DropdownMenuItem>
+              <DropdownMenuItem onSelect={onBlock} className="text-brand-terracotta">
+                Block
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
+
 
       <div className="space-y-2 p-4">
         <div>

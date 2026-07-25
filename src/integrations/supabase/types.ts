@@ -177,6 +177,7 @@ export type Database = {
           gender: Database["public"]["Enums"]["gender_type"] | null
           genotype: string | null
           id: string
+          id_document_path: string | null
           id_verification_status: Database["public"]["Enums"]["id_status"]
           latitude: number | null
           life_verse: string | null
@@ -205,6 +206,7 @@ export type Database = {
           gender?: Database["public"]["Enums"]["gender_type"] | null
           genotype?: string | null
           id: string
+          id_document_path?: string | null
           id_verification_status?: Database["public"]["Enums"]["id_status"]
           latitude?: number | null
           life_verse?: string | null
@@ -233,6 +235,7 @@ export type Database = {
           gender?: Database["public"]["Enums"]["gender_type"] | null
           genotype?: string | null
           id?: string
+          id_document_path?: string | null
           id_verification_status?: Database["public"]["Enums"]["id_status"]
           latitude?: number | null
           life_verse?: string | null

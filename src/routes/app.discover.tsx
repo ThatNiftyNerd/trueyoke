@@ -10,6 +10,9 @@ import {
 } from "@/features/discovery/api";
 import { CandidateCard } from "@/features/discovery/CandidateCard";
 import { MatchDialog } from "@/features/discovery/MatchDialog";
+import { BlockModal, ReportModal } from "@/features/safety/ReportBlockModals";
+import { blockProfile, reportProfile } from "@/features/safety/api";
+import { formatReason, type ReportReason } from "@/features/safety/logic";
 
 export const Route = createFileRoute("/app/discover")({
   head: () => ({
@@ -30,6 +33,8 @@ function DiscoverScreen() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [matched, setMatched] = useState<Candidate | null>(null);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [blockOpen, setBlockOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -68,7 +73,6 @@ function DiscoverScreen() {
           setError("You've reached your active conversation limit — free up a match to try again.");
           return;
         }
-        // duplicate or recorded: proceed
         if (direction === "like" && result.kind === "recorded") {
           const isMatch = await findMatchWith(current.id);
           if (isMatch) {
@@ -90,6 +94,17 @@ function DiscoverScreen() {
     setMatched(null);
     advance();
   }, [advance]);
+
+  async function handleReport(category: ReportReason, details: string) {
+    if (!current) return;
+    await reportProfile(current.id, formatReason(category, details));
+  }
+
+  async function handleBlock() {
+    if (!current) return;
+    await blockProfile(current.id);
+    advance();
+  }
 
   return (
     <section className="flex min-h-[calc(100dvh-6rem)] flex-col px-4 pt-6">
@@ -116,6 +131,8 @@ function DiscoverScreen() {
               candidate={current}
               onLike={() => handleSwipe("like")}
               onPass={() => handleSwipe("pass")}
+              onReport={() => setReportOpen(true)}
+              onBlock={() => setBlockOpen(true)}
               busy={busy}
             />
             {error ? (
@@ -135,6 +152,19 @@ function DiscoverScreen() {
       </div>
 
       {matched ? <MatchDialog displayName={matched.display_name} onClose={closeMatch} /> : null}
+
+      <ReportModal
+        open={reportOpen}
+        onOpenChange={setReportOpen}
+        reportedName={current?.display_name ?? undefined}
+        onSubmit={handleReport}
+      />
+      <BlockModal
+        open={blockOpen}
+        onOpenChange={setBlockOpen}
+        blockedName={current?.display_name ?? undefined}
+        onConfirm={handleBlock}
+      />
     </section>
   );
 }
