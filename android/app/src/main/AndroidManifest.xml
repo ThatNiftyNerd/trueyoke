@@ -39,4 +39,6 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Voice-intro recording (onboarding step, mandatory for profile completion). -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 </manifest>
