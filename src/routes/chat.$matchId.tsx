@@ -45,13 +45,17 @@ export const Route = createFileRoute("/chat/$matchId")({
 
 function ChatScreen() {
   const { matchId } = Route.useParams();
+  const navigate = useNavigate();
   const [item, setItem] = useState<MatchListItem | null | undefined>(undefined);
   const [messages, setMessages] = useState<MessageRow[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
+  const [blocked, setBlocked] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [blockOpen, setBlockOpen] = useState(false);
   const scrollerRef = useRef<HTMLDivElement>(null);
 
-  // Initial load: current user id, match + other, message history.
+  // Initial load: current user id, match + other, message history, block state.
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -63,16 +67,19 @@ function ChatScreen() {
       setItem(m);
       if (!m) return;
       setStatus(m.match.status);
-      const history = await listMessages(matchId);
+      const [history, isBlk] = await Promise.all([
+        listMessages(matchId),
+        isBlockedWith(m.other.id),
+      ]);
       if (cancelled) return;
       setMessages(history);
+      setBlocked(isBlk);
     })();
     return () => {
       cancelled = true;
     };
   }, [matchId]);
 
-  // Realtime: new messages + match status flips.
   useEffect(() => {
     if (!item) return;
     const offMsg = subscribeToMessages(matchId, (row) => {
@@ -87,7 +94,6 @@ function ChatScreen() {
     };
   }, [matchId, item]);
 
-  // Auto-scroll to latest whenever the message list changes.
   useEffect(() => {
     const el = scrollerRef.current;
     if (el) el.scrollTop = el.scrollHeight;
@@ -118,8 +124,13 @@ function ChatScreen() {
     );
   }
 
-  const name = displayNameOf(item.other);
+  const other = item.other;
+  const name = displayNameOf(other);
   const isActive = status === "active";
+  const composerDisabled = !isActive || blocked;
+  const composerReason = blocked
+    ? "You've blocked this person, so messages can't be sent."
+    : "This conversation has ended. History is preserved, but new messages can't be sent.";
 
   async function handleSend(body: string) {
     const result = await sendMessage(matchId, body);
@@ -130,12 +141,20 @@ function ChatScreen() {
     if (result.kind === "too_long" || result.kind === "empty") {
       throw new Error("Message could not be sent.");
     }
-    // On success, Realtime INSERT will append; guard added in subscription.
     if (result.kind === "sent") {
       setMessages((prev) =>
         prev.some((m) => m.id === result.message.id) ? prev : [...prev, result.message],
       );
     }
+  }
+
+  async function handleReport(category: ReportReason, details: string) {
+    await reportProfile(other.id, formatReason(category, details));
+  }
+
+  async function handleBlock() {
+    await blockProfile(other.id);
+    navigate({ to: "/app/matches" });
   }
 
   return (
@@ -145,15 +164,11 @@ function ChatScreen() {
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full bg-brand-sage/20">
-          {item.other.photoSignedUrl ? (
-            <img
-              src={item.other.photoSignedUrl}
-              alt={name}
-              className="h-full w-full object-cover"
-            />
+          {other.photoSignedUrl ? (
+            <img src={other.photoSignedUrl} alt={name} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full w-full items-center justify-center font-serif text-sm text-brand-burgundy/70">
-              {initialsOf(item.other.display_name)}
+              {initialsOf(other.display_name)}
             </div>
           )}
         </div>
@@ -161,6 +176,26 @@ function ChatScreen() {
           <p className="truncate font-serif text-lg text-brand-burgundy">{name}</p>
           {!isActive ? <p className="text-xs text-brand-terracotta">Conversation ended</p> : null}
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              aria-label="More options"
+              className="rounded-full p-2 text-brand-burgundy hover:bg-brand-burgundy/10"
+            >
+              <MoreHorizontal className="h-5 w-5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onSelect={() => setReportOpen(true)}>Report</DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={() => setBlockOpen(true)}
+              className="text-brand-terracotta"
+            >
+              Block
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </header>
 
       <section ref={scrollerRef} className="flex-1 overflow-y-auto px-4 py-4">
@@ -178,10 +213,24 @@ function ChatScreen() {
       </section>
 
       <MessageComposer
-        disabled={!isActive}
-        disabledReason="This conversation has ended. History is preserved, but new messages can't be sent."
+        disabled={composerDisabled}
+        disabledReason={composerReason}
         onSend={handleSend}
       />
+
+      <ReportModal
+        open={reportOpen}
+        onOpenChange={setReportOpen}
+        reportedName={name}
+        onSubmit={handleReport}
+      />
+      <BlockModal
+        open={blockOpen}
+        onOpenChange={setBlockOpen}
+        blockedName={name}
+        onConfirm={handleBlock}
+      />
     </main>
+
   );
 }
