@@ -3,24 +3,12 @@
  */
 import { supabase } from "@/lib/supabase";
 import { getCurrentUserId } from "@/features/auth/api";
+import type { Tables } from "@/integrations/supabase/types";
 
-export interface OwnProfile {
-  id: string;
-  account_type: "match" | "mentor";
-  display_name: string;
-  profile_complete: boolean;
-}
-
-const db = supabase as unknown as {
-  from: (table: string) => {
-    select: (cols: string) => {
-      eq: (
-        col: string,
-        val: string,
-      ) => { maybeSingle: () => Promise<{ data: OwnProfile | null; error: { message: string } | null }> };
-    };
-  };
-};
+export type OwnProfile = Pick<
+  Tables<"profiles">,
+  "id" | "account_type" | "display_name" | "profile_complete"
+>;
 
 /**
  * Fetches the signed-in user's profile row (or null if none exists yet, e.g.
@@ -30,7 +18,7 @@ const db = supabase as unknown as {
 export async function getOwnProfile(): Promise<OwnProfile | null> {
   const userId = await getCurrentUserId();
   if (!userId) return null;
-  const { data, error } = await db
+  const { data, error } = await supabase
     .from("profiles")
     .select("id, account_type, display_name, profile_complete")
     .eq("id", userId)

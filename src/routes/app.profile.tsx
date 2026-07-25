@@ -38,6 +38,10 @@ function ProfileScreen() {
           Sign out
         </Button>
       </div>
+
+      <p className="mt-8 text-center text-xs text-brand-burgundy/60">
+        Yoked is a product of House603 Digital Solutions.
+      </p>
     </section>
   );
 }

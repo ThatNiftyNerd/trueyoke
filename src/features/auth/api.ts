@@ -6,26 +6,6 @@ import { supabase } from "@/lib/supabase";
 import type { Session } from "@supabase/supabase-js";
 import type { AccountType } from "@/lib/constants";
 
-// Schema types aren't generated in this pass; we intentionally loose-type
-// profile writes here so this file remains the single funnel for all data
-// access instead of scattering casts across components.
-const db = supabase as unknown as {
-  from: (table: string) => {
-    select: (cols: string) => {
-      eq: (
-        col: string,
-        val: string,
-      ) => { maybeSingle: () => Promise<{ data: unknown; error: { message: string } | null }> };
-    };
-    insert: (
-      row: Record<string, unknown>,
-    ) => Promise<{ error: { message: string; code?: string } | null }>;
-    upsert: (
-      row: Record<string, unknown>,
-    ) => Promise<{ error: { message: string } | null }>;
-  };
-};
-
 export interface SignUpInput {
   email: string;
   password: string;
@@ -64,13 +44,11 @@ export async function signUpWithEmail(input: SignUpInput): Promise<void> {
   // Only when a session came back immediately (email confirmation is off) do
   // we have an authenticated auth.uid() to satisfy the RLS insert policy.
   if (data.session && data.user) {
-    const { error: upsertErr } = await db
-      .from("profiles")
-      .upsert({
-        id: data.user.id,
-        account_type: input.accountType,
-        display_name: input.displayName,
-      });
+    const { error: upsertErr } = await supabase.from("profiles").upsert({
+      id: data.user.id,
+      account_type: input.accountType,
+      display_name: input.displayName,
+    });
     if (upsertErr) throw new Error(upsertErr.message);
   }
 }
@@ -92,7 +70,7 @@ export async function ensureProfileExists(input: EnsureProfileInput): Promise<vo
   const userId = await getCurrentUserId();
   if (!userId) return;
 
-  const { data: existing, error: selErr } = await db
+  const { data: existing, error: selErr } = await supabase
     .from("profiles")
     .select("id")
     .eq("id", userId)
@@ -100,7 +78,7 @@ export async function ensureProfileExists(input: EnsureProfileInput): Promise<vo
   if (selErr) throw new Error(selErr.message);
   if (existing) return;
 
-  const { error: insErr } = await db.from("profiles").insert({
+  const { error: insErr } = await supabase.from("profiles").insert({
     id: userId,
     account_type: input.accountType,
     display_name: input.displayName,
