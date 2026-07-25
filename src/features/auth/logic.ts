@@ -1,6 +1,10 @@
 /**
- * Auth business logic — pure functions and hooks that orchestrate `api.ts`.
- *
- * TODO: Implement in a follow-up prompt.
+ * Auth business logic — pure helpers that orchestrate `api.ts`.
  */
-export {};
+import { getCurrentSession } from "./api";
+
+/** True if there is currently an authenticated session. */
+export async function isAuthenticated(): Promise<boolean> {
+  const session = await getCurrentSession();
+  return session !== null;
+}

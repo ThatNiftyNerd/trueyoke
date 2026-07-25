@@ -1,5 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { getCurrentSession } from "@/features/auth/api";
 
 export const Route = createFileRoute("/chat/$matchId")({
   head: () => ({
@@ -10,6 +11,10 @@ export const Route = createFileRoute("/chat/$matchId")({
       { property: "og:description", content: "Conversation with your match." },
     ],
   }),
+  beforeLoad: async () => {
+    const session = await getCurrentSession();
+    if (!session) throw redirect({ to: "/auth" });
+  },
   component: ChatScreen,
 });
 

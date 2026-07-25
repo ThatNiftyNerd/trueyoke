@@ -1,9 +1,16 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ACCOUNT_TYPES, type AccountType } from "@/lib/constants";
+import {
+  signUpWithEmail,
+  signInWithEmail,
+  ensureProfileExists,
+  getCurrentSession,
+} from "@/features/auth/api";
+import { getOwnProfile } from "@/features/profile/api";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -14,14 +21,76 @@ export const Route = createFileRoute("/auth")({
       { property: "og:description", content: "Sign in or create your Yoked account." },
     ],
   }),
+  beforeLoad: async () => {
+    const session = await getCurrentSession();
+    if (!session) return;
+    const profile = await getOwnProfile();
+    if (profile?.profile_complete) {
+      throw redirect({ to: "/app/discover" });
+    }
+    throw redirect({ to: "/onboarding" });
+  },
   component: AuthScreen,
 });
 
 type Mode = "signin" | "signup";
 
 function AuthScreen() {
+  const navigate = useNavigate();
   const [mode, setMode] = useState<Mode>("signup");
   const [accountType, setAccountType] = useState<AccountType>("match");
+  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setNotice(null);
+    setSubmitting(true);
+    try {
+      if (mode === "signup") {
+        if (!displayName.trim()) {
+          throw new Error("Please enter a display name.");
+        }
+        await signUpWithEmail({
+          email,
+          password,
+          accountType,
+          displayName: displayName.trim(),
+        });
+        const session = await getCurrentSession();
+        if (session) {
+          navigate({ to: "/onboarding" });
+        } else {
+          setNotice("Check your email to confirm your account, then sign in.");
+          setMode("signin");
+        }
+      } else {
+        await signInWithEmail({ email, password });
+        // Idempotent — only inserts if a profile row is missing (covers
+        // accounts created under email-confirmation mode where signUp
+        // couldn't insert). displayName may be empty for pure sign-in of an
+        // existing account with a profile; ensureProfileExists no-ops in
+        // that case.
+        if (displayName.trim()) {
+          await ensureProfileExists({
+            accountType,
+            displayName: displayName.trim(),
+          });
+        }
+        const profile = await getOwnProfile();
+        navigate({ to: profile?.profile_complete ? "/app/discover" : "/onboarding" });
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <main className="flex min-h-[100dvh] flex-col bg-brand-linen px-6 py-10">
@@ -54,26 +123,63 @@ function AuthScreen() {
         </section>
       )}
 
-      <form
-        className="mx-auto flex w-full max-w-sm flex-col gap-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          // TODO: wire to features/auth/api.ts (signUpWithEmail / signInWithEmail)
-        }}
-      >
+      <form className="mx-auto flex w-full max-w-sm flex-col gap-4" onSubmit={handleSubmit}>
+        {mode === "signup" && (
+          <div className="space-y-1.5">
+            <Label htmlFor="displayName">Display name</Label>
+            <Input
+              id="displayName"
+              type="text"
+              autoComplete="name"
+              required
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+            />
+          </div>
+        )}
         <div className="space-y-1.5">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" autoComplete="email" required />
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" type="password" autoComplete="current-password" required />
+          <Input
+            id="password"
+            type="password"
+            autoComplete={mode === "signup" ? "new-password" : "current-password"}
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </div>
+
+        {error && (
+          <p
+            role="alert"
+            className="rounded-md border border-brand-terracotta/40 bg-brand-terracotta/10 px-3 py-2 text-sm text-brand-terracotta"
+          >
+            {error}
+          </p>
+        )}
+        {notice && (
+          <p className="rounded-md border border-brand-sage/40 bg-brand-sage/10 px-3 py-2 text-sm text-brand-burgundy">
+            {notice}
+          </p>
+        )}
+
         <Button
           type="submit"
+          disabled={submitting}
           className="bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90"
         >
-          {mode === "signup" ? "Create account" : "Sign in"}
+          {submitting ? "Please wait…" : mode === "signup" ? "Create account" : "Sign in"}
         </Button>
 
         <div className="my-2 flex items-center gap-3 text-xs text-brand-burgundy/50">
@@ -87,7 +193,11 @@ function AuthScreen() {
           variant="outline"
           className="border-brand-burgundy/30 text-brand-burgundy"
           onClick={() => {
-            // TODO: wire to lovable.auth.signInWithOAuth("google", ...)
+            // TODO: Google sign-in requires a Capacitor-safe OAuth redirect
+            // (custom URL scheme) that hasn't been configured yet. Leaving
+            // this as an explicit notice rather than a silent no-op.
+            setError(null);
+            setNotice("Google sign-in isn't set up yet. Use email for now.");
           }}
         >
           Continue with Google
@@ -99,7 +209,11 @@ function AuthScreen() {
         <button
           type="button"
           className="underline"
-          onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
+          onClick={() => {
+            setError(null);
+            setNotice(null);
+            setMode(mode === "signup" ? "signin" : "signup");
+          }}
         >
           {mode === "signup" ? "Sign in" : "Create one"}
         </button>

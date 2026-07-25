@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { getCurrentSession } from "@/features/auth/api";
 
 export const Route = createFileRoute("/verify-id")({
   head: () => ({
@@ -11,6 +12,10 @@ export const Route = createFileRoute("/verify-id")({
       { property: "og:description", content: "Upload a government ID for verification." },
     ],
   }),
+  beforeLoad: async () => {
+    const session = await getCurrentSession();
+    if (!session) throw redirect({ to: "/auth" });
+  },
   component: VerifyIdScreen,
 });
 

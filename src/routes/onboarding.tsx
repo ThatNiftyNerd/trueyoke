@@ -1,7 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { VOICE_INTRO_MAX_SECONDS } from "@/lib/constants";
+import { getCurrentSession } from "@/features/auth/api";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -12,6 +13,10 @@ export const Route = createFileRoute("/onboarding")({
       { property: "og:description", content: "Walk through your Yoked profile step by step." },
     ],
   }),
+  beforeLoad: async () => {
+    const session = await getCurrentSession();
+    if (!session) throw redirect({ to: "/auth" });
+  },
   component: OnboardingWizard,
 });
 
