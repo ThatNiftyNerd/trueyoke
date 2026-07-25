@@ -65,9 +65,7 @@ function DiscoverScreen() {
       try {
         const result = await recordSwipe(current.id, direction);
         if (result.kind === "cap_reached") {
-          setError(
-            "You've reached your active conversation limit — free up a match to try again.",
-          );
+          setError("You've reached your active conversation limit — free up a match to try again.");
           return;
         }
         // duplicate or recorded: proceed
@@ -121,10 +119,7 @@ function DiscoverScreen() {
               busy={busy}
             />
             {error ? (
-              <p
-                role="alert"
-                className="max-w-sm text-center text-sm text-brand-terracotta"
-              >
+              <p role="alert" className="max-w-sm text-center text-sm text-brand-terracotta">
                 {error}
               </p>
             ) : null}
@@ -139,9 +134,7 @@ function DiscoverScreen() {
         )}
       </div>
 
-      {matched ? (
-        <MatchDialog displayName={matched.display_name} onClose={closeMatch} />
-      ) : null}
+      {matched ? <MatchDialog displayName={matched.display_name} onClose={closeMatch} /> : null}
     </section>
   );
 }

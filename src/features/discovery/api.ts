@@ -75,10 +75,7 @@ export async function fetchDeck(): Promise<Candidate[]> {
 
 export type SwipeDirection = "like" | "pass";
 
-export type SwipeResult =
-  | { kind: "recorded" }
-  | { kind: "duplicate" }
-  | { kind: "cap_reached" };
+export type SwipeResult = { kind: "recorded" } | { kind: "duplicate" } | { kind: "cap_reached" };
 
 /**
  * Inserts one swipe row. The `handle_mutual_like` + `enforce_active_chat_cap`
