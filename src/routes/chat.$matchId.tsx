@@ -122,7 +122,9 @@ function ChatScreen() {
     }
     // On success, Realtime INSERT will append; guard added in subscription.
     if (result.kind === "sent") {
-      setMessages((prev) => (prev.some((m) => m.id === result.message.id) ? prev : [...prev, result.message]));
+      setMessages((prev) =>
+        prev.some((m) => m.id === result.message.id) ? prev : [...prev, result.message],
+      );
     }
   }
 
@@ -134,7 +136,11 @@ function ChatScreen() {
         </Link>
         <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full bg-brand-sage/20">
           {item.other.photoSignedUrl ? (
-            <img src={item.other.photoSignedUrl} alt={name} className="h-full w-full object-cover" />
+            <img
+              src={item.other.photoSignedUrl}
+              alt={name}
+              className="h-full w-full object-cover"
+            />
           ) : (
             <div className="flex h-full w-full items-center justify-center font-serif text-sm text-brand-burgundy/70">
               {initialsOf(item.other.display_name)}
@@ -143,9 +149,7 @@ function ChatScreen() {
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate font-serif text-lg text-brand-burgundy">{name}</p>
-          {!isActive ? (
-            <p className="text-xs text-brand-terracotta">Conversation ended</p>
-          ) : null}
+          {!isActive ? <p className="text-xs text-brand-terracotta">Conversation ended</p> : null}
         </div>
       </header>
 

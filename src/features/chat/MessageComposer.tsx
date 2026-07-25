@@ -17,7 +17,9 @@ export function MessageComposer({ disabled, disabledReason, onSend }: Props) {
     if (disabled || sending) return;
     const check = validateDraft(value);
     if (!check.ok) {
-      setError(check.reason === "too_long" ? `Keep it under ${MESSAGE_MAX_LENGTH} characters.` : null);
+      setError(
+        check.reason === "too_long" ? `Keep it under ${MESSAGE_MAX_LENGTH} characters.` : null,
+      );
       return;
     }
     setError(null);
@@ -41,10 +43,7 @@ export function MessageComposer({ disabled, disabledReason, onSend }: Props) {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="border-t border-brand-burgundy/10 bg-brand-linen p-3"
-    >
+    <form onSubmit={handleSubmit} className="border-t border-brand-burgundy/10 bg-brand-linen p-3">
       {error ? <p className="mb-2 text-xs text-brand-terracotta">{error}</p> : null}
       <div className="flex items-center gap-2">
         <input

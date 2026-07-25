@@ -43,7 +43,9 @@ function MatchesScreen() {
     <section className="flex flex-col px-4 pt-6 pb-8">
       <header className="mb-4">
         <h1 className="font-serif text-2xl text-brand-burgundy">Matches</h1>
-        <p className={`mt-1 text-sm ${atCap ? "text-brand-terracotta font-medium" : "text-brand-terracotta"}`}>
+        <p
+          className={`mt-1 text-sm ${atCap ? "text-brand-terracotta font-medium" : "text-brand-terracotta"}`}
+        >
           {activeCount} of {ACTIVE_MATCH_CAP} active conversations
           {atCap ? " — cap reached" : ""}
         </p>
