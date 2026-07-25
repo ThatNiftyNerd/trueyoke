@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { StepShell } from "./StepShell";
 import { updateOwnProfile, type OnboardingProfile } from "../api";
-import { bioSchema, BIO_MAX, INTENT_MAX, type BioValues } from "../schemas";
+import { bioSchema, BIO_MAX, INTENT_MAX, emptyToNull, type BioValues } from "../schemas";
 
 interface Props {
   profile: OnboardingProfile;
@@ -35,8 +35,9 @@ export function BioStep({ profile, onSaved, onNext, onBack, canGoBack }: Props) 
   const onSubmit = handleSubmit(async (values) => {
     setError(null);
     try {
-      await updateOwnProfile(values);
-      onSaved(values);
+      const patch = emptyToNull(values) as Partial<OnboardingProfile>;
+      await updateOwnProfile(patch);
+      onSaved(patch);
       onNext();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save.");

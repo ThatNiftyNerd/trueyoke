@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { StepShell } from "./StepShell";
 import { updateOwnProfile, type OnboardingProfile } from "../api";
-import { faithSchema, type FaithValues } from "../schemas";
+import { faithSchema, emptyToNull, type FaithValues } from "../schemas";
 import { SPIRITUALITY_MARKERS } from "../logic";
 
 interface Props {
@@ -45,8 +45,9 @@ export function FaithStep({ profile, onSaved, onNext, onBack, canGoBack }: Props
   const onSubmit = handleSubmit(async (values) => {
     setError(null);
     try {
-      await updateOwnProfile(values);
-      onSaved(values);
+      const patch = emptyToNull(values) as Partial<OnboardingProfile>;
+      await updateOwnProfile(patch);
+      onSaved(patch);
       onNext();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save.");

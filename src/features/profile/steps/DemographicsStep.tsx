@@ -42,7 +42,7 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
   const onSubmit = handleSubmit(async (values) => {
     setError(null);
     try {
-      const patch = emptyToNull(values);
+      const patch = emptyToNull(values) as Partial<OnboardingProfile>;
       await updateOwnProfile(patch);
       onSaved(patch);
       onNext();
