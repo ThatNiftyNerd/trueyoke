@@ -162,3 +162,65 @@ export async function getVoiceIntroSignedUrl(
   if (error) return null;
   return data.signedUrl;
 }
+
+// -------- ID verification -------------------------------------------------
+
+export type IdVerificationInfo = Pick<
+  Tables<"profiles">,
+  "id_verification_status" | "id_document_path"
+>;
+
+const ID_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const ID_MAX_BYTES = 8 * 1024 * 1024;
+
+export async function getIdVerification(): Promise<IdVerificationInfo | null> {
+  const userId = await getCurrentUserId();
+  if (!userId) return null;
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id_verification_status, id_document_path")
+    .eq("id", userId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export type IdSubmitError = "invalid_type" | "too_large";
+
+/**
+ * Uploads a government ID image to the private `id-verification` bucket at
+ * `${userId}/<random>.<ext>` and flips the caller's own status to 'pending'.
+ * Only the owner may read the document (bucket is strictly private).
+ */
+export async function submitIdVerification(file: File): Promise<void> {
+  if (!ID_ALLOWED_TYPES.includes(file.type)) {
+    const err = new Error("Please upload a JPG, PNG, or WebP image.") as Error & {
+      code: IdSubmitError;
+    };
+    err.code = "invalid_type";
+    throw err;
+  }
+  if (file.size > ID_MAX_BYTES) {
+    const err = new Error("File must be under 8 MB.") as Error & { code: IdSubmitError };
+    err.code = "too_large";
+    throw err;
+  }
+
+  const userId = await getCurrentUserId();
+  if (!userId) throw new Error("Not authenticated");
+
+  const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+  const path = `${userId}/${crypto.randomUUID()}.${ext}`;
+
+  const { error: upErr } = await supabase.storage
+    .from("id-verification")
+    .upload(path, file, { contentType: file.type, upsert: false });
+  if (upErr) throw new Error(upErr.message);
+
+  const { error: updErr } = await supabase
+    .from("profiles")
+    .update({ id_document_path: path, id_verification_status: "pending" })
+    .eq("id", userId);
+  if (updErr) throw new Error(updErr.message);
+}
+
