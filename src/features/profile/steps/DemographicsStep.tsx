@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { StepShell } from "./StepShell";
 import { updateOwnProfile, type OnboardingProfile } from "../api";
-import { demographicsSchema, type DemographicsValues } from "../schemas";
+import { demographicsSchema, emptyToNull, type DemographicsValues } from "../schemas";
 
 interface Props {
   profile: OnboardingProfile;
@@ -27,8 +27,8 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
   } = useForm<DemographicsValues>({
     resolver: zodResolver(demographicsSchema),
     defaultValues: {
-      age: profile.age ?? undefined,
-      gender: profile.gender ?? undefined,
+      age: profile.age ?? (undefined as unknown as number),
+      gender: profile.gender ?? (undefined as unknown as "male" | "female"),
       location_label: profile.location_label ?? "",
       blood_group: profile.blood_group ?? "",
       genotype: profile.genotype ?? "",
@@ -42,8 +42,9 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
   const onSubmit = handleSubmit(async (values) => {
     setError(null);
     try {
-      await updateOwnProfile(values);
-      onSaved(values);
+      const patch = emptyToNull(values);
+      await updateOwnProfile(patch);
+      onSaved(patch);
       onNext();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save.");
