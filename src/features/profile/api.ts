@@ -72,9 +72,7 @@ export async function getOnboardingProfile(): Promise<OnboardingProfile | null> 
  * scope by userId here so a mistake surfaces as an empty update rather than
  * a policy error.
  */
-export async function updateOwnProfile(
-  patch: TablesUpdate<"profiles">,
-): Promise<void> {
+export async function updateOwnProfile(patch: TablesUpdate<"profiles">): Promise<void> {
   const userId = await getCurrentUserId();
   if (!userId) throw new Error("Not authenticated");
   const { error } = await supabase.from("profiles").update(patch).eq("id", userId);
@@ -83,10 +81,7 @@ export async function updateOwnProfile(
 
 // -------- Photos ----------------------------------------------------------
 
-export type PhotoRow = Pick<
-  Tables<"photos">,
-  "id" | "storage_path" | "position"
->;
+export type PhotoRow = Pick<Tables<"photos">, "id" | "storage_path" | "position">;
 
 export async function listOwnPhotos(): Promise<PhotoRow[]> {
   const userId = await getCurrentUserId();
@@ -146,10 +141,7 @@ export async function getPhotoSignedUrl(
  * responsible for writing that path to `profiles.voice_intro_url` via
  * `updateOwnProfile` — matching the private-bucket + signed-URL rule.
  */
-export async function uploadOwnVoiceIntro(
-  blob: Blob,
-  extension: string,
-): Promise<string> {
+export async function uploadOwnVoiceIntro(blob: Blob, extension: string): Promise<string> {
   const userId = await getCurrentUserId();
   if (!userId) throw new Error("Not authenticated");
   const path = `${userId}/${crypto.randomUUID()}.${extension}`;

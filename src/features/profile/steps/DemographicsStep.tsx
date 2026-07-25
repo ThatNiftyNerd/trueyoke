@@ -66,7 +66,9 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
         <Field label="Gender" error={errors.gender?.message}>
           <RadioGroup
             value={gender ?? ""}
-            onValueChange={(v) => setValue("gender", v as "male" | "female", { shouldValidate: true })}
+            onValueChange={(v) =>
+              setValue("gender", v as "male" | "female", { shouldValidate: true })
+            }
             className="flex gap-6"
           >
             <label className="flex items-center gap-2 text-sm text-brand-burgundy">
@@ -81,12 +83,22 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
           <Input placeholder="Lagos, Nigeria" {...register("location_label")} />
         </Field>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Blood group"><Input {...register("blood_group")} /></Field>
-          <Field label="Genotype"><Input {...register("genotype")} /></Field>
-          <Field label="Nationality"><Input {...register("nationality")} /></Field>
-          <Field label="Qualification"><Input {...register("qualification")} /></Field>
+          <Field label="Blood group">
+            <Input {...register("blood_group")} />
+          </Field>
+          <Field label="Genotype">
+            <Input {...register("genotype")} />
+          </Field>
+          <Field label="Nationality">
+            <Input {...register("nationality")} />
+          </Field>
+          <Field label="Qualification">
+            <Input {...register("qualification")} />
+          </Field>
         </div>
-        <Field label="Occupation"><Input {...register("occupation")} /></Field>
+        <Field label="Occupation">
+          <Input {...register("occupation")} />
+        </Field>
       </StepShell>
     </form>
   );

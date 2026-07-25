@@ -50,7 +50,9 @@ export function BioStep({ profile, onSaved, onNext, onBack, canGoBack }: Props) 
         <div className="space-y-1">
           <div className="flex items-baseline justify-between">
             <Label className="text-brand-burgundy">About you</Label>
-            <span className="text-xs text-brand-burgundy/60">{bioLen}/{BIO_MAX}</span>
+            <span className="text-xs text-brand-burgundy/60">
+              {bioLen}/{BIO_MAX}
+            </span>
           </div>
           <Textarea
             rows={5}
@@ -65,7 +67,9 @@ export function BioStep({ profile, onSaved, onNext, onBack, canGoBack }: Props) 
         <div className="space-y-1">
           <div className="flex items-baseline justify-between">
             <Label className="text-brand-burgundy">Marriage intentions (optional)</Label>
-            <span className="text-xs text-brand-burgundy/60">{intentLen}/{INTENT_MAX}</span>
+            <span className="text-xs text-brand-burgundy/60">
+              {intentLen}/{INTENT_MAX}
+            </span>
           </div>
           <Textarea
             rows={4}

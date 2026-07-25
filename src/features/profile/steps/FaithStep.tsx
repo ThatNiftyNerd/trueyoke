@@ -75,10 +75,7 @@ export function FaithStep({ profile, onSaved, onNext, onBack, canGoBack }: Props
                   key={m}
                   className="flex items-center gap-2 rounded-md border border-brand-burgundy/10 bg-white/60 px-3 py-2 text-sm text-brand-burgundy"
                 >
-                  <Checkbox
-                    checked={checked}
-                    onCheckedChange={(v) => toggle(m, v === true)}
-                  />
+                  <Checkbox checked={checked} onCheckedChange={(v) => toggle(m, v === true)} />
                   {m}
                 </label>
               );

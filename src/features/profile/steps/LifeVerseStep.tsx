@@ -45,7 +45,9 @@ export function LifeVerseStep({ profile, onSaved, onNext, onBack, canGoBack }: P
         <div className="space-y-1">
           <div className="flex items-baseline justify-between">
             <Label className="text-brand-burgundy">Life verse</Label>
-            <span className="text-xs text-brand-burgundy/60">{len}/{LIFE_VERSE_MAX}</span>
+            <span className="text-xs text-brand-burgundy/60">
+              {len}/{LIFE_VERSE_MAX}
+            </span>
           </div>
           <Textarea
             rows={5}

@@ -1,17 +1,8 @@
 import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { StepShell } from "./StepShell";
-import {
-  getPhotoSignedUrl,
-  listOwnPhotos,
-  uploadOwnPhoto,
-  type PhotoRow,
-} from "../api";
-import {
-  PHOTO_MAX_BYTES,
-  PHOTO_MAX_COUNT,
-  extensionForImage,
-} from "../logic";
+import { getPhotoSignedUrl, listOwnPhotos, uploadOwnPhoto, type PhotoRow } from "../api";
+import { PHOTO_MAX_BYTES, PHOTO_MAX_COUNT, extensionForImage } from "../logic";
 
 interface Props {
   onNext: () => void;

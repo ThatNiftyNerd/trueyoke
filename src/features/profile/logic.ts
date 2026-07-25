@@ -20,14 +20,7 @@ export const SPIRITUALITY_MARKERS: readonly string[] = [
 ] as const;
 
 /** Wizard step keys, in display order. */
-export const STEP_KEYS = [
-  "demographics",
-  "photos",
-  "bio",
-  "faith",
-  "life-verse",
-  "voice",
-] as const;
+export const STEP_KEYS = ["demographics", "photos", "bio", "faith", "life-verse", "voice"] as const;
 export type StepKey = (typeof STEP_KEYS)[number];
 
 export interface StepMeta {
@@ -96,9 +89,7 @@ export function firstIncompleteStepIndex(profile: OnboardingProfile | null): num
 /** Which steps still have required fields missing — used for Finish error UI. */
 export function missingStepTitles(profile: OnboardingProfile | null): string[] {
   if (!profile) return STEPS.map((s) => s.title);
-  return STEPS.filter((s) =>
-    s.requiredFields.some((f) => profile[f] == null),
-  ).map((s) => s.title);
+  return STEPS.filter((s) => s.requiredFields.some((f) => profile[f] == null)).map((s) => s.title);
 }
 
 // -------- Photo upload UX constraints (bucket enforces the real limits) --

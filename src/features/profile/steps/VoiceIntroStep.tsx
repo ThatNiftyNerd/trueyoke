@@ -142,7 +142,11 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
     }
   };
 
-  const submitLabel = localBlob ? "Save & continue" : profile.voice_intro_url ? "Continue" : "Continue";
+  const submitLabel = localBlob
+    ? "Save & continue"
+    : profile.voice_intro_url
+      ? "Continue"
+      : "Continue";
   const disableSubmit = state === "recording" || (!localBlob && !profile.voice_intro_url);
 
   return (

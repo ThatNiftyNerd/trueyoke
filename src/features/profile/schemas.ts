@@ -45,16 +45,14 @@ export type FaithValues = z.infer<typeof faithSchema>;
 export const LIFE_VERSE_MAX = 500;
 
 export const lifeVerseSchema = z.object({
-  life_verse: z
-    .string()
-    .trim()
-    .min(1, "Add a verse that anchors you")
-    .max(LIFE_VERSE_MAX),
+  life_verse: z.string().trim().min(1, "Add a verse that anchors you").max(LIFE_VERSE_MAX),
 });
 export type LifeVerseValues = z.infer<typeof lifeVerseSchema>;
 
 /** Convert "" → null for optional text fields before writing to Supabase. */
-export function emptyToNull<T extends Record<string, unknown>>(obj: T): {
+export function emptyToNull<T extends Record<string, unknown>>(
+  obj: T,
+): {
   [K in keyof T]: T[K] extends string ? string | null : T[K];
 } {
   const out: Record<string, unknown> = { ...obj };
