@@ -14,7 +14,365 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      blocks: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocks_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blocks_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      matches: {
+        Row: {
+          created_at: string
+          id: string
+          last_activity_at: string
+          status: Database["public"]["Enums"]["match_status"]
+          user_a_id: string
+          user_b_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_activity_at?: string
+          status?: Database["public"]["Enums"]["match_status"]
+          user_a_id: string
+          user_b_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_activity_at?: string
+          status?: Database["public"]["Enums"]["match_status"]
+          user_a_id?: string
+          user_b_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_user_a_id_fkey"
+            columns: ["user_a_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_user_b_id_fkey"
+            columns: ["user_b_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          match_id: string
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          match_id: string
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          match_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      photos: {
+        Row: {
+          created_at: string
+          id: string
+          position: number
+          profile_id: string
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          position?: number
+          profile_id: string
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          position?: number
+          profile_id?: string
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photos_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          account_type: Database["public"]["Enums"]["account_type"]
+          age: number | null
+          bio: string | null
+          blood_group: string | null
+          church_affiliation: string | null
+          church_verified: boolean
+          congregation: string | null
+          created_at: string
+          display_name: string
+          gender: Database["public"]["Enums"]["gender_type"] | null
+          genotype: string | null
+          id: string
+          id_verification_status: Database["public"]["Enums"]["id_status"]
+          latitude: number | null
+          life_verse: string | null
+          location_label: string | null
+          longitude: number | null
+          marriage_intentions: string | null
+          mentor_role: string | null
+          nationality: string | null
+          occupation: string | null
+          profile_complete: boolean | null
+          qualification: string | null
+          spirituality_markers: string[] | null
+          updated_at: string
+          voice_intro_url: string | null
+        }
+        Insert: {
+          account_type?: Database["public"]["Enums"]["account_type"]
+          age?: number | null
+          bio?: string | null
+          blood_group?: string | null
+          church_affiliation?: string | null
+          church_verified?: boolean
+          congregation?: string | null
+          created_at?: string
+          display_name: string
+          gender?: Database["public"]["Enums"]["gender_type"] | null
+          genotype?: string | null
+          id: string
+          id_verification_status?: Database["public"]["Enums"]["id_status"]
+          latitude?: number | null
+          life_verse?: string | null
+          location_label?: string | null
+          longitude?: number | null
+          marriage_intentions?: string | null
+          mentor_role?: string | null
+          nationality?: string | null
+          occupation?: string | null
+          profile_complete?: boolean | null
+          qualification?: string | null
+          spirituality_markers?: string[] | null
+          updated_at?: string
+          voice_intro_url?: string | null
+        }
+        Update: {
+          account_type?: Database["public"]["Enums"]["account_type"]
+          age?: number | null
+          bio?: string | null
+          blood_group?: string | null
+          church_affiliation?: string | null
+          church_verified?: boolean
+          congregation?: string | null
+          created_at?: string
+          display_name?: string
+          gender?: Database["public"]["Enums"]["gender_type"] | null
+          genotype?: string | null
+          id?: string
+          id_verification_status?: Database["public"]["Enums"]["id_status"]
+          latitude?: number | null
+          life_verse?: string | null
+          location_label?: string | null
+          longitude?: number | null
+          marriage_intentions?: string | null
+          mentor_role?: string | null
+          nationality?: string | null
+          occupation?: string | null
+          profile_complete?: boolean | null
+          qualification?: string | null
+          spirituality_markers?: string[] | null
+          updated_at?: string
+          voice_intro_url?: string | null
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string | null
+          reported_id: string
+          reporter_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason?: string | null
+          reported_id: string
+          reporter_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string | null
+          reported_id?: string
+          reporter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_reported_id_fkey"
+            columns: ["reported_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reporter_id_fkey"
+            columns: ["reporter_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      swipes: {
+        Row: {
+          created_at: string
+          direction: Database["public"]["Enums"]["swipe_direction"]
+          id: string
+          swipee_id: string
+          swiper_id: string
+        }
+        Insert: {
+          created_at?: string
+          direction: Database["public"]["Enums"]["swipe_direction"]
+          id?: string
+          swipee_id: string
+          swiper_id: string
+        }
+        Update: {
+          created_at?: string
+          direction?: Database["public"]["Enums"]["swipe_direction"]
+          id?: string
+          swipee_id?: string
+          swiper_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "swipes_swipee_id_fkey"
+            columns: ["swipee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "swipes_swiper_id_fkey"
+            columns: ["swiper_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vouchers: {
+        Row: {
+          created_at: string
+          endorsement: string | null
+          id: string
+          invitee_email: string
+          match_user_id: string
+          mentor_id: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          endorsement?: string | null
+          id?: string
+          invitee_email: string
+          match_user_id: string
+          mentor_id?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          endorsement?: string | null
+          id?: string
+          invitee_email?: string
+          match_user_id?: string
+          mentor_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vouchers_match_user_id_fkey"
+            columns: ["match_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vouchers_mentor_id_fkey"
+            columns: ["mentor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +381,11 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      account_type: "match" | "mentor"
+      gender_type: "male" | "female"
+      id_status: "none" | "pending" | "verified" | "rejected"
+      match_status: "active" | "expired" | "closed"
+      swipe_direction: "like" | "pass"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +512,12 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      account_type: ["match", "mentor"],
+      gender_type: ["male", "female"],
+      id_status: ["none", "pending", "verified", "rejected"],
+      match_status: ["active", "expired", "closed"],
+      swipe_direction: ["like", "pass"],
+    },
   },
 } as const
