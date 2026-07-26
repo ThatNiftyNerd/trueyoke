@@ -14,6 +14,8 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as VerifyIdRouteImport } from './routes/verify-id'
+import { Route as AppAdminReviewRouteImport } from './routes/app.admin-review'
+import { Route as AppBlockedRouteImport } from './routes/app.blocked'
 import { Route as AppDiscoverRouteImport } from './routes/app.discover'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
@@ -44,6 +46,16 @@ const VerifyIdRoute = VerifyIdRouteImport.update({
   path: '/verify-id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppAdminReviewRoute = AppAdminReviewRouteImport.update({
+  id: '/admin-review',
+  path: '/admin-review',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBlockedRoute = AppBlockedRouteImport.update({
+  id: '/blocked',
+  path: '/blocked',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDiscoverRoute = AppDiscoverRouteImport.update({
   id: '/discover',
   path: '/discover',
@@ -71,6 +83,8 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
   '/verify-id': typeof VerifyIdRoute
+  '/app/admin-review': typeof AppAdminReviewRoute
+  '/app/blocked': typeof AppBlockedRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
@@ -82,6 +96,8 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
   '/verify-id': typeof VerifyIdRoute
+  '/app/admin-review': typeof AppAdminReviewRoute
+  '/app/blocked': typeof AppBlockedRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
@@ -94,6 +110,8 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
   '/verify-id': typeof VerifyIdRoute
+  '/app/admin-review': typeof AppAdminReviewRoute
+  '/app/blocked': typeof AppBlockedRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
@@ -107,6 +125,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/onboarding'
     | '/verify-id'
+    | '/app/admin-review'
+    | '/app/blocked'
     | '/app/discover'
     | '/app/matches'
     | '/app/profile'
@@ -118,6 +138,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/onboarding'
     | '/verify-id'
+    | '/app/admin-review'
+    | '/app/blocked'
     | '/app/discover'
     | '/app/matches'
     | '/app/profile'
@@ -129,6 +151,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/onboarding'
     | '/verify-id'
+    | '/app/admin-review'
+    | '/app/blocked'
     | '/app/discover'
     | '/app/matches'
     | '/app/profile'
@@ -181,6 +205,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/admin-review': {
+      id: '/app/admin-review'
+      path: '/admin-review'
+      fullPath: '/app/admin-review'
+      preLoaderRoute: typeof AppAdminReviewRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/blocked': {
+      id: '/app/blocked'
+      path: '/blocked'
+      fullPath: '/app/blocked'
+      preLoaderRoute: typeof AppBlockedRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/discover': {
       id: '/app/discover'
       path: '/discover'
@@ -213,12 +251,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppAdminReviewRoute: typeof AppAdminReviewRoute
+  AppBlockedRoute: typeof AppBlockedRoute
   AppDiscoverRoute: typeof AppDiscoverRoute
   AppMatchesRoute: typeof AppMatchesRoute
   AppProfileRoute: typeof AppProfileRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAdminReviewRoute: AppAdminReviewRoute,
+  AppBlockedRoute: AppBlockedRoute,
   AppDiscoverRoute: AppDiscoverRoute,
   AppMatchesRoute: AppMatchesRoute,
   AppProfileRoute: AppProfileRoute,
