@@ -48,6 +48,20 @@ function ProfileScreen() {
         >
           Verify your ID
         </Link>
+        <Link
+          to="/app/blocked"
+          className="block rounded-md border border-brand-burgundy/20 px-4 py-3 text-center text-sm font-medium text-brand-burgundy"
+        >
+          Manage blocked users
+        </Link>
+        {isAdmin ? (
+          <Link
+            to="/app/admin-review"
+            className="block rounded-md border border-brand-burgundy/20 px-4 py-3 text-center text-sm font-medium text-brand-burgundy"
+          >
+            ID review
+          </Link>
+        ) : null}
         <Button variant="outline" className="w-full border-brand-burgundy/30 text-brand-burgundy">
           {/* TODO: sign out via features/auth/api.ts */}
           Sign out
