@@ -26,6 +26,7 @@ export const Route = createFileRoute("/verify-id")({
 
 function VerifyIdScreen() {
   const [status, setStatus] = useState<IdStatus | null>(null);
+  const [rejectionReason, setRejectionReason] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -35,7 +36,8 @@ function VerifyIdScreen() {
     getIdVerification()
       .then((info) => {
         if (!alive) return;
-        setStatus(info?.id_verification_status ?? "none");
+        setStatus(info?.status ?? "none");
+        setRejectionReason(info?.rejection_reason ?? null);
       })
       .catch(() => alive && setStatus("none"));
     return () => {
@@ -49,6 +51,7 @@ function VerifyIdScreen() {
     try {
       await submitIdVerification(file);
       setStatus("pending");
+      setRejectionReason(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Upload failed. Try again.");
     } finally {
