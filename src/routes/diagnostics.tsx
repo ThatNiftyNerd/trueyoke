@@ -96,6 +96,7 @@ function DiagnosticsScreen() {
           {ranAt ? ` · Last run ${ranAt}` : ""}
         </p>
       </div>
-    </section>
+      </section>
+    </main>
   );
 }
