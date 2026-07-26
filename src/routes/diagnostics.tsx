@@ -41,7 +41,9 @@ function DiagnosticsScreen() {
   const [checks, setChecks] = useState<DiagnosticCheck[]>(PENDING);
   const [running, setRunning] = useState(false);
   const [ranAt, setRanAt] = useState<string | null>(null);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
   const build = getBuildInfo();
+
 
   const run = useCallback(async () => {
     setRunning(true);
