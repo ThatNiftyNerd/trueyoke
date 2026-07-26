@@ -100,8 +100,12 @@ async function checkSession(): Promise<DiagnosticCheck> {
   return {
     id: "session",
     label: "Signed-in session",
-    status: data.session ? "pass" : "fail",
-    detail: data.session ? "Session restored on this device." : "No active session.",
+    // Informational only: being signed out is a valid state, so this never
+    // fails the overall connectivity verdict.
+    status: "pass",
+    detail: data.session
+      ? "Session restored on this device."
+      : "No active session (not required for this check).",
   };
 }
 
