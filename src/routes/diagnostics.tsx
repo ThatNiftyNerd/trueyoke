@@ -5,7 +5,7 @@ import { CheckRow } from "@/features/diagnostics/CheckRow";
 import { getBuildInfo, runDiagnostics } from "@/features/diagnostics/api";
 import { overallStatus, type DiagnosticCheck } from "@/features/diagnostics/logic";
 
-export const Route = createFileRoute("/app/diagnostics")({
+export const Route = createFileRoute("/diagnostics")({
   head: () => ({
     meta: [
       { title: "Connection diagnostics — Yoked" },

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyIdRouteImport } from './routes/verify-id'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
@@ -18,7 +19,6 @@ import { Route as ChatMatchIdRouteImport } from './routes/chat.$matchId'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
 import { Route as AppDiscoverRouteImport } from './routes/app.discover'
-import { Route as AppDiagnosticsRouteImport } from './routes/app.diagnostics'
 import { Route as AppBlockedRouteImport } from './routes/app.blocked'
 import { Route as AppAdminReviewRouteImport } from './routes/app.admin-review'
 
@@ -30,6 +30,11 @@ const VerifyIdRoute = VerifyIdRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiagnosticsRoute = DiagnosticsRouteImport.update({
+  id: '/diagnostics',
+  path: '/diagnostics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -67,11 +72,6 @@ const AppDiscoverRoute = AppDiscoverRouteImport.update({
   path: '/discover',
   getParentRoute: () => AppRoute,
 } as any)
-const AppDiagnosticsRoute = AppDiagnosticsRouteImport.update({
-  id: '/diagnostics',
-  path: '/diagnostics',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppBlockedRoute = AppBlockedRouteImport.update({
   id: '/blocked',
   path: '/blocked',
@@ -87,11 +87,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
   '/app/blocked': typeof AppBlockedRoute
-  '/app/diagnostics': typeof AppDiagnosticsRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
@@ -101,11 +101,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
   '/app/blocked': typeof AppBlockedRoute
-  '/app/diagnostics': typeof AppDiagnosticsRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
@@ -116,11 +116,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
   '/app/blocked': typeof AppBlockedRoute
-  '/app/diagnostics': typeof AppDiagnosticsRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
@@ -132,11 +132,11 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/diagnostics'
     | '/onboarding'
     | '/verify-id'
     | '/app/admin-review'
     | '/app/blocked'
-    | '/app/diagnostics'
     | '/app/discover'
     | '/app/matches'
     | '/app/profile'
@@ -146,11 +146,11 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/diagnostics'
     | '/onboarding'
     | '/verify-id'
     | '/app/admin-review'
     | '/app/blocked'
-    | '/app/diagnostics'
     | '/app/discover'
     | '/app/matches'
     | '/app/profile'
@@ -160,11 +160,11 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/diagnostics'
     | '/onboarding'
     | '/verify-id'
     | '/app/admin-review'
     | '/app/blocked'
-    | '/app/diagnostics'
     | '/app/discover'
     | '/app/matches'
     | '/app/profile'
@@ -175,6 +175,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  DiagnosticsRoute: typeof DiagnosticsRoute
   OnboardingRoute: typeof OnboardingRoute
   VerifyIdRoute: typeof VerifyIdRoute
   ChatMatchIdRoute: typeof ChatMatchIdRoute
@@ -194,6 +195,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/diagnostics': {
+      id: '/diagnostics'
+      path: '/diagnostics'
+      fullPath: '/diagnostics'
+      preLoaderRoute: typeof DiagnosticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -245,13 +253,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDiscoverRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/diagnostics': {
-      id: '/app/diagnostics'
-      path: '/diagnostics'
-      fullPath: '/app/diagnostics'
-      preLoaderRoute: typeof AppDiagnosticsRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/blocked': {
       id: '/app/blocked'
       path: '/blocked'
@@ -272,7 +273,6 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppAdminReviewRoute: typeof AppAdminReviewRoute
   AppBlockedRoute: typeof AppBlockedRoute
-  AppDiagnosticsRoute: typeof AppDiagnosticsRoute
   AppDiscoverRoute: typeof AppDiscoverRoute
   AppMatchesRoute: typeof AppMatchesRoute
   AppProfileRoute: typeof AppProfileRoute
@@ -281,7 +281,6 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppAdminReviewRoute: AppAdminReviewRoute,
   AppBlockedRoute: AppBlockedRoute,
-  AppDiagnosticsRoute: AppDiagnosticsRoute,
   AppDiscoverRoute: AppDiscoverRoute,
   AppMatchesRoute: AppMatchesRoute,
   AppProfileRoute: AppProfileRoute,
@@ -293,6 +292,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  DiagnosticsRoute: DiagnosticsRoute,
   OnboardingRoute: OnboardingRoute,
   VerifyIdRoute: VerifyIdRoute,
   ChatMatchIdRoute: ChatMatchIdRoute,

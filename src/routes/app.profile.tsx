@@ -62,7 +62,7 @@ function ProfileScreen() {
           </Link>
         ) : null}
         <Link
-          to="/app/diagnostics"
+          to="/diagnostics"
           className="block rounded-md border border-brand-burgundy/20 px-4 py-3 text-center text-sm font-medium text-brand-burgundy"
         >
           Connection diagnostics
