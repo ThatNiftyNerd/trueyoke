@@ -156,6 +156,12 @@ export async function runDiagnostics(): Promise<DiagnosticCheck[]> {
         detail: "Skipped — backend URL or key is missing from this build.",
       },
       {
+        id: "runtime-target",
+        label: "Runtime request target",
+        status: "fail",
+        detail: "Skipped — backend URL or key is missing from this build.",
+      },
+      {
         id: "data-api",
         label: "Database API responding",
         status: "fail",
@@ -170,12 +176,13 @@ export async function runDiagnostics(): Promise<DiagnosticCheck[]> {
     ];
   }
 
-  const [auth, data, session] = await Promise.all([
+  const [auth, target, data, session] = await Promise.all([
     checkAuthReachable(),
+    checkRuntimeTarget(),
     checkDataApi(),
     checkSession(),
   ]);
-  return [...envChecks, auth, data, session];
+  return [...envChecks, auth, target, data, session];
 }
 
 /** Build-time metadata shown alongside the checks. */
