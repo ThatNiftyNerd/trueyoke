@@ -46,6 +46,19 @@ export function isValidProjectUrl(rawUrl: string): boolean {
   }
 }
 
+/**
+ * True when two URLs point at the same origin. Used to prove the URL the app
+ * actually sends requests to is the one that was inlined at build time.
+ */
+export function isSameOrigin(a: string, b: string): boolean {
+  try {
+    return new URL(a).origin === new URL(b).origin;
+  } catch {
+    return false;
+  }
+}
+
+
 export function overallStatus(checks: readonly DiagnosticCheck[]): CheckStatus {
   if (checks.some((c) => c.status === "pending")) return "pending";
   return checks.every((c) => c.status === "pass") ? "pass" : "fail";

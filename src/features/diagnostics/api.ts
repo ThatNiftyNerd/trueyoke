@@ -7,6 +7,7 @@
 import { supabase } from "@/lib/supabase";
 import {
   formatDuration,
+  isSameOrigin,
   isValidProjectUrl,
   maskUrl,
   maskValue,
@@ -71,6 +72,36 @@ async function checkAuthReachable(): Promise<DiagnosticCheck> {
 }
 
 /**
+ * Proves which origin the app *actually* sends requests to at runtime, read
+ * back off a real response rather than off the env var. On a host like Vercel
+ * this is the check that catches a stale or wrong inlined value.
+ */
+async function checkRuntimeTarget(): Promise<DiagnosticCheck> {
+  try {
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/settings`, {
+      headers: { apikey: SUPABASE_PUBLISHABLE_KEY },
+    });
+    const effective = new URL(response.url).origin;
+    const matches = isSameOrigin(effective, SUPABASE_URL);
+    return {
+      id: "runtime-target",
+      label: "Runtime request target",
+      status: matches ? "pass" : "fail",
+      detail: matches
+        ? `Requests go to ${maskUrl(effective)} — matches the inlined build value.`
+        : `Requests go to ${maskUrl(effective)}, but the build inlined ${maskUrl(SUPABASE_URL)}. Update the host's env vars and rebuild.`,
+    };
+  } catch (error) {
+    return {
+      id: "runtime-target",
+      label: "Runtime request target",
+      status: "fail",
+      detail: error instanceof Error ? error.message : "Could not resolve a runtime request target.",
+    };
+  }
+}
+
+/**
  * Lightweight Data API probe: a HEAD-style count against `profiles`, which
  * returns no rows and is cheap. Proves the key is accepted by PostgREST.
  */
@@ -85,6 +116,7 @@ async function checkDataApi(): Promise<DiagnosticCheck> {
     detail: error ? `${error.code ?? "error"}: ${error.message}` : `Query answered in ${elapsed}`,
   };
 }
+
 
 /** Reports whether a user session is currently restored on this device. */
 async function checkSession(): Promise<DiagnosticCheck> {
@@ -124,6 +156,12 @@ export async function runDiagnostics(): Promise<DiagnosticCheck[]> {
         detail: "Skipped — backend URL or key is missing from this build.",
       },
       {
+        id: "runtime-target",
+        label: "Runtime request target",
+        status: "fail",
+        detail: "Skipped — backend URL or key is missing from this build.",
+      },
+      {
         id: "data-api",
         label: "Database API responding",
         status: "fail",
@@ -138,12 +176,13 @@ export async function runDiagnostics(): Promise<DiagnosticCheck[]> {
     ];
   }
 
-  const [auth, data, session] = await Promise.all([
+  const [auth, target, data, session] = await Promise.all([
     checkAuthReachable(),
+    checkRuntimeTarget(),
     checkDataApi(),
     checkSession(),
   ]);
-  return [...envChecks, auth, data, session];
+  return [...envChecks, auth, target, data, session];
 }
 
 /** Build-time metadata shown alongside the checks. */
