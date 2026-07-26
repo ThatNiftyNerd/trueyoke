@@ -90,7 +90,8 @@ function VerifyIdScreen() {
         <div className="flex flex-1 flex-col gap-4">
           {status === "rejected" ? (
             <p className="rounded-md border border-brand-terracotta/40 bg-brand-terracotta/10 p-3 text-sm text-brand-terracotta">
-              Your previous submission wasn't approved. Please try again with a clearer photo.
+              {rejectionReason ??
+                "Your previous submission wasn't approved. Please try again with a clearer photo."}
             </p>
           ) : null}
 
