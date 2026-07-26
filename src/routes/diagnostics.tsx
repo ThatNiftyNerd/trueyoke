@@ -24,7 +24,14 @@ const PENDING: DiagnosticCheck[] = [
   { id: "env-url", label: "Backend URL configured", status: "pending", detail: "Checking…" },
   { id: "env-key", label: "Publishable key configured", status: "pending", detail: "Checking…" },
   { id: "auth-reachable", label: "Auth service reachable", status: "pending", detail: "Checking…" },
+  {
+    id: "runtime-target",
+    label: "Runtime request target",
+    status: "pending",
+    detail: "Checking…",
+  },
   { id: "data-api", label: "Database API responding", status: "pending", detail: "Checking…" },
+
   { id: "session", label: "Signed-in session", status: "pending", detail: "Checking…" },
 ];
 
