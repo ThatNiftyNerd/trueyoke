@@ -115,6 +115,22 @@ function DiagnosticsScreen() {
         >
           {running ? "Running…" : "Run checks again"}
         </Button>
+        <Button
+          variant="outline"
+          onClick={() => void copyReport()}
+          disabled={running}
+          className="w-full border-brand-burgundy/30 bg-transparent text-brand-burgundy"
+        >
+          {copyState === "copied"
+            ? "Copied to clipboard"
+            : copyState === "error"
+              ? "Copy failed — select the text manually"
+              : "Copy report"}
+        </Button>
+        <p className="sr-only" role="status" aria-live="polite">
+          {copyState === "copied" ? "Diagnostics report copied to clipboard." : ""}
+        </p>
+
         <p className="text-center text-xs text-brand-burgundy/60">
           Build mode: {build.mode}
           {ranAt ? ` · Last run ${ranAt}` : ""}
