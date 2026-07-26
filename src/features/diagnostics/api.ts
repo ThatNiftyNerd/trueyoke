@@ -7,6 +7,7 @@
 import { supabase } from "@/lib/supabase";
 import {
   formatDuration,
+  isSameOrigin,
   isValidProjectUrl,
   maskUrl,
   maskValue,
