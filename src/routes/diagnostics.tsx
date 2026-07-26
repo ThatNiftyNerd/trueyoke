@@ -50,7 +50,8 @@ function DiagnosticsScreen() {
   const status = overallStatus(checks);
 
   return (
-    <section className="flex flex-col px-4 pt-6">
+    <main className="min-h-[100dvh] bg-brand-linen">
+      <section className="mx-auto flex max-w-md flex-col px-4 pb-16 pt-6">
       <header className="mb-5">
         <h1 className="font-serif text-2xl text-brand-burgundy">Connection diagnostics</h1>
         <p className="mt-1 text-sm text-brand-burgundy/70">
