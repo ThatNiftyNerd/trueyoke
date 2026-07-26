@@ -3,7 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckRow } from "@/features/diagnostics/CheckRow";
 import { getBuildInfo, runDiagnostics } from "@/features/diagnostics/api";
-import { overallStatus, type DiagnosticCheck } from "@/features/diagnostics/logic";
+import { copyText } from "@/features/diagnostics/clipboard";
+import { buildReport, overallStatus, type DiagnosticCheck } from "@/features/diagnostics/logic";
+
 
 export const Route = createFileRoute("/diagnostics")({
   head: () => ({
@@ -39,7 +41,9 @@ function DiagnosticsScreen() {
   const [checks, setChecks] = useState<DiagnosticCheck[]>(PENDING);
   const [running, setRunning] = useState(false);
   const [ranAt, setRanAt] = useState<string | null>(null);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
   const build = getBuildInfo();
+
 
   const run = useCallback(async () => {
     setRunning(true);
@@ -49,6 +53,19 @@ function DiagnosticsScreen() {
     setRanAt(new Date().toLocaleTimeString());
     setRunning(false);
   }, []);
+
+  const copyReport = useCallback(async () => {
+    const report = buildReport(checks, {
+      mode: build.mode,
+      dev: build.dev,
+      ranAt,
+      userAgent: navigator.userAgent,
+    });
+    const ok = await copyText(report);
+    setCopyState(ok ? "copied" : "error");
+    window.setTimeout(() => setCopyState("idle"), 2500);
+  }, [checks, build.mode, build.dev, ranAt]);
+
 
   useEffect(() => {
     void run();
@@ -98,6 +115,22 @@ function DiagnosticsScreen() {
         >
           {running ? "Running…" : "Run checks again"}
         </Button>
+        <Button
+          variant="outline"
+          onClick={() => void copyReport()}
+          disabled={running}
+          className="w-full border-brand-burgundy/30 bg-transparent text-brand-burgundy"
+        >
+          {copyState === "copied"
+            ? "Copied to clipboard"
+            : copyState === "error"
+              ? "Copy failed — select the text manually"
+              : "Copy report"}
+        </Button>
+        <p className="sr-only" role="status" aria-live="polite">
+          {copyState === "copied" ? "Diagnostics report copied to clipboard." : ""}
+        </p>
+
         <p className="text-center text-xs text-brand-burgundy/60">
           Build mode: {build.mode}
           {ranAt ? ` · Last run ${ranAt}` : ""}

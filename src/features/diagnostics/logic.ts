@@ -67,3 +67,38 @@ export function overallStatus(checks: readonly DiagnosticCheck[]): CheckStatus {
 export function formatDuration(ms: number): string {
   return ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toFixed(2)} s`;
 }
+
+const STATUS_LABEL: Record<CheckStatus, string> = {
+  pass: "PASS",
+  fail: "FAIL",
+  pending: "PENDING",
+};
+
+export interface ReportContext {
+  mode: string;
+  dev: boolean;
+  ranAt: string | null;
+  userAgent: string;
+}
+
+/**
+ * Builds the plain-text diagnostics report copied to the clipboard.
+ * Values are already masked by the checks themselves — nothing secret is added.
+ */
+export function buildReport(
+  checks: readonly DiagnosticCheck[],
+  context: ReportContext,
+): string {
+  const lines: string[] = [
+    "Yoked — connection diagnostics report",
+    `Generated: ${new Date().toISOString()}`,
+    `Last run: ${context.ranAt ?? "not run yet"}`,
+    `Build mode: ${context.mode}${context.dev ? " (dev)" : ""}`,
+    `User agent: ${context.userAgent}`,
+    `Overall verdict: ${STATUS_LABEL[overallStatus(checks)]}`,
+    "",
+    "Checks:",
+    ...checks.map((c) => `- [${STATUS_LABEL[c.status]}] ${c.label}: ${c.detail}`),
+  ];
+  return lines.join("\n");
+}
