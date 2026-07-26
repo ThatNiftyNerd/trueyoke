@@ -28,7 +28,6 @@ function ProfileScreen() {
     };
   }, []);
 
-
   return (
     <section className="flex flex-col px-4 pt-6">
       <header className="mb-6 text-center">

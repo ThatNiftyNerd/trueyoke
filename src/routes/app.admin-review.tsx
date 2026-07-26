@@ -97,9 +97,7 @@ function AdminReviewScreen() {
                   className="w-full object-contain"
                 />
               ) : (
-                <p className="px-3 pb-3 text-sm text-brand-terracotta">
-                  Document unavailable.
-                </p>
+                <p className="px-3 pb-3 text-sm text-brand-terracotta">Document unavailable.</p>
               )}
 
               {rejectingId === r.id ? (

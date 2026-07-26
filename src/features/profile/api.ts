@@ -258,7 +258,9 @@ export interface PendingIdReview {
 export async function listPendingIdVerifications(): Promise<PendingIdReview[]> {
   const { data, error } = await supabase
     .from("id_verifications")
-    .select("id, profile_id, document_path, created_at, profiles!id_verifications_profile_id_fkey(display_name)")
+    .select(
+      "id, profile_id, document_path, created_at, profiles!id_verifications_profile_id_fkey(display_name)",
+    )
     .eq("status", "pending")
     .order("created_at", { ascending: true });
   if (error) throw new Error(error.message);
@@ -304,7 +306,7 @@ export async function reviewIdVerification(
       status: decision,
       reviewed_by: adminId,
       reviewed_at: new Date().toISOString(),
-      rejection_reason: decision === "rejected" ? (rejectionReason?.trim() || null) : null,
+      rejection_reason: decision === "rejected" ? rejectionReason?.trim() || null : null,
     })
     .eq("id", verificationId);
   if (error) throw new Error(error.message);
