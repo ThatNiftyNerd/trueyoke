@@ -1,0 +1,13 @@
+# Android 11 shipped with a WebView based on Chromium ~83. Google Play auto-
+# updates WebView independently of the OS on virtually all real devices, but
+# this floor is kept explicit so postcss-preset-env transpiles CSS that would
+# otherwise silently break (invisible colors, dropped rules) on a device that
+# hasn't picked up those updates. This also covers the wider range of visitor
+# browsers for the planned Vercel web deployment.
+Chrome >= 83
+ChromeAndroid >= 83
+Android >= 83
+Safari >= 14
+iOS >= 14
+Firefox >= 78
+not dead
