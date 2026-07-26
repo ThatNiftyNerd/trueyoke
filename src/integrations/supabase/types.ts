@@ -50,6 +50,54 @@ export type Database = {
           },
         ]
       }
+      id_verifications: {
+        Row: {
+          created_at: string
+          document_path: string
+          id: string
+          profile_id: string
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["id_status"]
+        }
+        Insert: {
+          created_at?: string
+          document_path: string
+          id?: string
+          profile_id: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["id_status"]
+        }
+        Update: {
+          created_at?: string
+          document_path?: string
+          id?: string
+          profile_id?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["id_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "id_verifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "id_verifications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       matches: {
         Row: {
           created_at: string
@@ -177,8 +225,7 @@ export type Database = {
           gender: Database["public"]["Enums"]["gender_type"] | null
           genotype: string | null
           id: string
-          id_document_path: string | null
-          id_verification_status: Database["public"]["Enums"]["id_status"]
+          is_admin: boolean
           latitude: number | null
           life_verse: string | null
           location_label: string | null
@@ -206,8 +253,7 @@ export type Database = {
           gender?: Database["public"]["Enums"]["gender_type"] | null
           genotype?: string | null
           id: string
-          id_document_path?: string | null
-          id_verification_status?: Database["public"]["Enums"]["id_status"]
+          is_admin?: boolean
           latitude?: number | null
           life_verse?: string | null
           location_label?: string | null
@@ -235,8 +281,7 @@ export type Database = {
           gender?: Database["public"]["Enums"]["gender_type"] | null
           genotype?: string | null
           id?: string
-          id_document_path?: string | null
-          id_verification_status?: Database["public"]["Enums"]["id_status"]
+          is_admin?: boolean
           latitude?: number | null
           life_verse?: string | null
           location_label?: string | null
@@ -381,6 +426,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      is_admin: { Args: never; Returns: boolean }
       is_blocked: { Args: { other_id: string }; Returns: boolean }
     }
     Enums: {

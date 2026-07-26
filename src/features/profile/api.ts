@@ -165,21 +165,29 @@ export async function getVoiceIntroSignedUrl(
 
 // -------- ID verification -------------------------------------------------
 
+/**
+ * Latest submission for the caller. `id_document_path` / `id_verification_status`
+ * no longer live on `profiles` — they moved to the `id_verifications` table so a
+ * row-level policy can keep document paths private.
+ */
 export type IdVerificationInfo = Pick<
-  Tables<"profiles">,
-  "id_verification_status" | "id_document_path"
+  Tables<"id_verifications">,
+  "status" | "rejection_reason" | "created_at"
 >;
 
 const ID_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const ID_MAX_BYTES = 8 * 1024 * 1024;
 
+/** Most recent id_verifications row for the caller, or null if never submitted. */
 export async function getIdVerification(): Promise<IdVerificationInfo | null> {
   const userId = await getCurrentUserId();
   if (!userId) return null;
   const { data, error } = await supabase
-    .from("profiles")
-    .select("id_verification_status, id_document_path")
-    .eq("id", userId)
+    .from("id_verifications")
+    .select("status, rejection_reason, created_at")
+    .eq("profile_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(1)
     .maybeSingle();
   if (error) throw new Error(error.message);
   return data;
@@ -189,8 +197,8 @@ export type IdSubmitError = "invalid_type" | "too_large";
 
 /**
  * Uploads a government ID image to the private `id-verification` bucket at
- * `${userId}/<random>.<ext>` and flips the caller's own status to 'pending'.
- * Only the owner may read the document (bucket is strictly private).
+ * `${userId}/<random>.<ext>` and inserts a new pending `id_verifications` row.
+ * Each submission is a new row so reviewers keep the full history.
  */
 export async function submitIdVerification(file: File): Promise<void> {
   if (!ID_ALLOWED_TYPES.includes(file.type)) {
@@ -217,9 +225,87 @@ export async function submitIdVerification(file: File): Promise<void> {
     .upload(path, file, { contentType: file.type, upsert: false });
   if (upErr) throw new Error(upErr.message);
 
-  const { error: updErr } = await supabase
+  const { error: insErr } = await supabase
+    .from("id_verifications")
+    .insert({ profile_id: userId, document_path: path, status: "pending" });
+  if (insErr) throw new Error(insErr.message);
+}
+
+// -------- Admin ------------------------------------------------------------
+
+/** True only when the caller's own profiles.is_admin is set (direct-SQL only). */
+export async function isCurrentUserAdmin(): Promise<boolean> {
+  const userId = await getCurrentUserId();
+  if (!userId) return false;
+  const { data, error } = await supabase
     .from("profiles")
-    .update({ id_document_path: path, id_verification_status: "pending" })
-    .eq("id", userId);
-  if (updErr) throw new Error(updErr.message);
+    .select("is_admin")
+    .eq("id", userId)
+    .maybeSingle();
+  if (error || !data) return false;
+  return data.is_admin === true;
+}
+
+export interface PendingIdReview {
+  id: string;
+  profileId: string;
+  displayName: string;
+  createdAt: string;
+  documentSignedUrl: string | null;
+}
+
+/** Oldest-first queue of pending submissions. Admin-only via RLS. */
+export async function listPendingIdVerifications(): Promise<PendingIdReview[]> {
+  const { data, error } = await supabase
+    .from("id_verifications")
+    .select("id, profile_id, document_path, created_at, profiles!id_verifications_profile_id_fkey(display_name)")
+    .eq("status", "pending")
+    .order("created_at", { ascending: true });
+  if (error) throw new Error(error.message);
+
+  const rows = (data ?? []) as unknown as Array<{
+    id: string;
+    profile_id: string;
+    document_path: string;
+    created_at: string;
+    profiles: { display_name: string | null } | null;
+  }>;
+
+  return Promise.all(
+    rows.map(async (r) => {
+      const { data: signed } = await supabase.storage
+        .from("id-verification")
+        .createSignedUrl(r.document_path, 3600);
+      return {
+        id: r.id,
+        profileId: r.profile_id,
+        displayName: r.profiles?.display_name ?? "Member",
+        createdAt: r.created_at,
+        documentSignedUrl: signed?.signedUrl ?? null,
+      };
+    }),
+  );
+}
+
+/**
+ * Approve or reject a submission. `reviewed_by` is always the authenticated
+ * admin's own id — never accepted from the caller.
+ */
+export async function reviewIdVerification(
+  verificationId: string,
+  decision: "verified" | "rejected",
+  rejectionReason?: string,
+): Promise<void> {
+  const adminId = await getCurrentUserId();
+  if (!adminId) throw new Error("Not authenticated");
+  const { error } = await supabase
+    .from("id_verifications")
+    .update({
+      status: decision,
+      reviewed_by: adminId,
+      reviewed_at: new Date().toISOString(),
+      rejection_reason: decision === "rejected" ? (rejectionReason?.trim() || null) : null,
+    })
+    .eq("id", verificationId);
+  if (error) throw new Error(error.message);
 }

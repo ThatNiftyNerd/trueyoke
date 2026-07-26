@@ -26,6 +26,7 @@ export const Route = createFileRoute("/verify-id")({
 
 function VerifyIdScreen() {
   const [status, setStatus] = useState<IdStatus | null>(null);
+  const [rejectionReason, setRejectionReason] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -35,7 +36,8 @@ function VerifyIdScreen() {
     getIdVerification()
       .then((info) => {
         if (!alive) return;
-        setStatus(info?.id_verification_status ?? "none");
+        setStatus(info?.status ?? "none");
+        setRejectionReason(info?.rejection_reason ?? null);
       })
       .catch(() => alive && setStatus("none"));
     return () => {
@@ -49,6 +51,7 @@ function VerifyIdScreen() {
     try {
       await submitIdVerification(file);
       setStatus("pending");
+      setRejectionReason(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Upload failed. Try again.");
     } finally {
@@ -87,7 +90,8 @@ function VerifyIdScreen() {
         <div className="flex flex-1 flex-col gap-4">
           {status === "rejected" ? (
             <p className="rounded-md border border-brand-terracotta/40 bg-brand-terracotta/10 p-3 text-sm text-brand-terracotta">
-              Your previous submission wasn't approved. Please try again with a clearer photo.
+              {rejectionReason ??
+                "Your previous submission wasn't approved. Please try again with a clearer photo."}
             </p>
           ) : null}
 
