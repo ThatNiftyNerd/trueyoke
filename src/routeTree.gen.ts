@@ -9,31 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AppRouteImport } from './routes/app'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as VerifyIdRouteImport } from './routes/verify-id'
-import { Route as AppAdminReviewRouteImport } from './routes/app.admin-review'
-import { Route as AppBlockedRouteImport } from './routes/app.blocked'
-import { Route as AppDiscoverRouteImport } from './routes/app.discover'
-import { Route as AppMatchesRouteImport } from './routes/app.matches'
-import { Route as AppProfileRouteImport } from './routes/app.profile'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as ChatMatchIdRouteImport } from './routes/chat.$matchId'
+import { Route as AppProfileRouteImport } from './routes/app.profile'
+import { Route as AppMatchesRouteImport } from './routes/app.matches'
+import { Route as AppDiscoverRouteImport } from './routes/app.discover'
+import { Route as AppBlockedRouteImport } from './routes/app.blocked'
+import { Route as AppAdminReviewRouteImport } from './routes/app.admin-review'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AppRoute = AppRouteImport.update({
-  id: '/app',
-  path: '/app',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const VerifyIdRoute = VerifyIdRouteImport.update({
+  id: '/verify-id',
+  path: '/verify-id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -41,24 +31,29 @@ const OnboardingRoute = OnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VerifyIdRoute = VerifyIdRouteImport.update({
-  id: '/verify-id',
-  path: '/verify-id',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppAdminReviewRoute = AppAdminReviewRouteImport.update({
-  id: '/admin-review',
-  path: '/admin-review',
-  getParentRoute: () => AppRoute,
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AppBlockedRoute = AppBlockedRouteImport.update({
-  id: '/blocked',
-  path: '/blocked',
-  getParentRoute: () => AppRoute,
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AppDiscoverRoute = AppDiscoverRouteImport.update({
-  id: '/discover',
-  path: '/discover',
+const ChatMatchIdRoute = ChatMatchIdRouteImport.update({
+  id: '/chat/$matchId',
+  path: '/chat/$matchId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => AppRoute,
 } as any)
 const AppMatchesRoute = AppMatchesRouteImport.update({
@@ -66,15 +61,20 @@ const AppMatchesRoute = AppMatchesRouteImport.update({
   path: '/matches',
   getParentRoute: () => AppRoute,
 } as any)
-const AppProfileRoute = AppProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
+const AppDiscoverRoute = AppDiscoverRouteImport.update({
+  id: '/discover',
+  path: '/discover',
   getParentRoute: () => AppRoute,
 } as any)
-const ChatMatchIdRoute = ChatMatchIdRouteImport.update({
-  id: '/chat/$matchId',
-  path: '/chat/$matchId',
-  getParentRoute: () => rootRouteImport,
+const AppBlockedRoute = AppBlockedRouteImport.update({
+  id: '/blocked',
+  path: '/blocked',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminReviewRoute = AppAdminReviewRouteImport.update({
+  id: '/admin-review',
+  path: '/admin-review',
+  getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -170,25 +170,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/app': {
-      id: '/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/verify-id': {
+      id: '/verify-id'
+      path: '/verify-id'
+      fullPath: '/verify-id'
+      preLoaderRoute: typeof VerifyIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -198,32 +184,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/verify-id': {
-      id: '/verify-id'
-      path: '/verify-id'
-      fullPath: '/verify-id'
-      preLoaderRoute: typeof VerifyIdRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app/admin-review': {
-      id: '/app/admin-review'
-      path: '/admin-review'
-      fullPath: '/app/admin-review'
-      preLoaderRoute: typeof AppAdminReviewRouteImport
-      parentRoute: typeof AppRoute
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/app/blocked': {
-      id: '/app/blocked'
-      path: '/blocked'
-      fullPath: '/app/blocked'
-      preLoaderRoute: typeof AppBlockedRouteImport
-      parentRoute: typeof AppRoute
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/app/discover': {
-      id: '/app/discover'
-      path: '/discover'
-      fullPath: '/app/discover'
-      preLoaderRoute: typeof AppDiscoverRouteImport
+    '/chat/$matchId': {
+      id: '/chat/$matchId'
+      path: '/chat/$matchId'
+      fullPath: '/chat/$matchId'
+      preLoaderRoute: typeof ChatMatchIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/profile': {
+      id: '/app/profile'
+      path: '/profile'
+      fullPath: '/app/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/matches': {
@@ -233,19 +226,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMatchesRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/profile': {
-      id: '/app/profile'
-      path: '/profile'
-      fullPath: '/app/profile'
-      preLoaderRoute: typeof AppProfileRouteImport
+    '/app/discover': {
+      id: '/app/discover'
+      path: '/discover'
+      fullPath: '/app/discover'
+      preLoaderRoute: typeof AppDiscoverRouteImport
       parentRoute: typeof AppRoute
     }
-    '/chat/$matchId': {
-      id: '/chat/$matchId'
-      path: '/chat/$matchId'
-      fullPath: '/chat/$matchId'
-      preLoaderRoute: typeof ChatMatchIdRouteImport
-      parentRoute: typeof rootRouteImport
+    '/app/blocked': {
+      id: '/app/blocked'
+      path: '/blocked'
+      fullPath: '/app/blocked'
+      preLoaderRoute: typeof AppBlockedRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin-review': {
+      id: '/app/admin-review'
+      path: '/admin-review'
+      fullPath: '/app/admin-review'
+      preLoaderRoute: typeof AppAdminReviewRouteImport
+      parentRoute: typeof AppRoute
     }
   }
 }
