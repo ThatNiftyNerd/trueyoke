@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { isCurrentUserAdmin } from "@/features/profile/api";
 
 export const Route = createFileRoute("/app/profile")({
   head: () => ({
@@ -14,6 +16,19 @@ export const Route = createFileRoute("/app/profile")({
 });
 
 function ProfileScreen() {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    isCurrentUserAdmin()
+      .then((v) => alive && setIsAdmin(v))
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+
   return (
     <section className="flex flex-col px-4 pt-6">
       <header className="mb-6 text-center">
