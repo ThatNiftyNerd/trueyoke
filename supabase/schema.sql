@@ -40,10 +40,14 @@ create table public.profiles (
   -- media
   voice_intro_url      text,                 -- 15s snippet (PRD 3.4)
 
-  -- verification (PRD 3.2)
-  id_verification_status id_status not null default 'none',
-  id_document_path       text,                 -- Storage path in the id-verification bucket
+  -- verification (PRD 3.2). id_verification_status/id_document_path moved
+  -- to their own id_verifications table (see below) -- RLS is row-level
+  -- only, so keeping them on `profiles` meant any authenticated user could
+  -- select another user's id_document_path via the existing profiles_read
+  -- policy. church_verified stays here but is admin/staff-only, same as
+  -- is_admin -- both have table-wide client INSERT/UPDATE revoked below.
   church_verified        boolean   not null default false,
+  is_admin                boolean  not null default false,
 
   -- mentor-only (deferred UI, schema forward-compatible)
   mentor_role          text,                 -- elder | preacher | deacon
@@ -127,6 +131,21 @@ create table public.blocks (
   created_at  timestamptz not null default now(),
   unique (blocker_id, blocked_id)
 );
+
+-- id verification submissions -- one row per submission (resubmission after
+-- a rejection creates a new row, preserving history for reviewers). Replaces
+-- the old profiles.id_verification_status/id_document_path columns.
+create table public.id_verifications (
+  id                uuid primary key default gen_random_uuid(),
+  profile_id        uuid not null references public.profiles (id) on delete cascade,
+  document_path     text not null,          -- Storage path in the id-verification bucket
+  status            id_status not null default 'pending',
+  reviewed_by       uuid references public.profiles (id) on delete set null,
+  reviewed_at       timestamptz,
+  rejection_reason  text,
+  created_at        timestamptz not null default now()
+);
+create index on public.id_verifications (profile_id, created_at desc);
 
 -- ---------- vouchers (PRD 3.5 — schema only, UI deferred) ------------------
 create table public.vouchers (
@@ -249,6 +268,7 @@ alter table public.messages enable row level security;
 alter table public.reports  enable row level security;
 alter table public.blocks   enable row level security;
 alter table public.vouchers enable row level security;
+alter table public.id_verifications enable row level security;
 
 -- Mutual-invisibility for blocks: neither party should see the other's
 -- profile once a block exists in either direction. SECURITY DEFINER so the
@@ -271,12 +291,53 @@ $$;
 revoke all on function public.is_blocked(uuid) from public;
 grant execute on function public.is_blocked(uuid) to authenticated;
 
+-- Admin check for the CALLING user only (never another user's row), so no
+-- bypass of profiles_read's own-row branch is actually needed here -- kept
+-- SECURITY DEFINER + pinned search_path anyway for defense in depth and to
+-- match the is_blocked() pattern.
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public, pg_temp
+stable
+as $$
+  select coalesce((select p.is_admin from public.profiles p where p.id = auth.uid()), false);
+$$;
+
+revoke all on function public.is_admin() from public;
+grant execute on function public.is_admin() to authenticated;
+
 -- profiles: anyone authed can read (discovery) EXCEPT a profile you've
 -- blocked or that has blocked you; you may only edit your own.
 create policy "profiles_read"   on public.profiles for select to authenticated
   using (id = auth.uid() or not public.is_blocked(id));
 create policy "profiles_insert" on public.profiles for insert to authenticated with check (auth.uid() = id);
 create policy "profiles_update" on public.profiles for update to authenticated using (auth.uid() = id);
+
+-- is_admin / church_verified must never be client-settable (only via direct
+-- SQL/dashboard as postgres/service_role, which bypasses grants entirely).
+-- A plain `revoke ... (is_admin) from authenticated` is NOT enough here --
+-- the existing table-wide INSERT/UPDATE grant on profiles already covers
+-- every column including future ones, and a column-specific revoke doesn't
+-- override a table-wide grant in Postgres's ACL model. So: revoke the
+-- table-wide grant entirely, then re-grant scoped to every column except
+-- these two.
+revoke insert, update on public.profiles from authenticated, anon;
+
+grant insert (
+  id, account_type, display_name, age, gender, location_label, latitude, longitude,
+  blood_group, genotype, nationality, qualification, occupation, bio,
+  marriage_intentions, church_affiliation, congregation, spirituality_markers,
+  life_verse, voice_intro_url, mentor_role, created_at, updated_at, profile_complete
+) on public.profiles to authenticated, anon;
+
+grant update (
+  id, account_type, display_name, age, gender, location_label, latitude, longitude,
+  blood_group, genotype, nationality, qualification, occupation, bio,
+  marriage_intentions, church_affiliation, congregation, spirituality_markers,
+  life_verse, voice_intro_url, mentor_role, created_at, updated_at, profile_complete
+) on public.profiles to authenticated, anon;
 
 -- photos: read all (needed in discovery), write only your own.
 create policy "photos_read"   on public.photos for select to authenticated using (true);
@@ -315,6 +376,19 @@ create policy "reports_insert" on public.reports for insert to authenticated wit
 create policy "reports_read"   on public.reports for select to authenticated using (auth.uid() = reporter_id);
 create policy "blocks_owner"   on public.blocks  for all    to authenticated
   using (auth.uid() = blocker_id) with check (auth.uid() = blocker_id);
+
+-- id_verifications: owner can submit + read their own history; admins can
+-- read/update (approve/reject) anyone's. reviewed_by is set by app code to
+-- the calling admin's own id -- RLS can't itself force that column's value,
+-- so this is an app-level discipline point (documented in the feature spec).
+create policy "id_verifications_owner_read" on public.id_verifications
+  for select to authenticated using (auth.uid() = profile_id);
+create policy "id_verifications_owner_insert" on public.id_verifications
+  for insert to authenticated with check (auth.uid() = profile_id);
+create policy "id_verifications_admin_read" on public.id_verifications
+  for select to authenticated using (public.is_admin());
+create policy "id_verifications_admin_update" on public.id_verifications
+  for update to authenticated using (public.is_admin()) with check (public.is_admin());
 
 -- vouchers: the match user manages their own voucher requests.
 create policy "vouchers_owner" on public.vouchers for all to authenticated
@@ -381,9 +455,9 @@ alter table public.matches replica identity full;
 -- ============================================================================
 -- STORAGE — ID verification documents (PRD 3.2)
 -- Strictly private in every direction (unlike photos/voice-intros): this is
--- sensitive PII, so only the uploader may read their own document. There is
--- no admin/moderator review UI in this build yet — status stays 'pending'
--- until that exists.
+-- sensitive PII, so only the uploader OR an admin (is_admin()) may read a
+-- given document. Admin review UI now exists (approve/reject writes to
+-- id_verifications, see above).
 -- ============================================================================
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('id-verification', 'id-verification', false, 8388608, array['image/jpeg','image/png','image/webp'])
@@ -401,3 +475,10 @@ create policy "id_doc_storage_update_own" on storage.objects for update to authe
 
 create policy "id_doc_storage_delete_own" on storage.objects for delete to authenticated
   using (bucket_id = 'id-verification' and (storage.foldername(name))[1] = auth.uid()::text);
+
+-- Admins can read (generate signed URLs for) ANY submitted document -- the
+-- own-folder policy above only ever lets the uploader read their own, so
+-- without this an admin review panel could show metadata but never the
+-- actual image.
+create policy "id_doc_storage_select_admin" on storage.objects for select to authenticated
+  using (bucket_id = 'id-verification' and public.is_admin());
