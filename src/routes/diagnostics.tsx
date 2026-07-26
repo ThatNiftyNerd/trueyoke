@@ -3,7 +3,9 @@ import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckRow } from "@/features/diagnostics/CheckRow";
 import { getBuildInfo, runDiagnostics } from "@/features/diagnostics/api";
-import { overallStatus, type DiagnosticCheck } from "@/features/diagnostics/logic";
+import { copyText } from "@/features/diagnostics/clipboard";
+import { buildReport, overallStatus, type DiagnosticCheck } from "@/features/diagnostics/logic";
+
 
 export const Route = createFileRoute("/diagnostics")({
   head: () => ({
