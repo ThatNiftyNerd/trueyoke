@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyIdRouteImport } from './routes/verify-id'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
@@ -29,6 +30,11 @@ const VerifyIdRoute = VerifyIdRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiagnosticsRoute = DiagnosticsRouteImport.update({
+  id: '/diagnostics',
+  path: '/diagnostics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
+  '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/diagnostics'
     | '/onboarding'
     | '/verify-id'
     | '/app/admin-review'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/diagnostics'
     | '/onboarding'
     | '/verify-id'
     | '/app/admin-review'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/diagnostics'
     | '/onboarding'
     | '/verify-id'
     | '/app/admin-review'
@@ -163,6 +175,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  DiagnosticsRoute: typeof DiagnosticsRoute
   OnboardingRoute: typeof OnboardingRoute
   VerifyIdRoute: typeof VerifyIdRoute
   ChatMatchIdRoute: typeof ChatMatchIdRoute
@@ -182,6 +195,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/diagnostics': {
+      id: '/diagnostics'
+      path: '/diagnostics'
+      fullPath: '/diagnostics'
+      preLoaderRoute: typeof DiagnosticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -272,6 +292,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  DiagnosticsRoute: DiagnosticsRoute,
   OnboardingRoute: OnboardingRoute,
   VerifyIdRoute: VerifyIdRoute,
   ChatMatchIdRoute: ChatMatchIdRoute,
