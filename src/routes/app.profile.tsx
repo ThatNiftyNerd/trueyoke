@@ -61,6 +61,12 @@ function ProfileScreen() {
             ID review
           </Link>
         ) : null}
+        <Link
+          to="/app/diagnostics"
+          className="block rounded-md border border-brand-burgundy/20 px-4 py-3 text-center text-sm font-medium text-brand-burgundy"
+        >
+          Connection diagnostics
+        </Link>
         <Button variant="outline" className="w-full border-brand-burgundy/30 text-brand-burgundy">
           {/* TODO: sign out via features/auth/api.ts */}
           Sign out
