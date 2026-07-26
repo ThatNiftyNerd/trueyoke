@@ -54,6 +54,19 @@ function DiagnosticsScreen() {
     setRunning(false);
   }, []);
 
+  const copyReport = useCallback(async () => {
+    const report = buildReport(checks, {
+      mode: build.mode,
+      dev: build.dev,
+      ranAt,
+      userAgent: navigator.userAgent,
+    });
+    const ok = await copyText(report);
+    setCopyState(ok ? "copied" : "error");
+    window.setTimeout(() => setCopyState("idle"), 2500);
+  }, [checks, build.mode, build.dev, ranAt]);
+
+
   useEffect(() => {
     void run();
   }, [run]);
