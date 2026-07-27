@@ -62,7 +62,9 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
           <h2 className="font-serif text-xl text-brand-burgundy">
             {candidate.display_name ?? "Member"}
           </h2>
-          <p className="text-sm font-mono tabular-nums text-brand-burgundy/60">{cardSubtitle(candidate)}</p>
+          <p className="text-sm font-mono tabular-nums text-brand-burgundy/60">
+            {cardSubtitle(candidate)}
+          </p>
         </div>
         {candidate.bio ? (
           <p className="text-sm text-brand-burgundy/80">{bioExcerpt(candidate.bio)}</p>

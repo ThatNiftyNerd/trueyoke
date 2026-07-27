@@ -46,7 +46,8 @@ function MatchesScreen() {
         <p
           className={`mt-1 text-sm ${atCap ? "text-brand-terracotta font-medium" : "text-brand-terracotta"}`}
         >
-          <span className="font-mono tabular-nums">{activeCount}</span> of{" "}<span className="font-mono tabular-nums">{ACTIVE_MATCH_CAP}</span> active conversations
+          <span className="font-mono tabular-nums">{activeCount}</span> of{" "}
+          <span className="font-mono tabular-nums">{ACTIVE_MATCH_CAP}</span> active conversations
           {atCap ? " — cap reached" : ""}
         </p>
       </header>
