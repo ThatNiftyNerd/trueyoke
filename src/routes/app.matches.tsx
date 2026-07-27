@@ -46,13 +46,13 @@ function MatchesScreen() {
         <p
           className={`mt-1 text-sm ${atCap ? "text-brand-terracotta font-medium" : "text-brand-terracotta"}`}
         >
-          {activeCount} of {ACTIVE_MATCH_CAP} active conversations
+          <span className="font-mono tabular-nums">{activeCount}</span> of{" "}<span className="font-mono tabular-nums">{ACTIVE_MATCH_CAP}</span> active conversations
           {atCap ? " — cap reached" : ""}
         </p>
       </header>
 
       {error ? (
-        <p className="mb-4 rounded border border-brand-terracotta/40 bg-white/60 p-3 text-sm text-brand-terracotta">
+        <p className="mb-4 rounded border border-brand-terracotta/40 bg-card/60 p-3 text-sm text-brand-terracotta">
           {error}
         </p>
       ) : null}
@@ -94,7 +94,7 @@ function MatchesScreen() {
 
 function EmptyState({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-lg border border-dashed border-brand-burgundy/20 bg-white/40 p-6 text-center text-sm text-brand-burgundy/60">
+    <div className="rounded-lg border border-dashed border-brand-burgundy/20 bg-card/40 p-6 text-center text-sm text-brand-burgundy/60">
       {children}
     </div>
   );
@@ -102,7 +102,7 @@ function EmptyState({ children }: { children: React.ReactNode }) {
 
 function SectionSkeleton() {
   return (
-    <div className="rounded-lg border border-dashed border-brand-burgundy/10 bg-white/30 p-6 text-center text-sm text-brand-burgundy/40">
+    <div className="rounded-lg border border-dashed border-brand-burgundy/10 bg-card/30 p-6 text-center text-sm text-brand-burgundy/40">
       Loading…
     </div>
   );

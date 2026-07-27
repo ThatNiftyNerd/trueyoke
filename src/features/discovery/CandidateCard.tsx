@@ -21,7 +21,7 @@ interface Props {
 
 export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, busy }: Props) {
   return (
-    <Card className="w-full max-w-sm overflow-hidden border-brand-burgundy/20 bg-white">
+    <Card className="w-full max-w-sm overflow-hidden border-brand-burgundy/20 bg-card">
       <div className="relative aspect-[4/5] w-full bg-brand-linen">
         {candidate.photoSignedUrl ? (
           <img
@@ -42,7 +42,7 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
               <button
                 type="button"
                 aria-label="More options"
-                className="rounded-full bg-black/40 p-2 text-white backdrop-blur hover:bg-black/60"
+                className="rounded-full bg-brand-burgundy/60 p-2 text-brand-linen backdrop-blur"
               >
                 <MoreVertical className="h-4 w-4" />
               </button>
@@ -62,7 +62,7 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
           <h2 className="font-serif text-xl text-brand-burgundy">
             {candidate.display_name ?? "Member"}
           </h2>
-          <p className="text-sm text-brand-burgundy/60">{cardSubtitle(candidate)}</p>
+          <p className="text-sm font-mono tabular-nums text-brand-burgundy/60">{cardSubtitle(candidate)}</p>
         </div>
         {candidate.bio ? (
           <p className="text-sm text-brand-burgundy/80">{bioExcerpt(candidate.bio)}</p>

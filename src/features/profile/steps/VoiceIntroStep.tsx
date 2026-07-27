@@ -169,7 +169,7 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
         </p>
       </div>
 
-      <div className="flex flex-col items-center gap-3 rounded-md border border-brand-burgundy/10 bg-white/60 p-4">
+      <div className="flex flex-col items-center gap-3 rounded-md border border-brand-burgundy/10 bg-card/60 p-4">
         <div className="font-mono text-3xl text-brand-burgundy">
           {String(seconds).padStart(2, "0")}s / {VOICE_INTRO_MAX_SECONDS}s
         </div>

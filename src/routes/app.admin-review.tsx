@@ -82,7 +82,7 @@ function AdminReviewScreen() {
           {rows.map((r) => (
             <li
               key={r.id}
-              className="overflow-hidden rounded-lg border border-brand-burgundy/15 bg-white"
+              className="overflow-hidden rounded-lg border border-brand-burgundy/15 bg-card"
             >
               <div className="flex items-baseline justify-between p-3">
                 <span className="font-medium text-brand-burgundy">{r.displayName}</span>

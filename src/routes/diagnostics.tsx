@@ -86,7 +86,7 @@ function DiagnosticsScreen() {
               ? "border-brand-sage bg-brand-sage/15 text-brand-burgundy"
               : status === "fail"
                 ? "border-brand-terracotta bg-brand-terracotta/15 text-brand-burgundy"
-                : "border-brand-burgundy/20 bg-white/60 text-brand-burgundy/70"
+                : "border-brand-burgundy/20 bg-card/60 text-brand-burgundy/70"
           }`}
           role="status"
           aria-live="polite"

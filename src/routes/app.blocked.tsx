@@ -71,7 +71,7 @@ function BlockedScreen() {
           {rows.map((r) => (
             <li
               key={r.blockedId}
-              className="flex items-center gap-3 rounded-lg border border-brand-burgundy/15 bg-white p-3"
+              className="flex items-center gap-3 rounded-lg border border-brand-burgundy/15 bg-card p-3"
             >
               {r.photoSignedUrl ? (
                 <img
