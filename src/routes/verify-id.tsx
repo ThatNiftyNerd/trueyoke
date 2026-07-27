@@ -95,7 +95,7 @@ function VerifyIdScreen() {
             </p>
           ) : null}
 
-          <label className="flex-1 cursor-pointer rounded-lg border border-dashed border-brand-burgundy/30 bg-white/40 p-8 text-center text-sm text-brand-burgundy/60">
+          <label className="flex-1 cursor-pointer rounded-lg border border-dashed border-brand-burgundy/30 bg-card/40 p-8 text-center text-sm text-brand-burgundy/60">
             Tap to upload a photo of your government-issued ID (JPG, PNG, or WebP; max 8 MB).
             <input
               ref={fileRef}

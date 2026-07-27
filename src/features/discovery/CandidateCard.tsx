@@ -21,7 +21,7 @@ interface Props {
 
 export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, busy }: Props) {
   return (
-    <Card className="w-full max-w-sm overflow-hidden border-brand-burgundy/20 bg-white">
+    <Card className="w-full max-w-sm overflow-hidden border-brand-burgundy/20 bg-card">
       <div className="relative aspect-[4/5] w-full bg-brand-linen">
         {candidate.photoSignedUrl ? (
           <img

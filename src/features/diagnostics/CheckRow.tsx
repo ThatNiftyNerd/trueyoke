@@ -14,7 +14,7 @@ const STATUS_LABEL: Record<DiagnosticCheck["status"], string> = {
 
 export function CheckRow({ check }: { check: DiagnosticCheck }) {
   return (
-    <li className="rounded-md border border-brand-burgundy/15 bg-white/60 px-4 py-3">
+    <li className="rounded-md border border-brand-burgundy/15 bg-card/60 px-4 py-3">
       <div className="flex items-start justify-between gap-3">
         <span className="text-sm font-medium text-brand-burgundy">{check.label}</span>
         <span

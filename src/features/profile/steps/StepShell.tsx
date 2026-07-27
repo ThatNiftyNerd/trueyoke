@@ -30,7 +30,7 @@ export function StepShell({
 }: Props) {
   return (
     <div className="flex flex-1 flex-col">
-      <div className="flex-1 space-y-4 rounded-lg border border-brand-burgundy/10 bg-white/50 p-4">
+      <div className="flex-1 space-y-4 rounded-lg border border-brand-burgundy/10 bg-card/50 p-4">
         {children}
       </div>
       {error ? (

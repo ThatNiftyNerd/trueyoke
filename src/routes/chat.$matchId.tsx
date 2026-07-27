@@ -196,7 +196,7 @@ function ChatScreen() {
 
       <section ref={scrollerRef} className="flex-1 overflow-y-auto px-4 py-4">
         {messages.length === 0 ? (
-          <div className="mx-auto max-w-sm rounded-lg border border-dashed border-brand-burgundy/20 bg-white/40 p-6 text-center text-sm text-brand-burgundy/60">
+          <div className="mx-auto max-w-sm rounded-lg border border-dashed border-brand-burgundy/20 bg-card/40 p-6 text-center text-sm text-brand-burgundy/60">
             Say hello with intention.
           </div>
         ) : (

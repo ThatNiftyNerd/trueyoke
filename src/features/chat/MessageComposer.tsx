@@ -52,7 +52,7 @@ export function MessageComposer({ disabled, disabledReason, onSend }: Props) {
           maxLength={MESSAGE_MAX_LENGTH + 50}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Write with intention…"
-          className="flex-1 rounded-full border border-brand-burgundy/20 bg-white px-4 py-2 text-sm outline-none focus:border-brand-burgundy"
+          className="flex-1 rounded-full border border-brand-burgundy/20 bg-card px-4 py-2 text-sm outline-none focus:border-brand-burgundy"
         />
         <button
           type="submit"

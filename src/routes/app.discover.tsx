@@ -142,7 +142,7 @@ function DiscoverScreen() {
             ) : null}
           </>
         ) : (
-          <div className="w-full max-w-sm rounded-2xl border border-dashed border-brand-burgundy/30 bg-white/40 p-10 text-center">
+          <div className="w-full max-w-sm rounded-2xl border border-dashed border-brand-burgundy/30 bg-card/40 p-10 text-center">
             <p className="font-serif text-lg text-brand-burgundy">No profiles yet</p>
             <p className="mt-2 text-sm text-brand-burgundy/60">
               Check back soon as new members join.

@@ -113,7 +113,7 @@ export function PhotosStep({ onNext, onBack, canGoBack }: Props) {
           {photos.map((p) => (
             <div
               key={p.id}
-              className="aspect-square overflow-hidden rounded-md border border-brand-burgundy/10 bg-white/60"
+              className="aspect-square overflow-hidden rounded-md border border-brand-burgundy/10 bg-card/60"
             >
               {previews[p.id] ? (
                 <img src={previews[p.id]} alt="" className="h-full w-full object-cover" />
