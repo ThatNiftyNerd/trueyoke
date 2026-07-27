@@ -96,7 +96,8 @@ async function checkRuntimeTarget(): Promise<DiagnosticCheck> {
       id: "runtime-target",
       label: "Runtime request target",
       status: "fail",
-      detail: error instanceof Error ? error.message : "Could not resolve a runtime request target.",
+      detail:
+        error instanceof Error ? error.message : "Could not resolve a runtime request target.",
     };
   }
 }
@@ -116,7 +117,6 @@ async function checkDataApi(): Promise<DiagnosticCheck> {
     detail: error ? `${error.code ?? "error"}: ${error.message}` : `Query answered in ${elapsed}`,
   };
 }
-
 
 /** Reports whether a user session is currently restored on this device. */
 async function checkSession(): Promise<DiagnosticCheck> {

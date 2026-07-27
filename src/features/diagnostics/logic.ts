@@ -58,7 +58,6 @@ export function isSameOrigin(a: string, b: string): boolean {
   }
 }
 
-
 export function overallStatus(checks: readonly DiagnosticCheck[]): CheckStatus {
   if (checks.some((c) => c.status === "pending")) return "pending";
   return checks.every((c) => c.status === "pass") ? "pass" : "fail";
@@ -85,10 +84,7 @@ export interface ReportContext {
  * Builds the plain-text diagnostics report copied to the clipboard.
  * Values are already masked by the checks themselves — nothing secret is added.
  */
-export function buildReport(
-  checks: readonly DiagnosticCheck[],
-  context: ReportContext,
-): string {
+export function buildReport(checks: readonly DiagnosticCheck[], context: ReportContext): string {
   const lines: string[] = [
     "Yoked — connection diagnostics report",
     `Generated: ${new Date().toISOString()}`,

@@ -6,7 +6,6 @@ import { getBuildInfo, runDiagnostics } from "@/features/diagnostics/api";
 import { copyText } from "@/features/diagnostics/clipboard";
 import { buildReport, overallStatus, type DiagnosticCheck } from "@/features/diagnostics/logic";
 
-
 export const Route = createFileRoute("/diagnostics")({
   head: () => ({
     meta: [
@@ -44,7 +43,6 @@ function DiagnosticsScreen() {
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
   const build = getBuildInfo();
 
-
   const run = useCallback(async () => {
     setRunning(true);
     setChecks(PENDING);
@@ -66,7 +64,6 @@ function DiagnosticsScreen() {
     window.setTimeout(() => setCopyState("idle"), 2500);
   }, [checks, build.mode, build.dev, ranAt]);
 
-
   useEffect(() => {
     void run();
   }, [run]);
@@ -76,66 +73,66 @@ function DiagnosticsScreen() {
   return (
     <main className="min-h-[100dvh] bg-brand-linen">
       <section className="mx-auto flex max-w-md flex-col px-4 pb-16 pt-6">
-      <header className="mb-5">
-        <h1 className="font-serif text-2xl text-brand-burgundy">Connection diagnostics</h1>
-        <p className="mt-1 text-sm text-brand-burgundy/70">
-          Confirms this build has its backend settings and can reach the service.
-        </p>
-      </header>
+        <header className="mb-5">
+          <h1 className="font-serif text-2xl text-brand-burgundy">Connection diagnostics</h1>
+          <p className="mt-1 text-sm text-brand-burgundy/70">
+            Confirms this build has its backend settings and can reach the service.
+          </p>
+        </header>
 
-      <div
-        className={`mb-4 rounded-md border px-4 py-3 text-sm font-medium ${
-          status === "pass"
-            ? "border-brand-sage bg-brand-sage/15 text-brand-burgundy"
+        <div
+          className={`mb-4 rounded-md border px-4 py-3 text-sm font-medium ${
+            status === "pass"
+              ? "border-brand-sage bg-brand-sage/15 text-brand-burgundy"
+              : status === "fail"
+                ? "border-brand-terracotta bg-brand-terracotta/15 text-brand-burgundy"
+                : "border-brand-burgundy/20 bg-white/60 text-brand-burgundy/70"
+          }`}
+          role="status"
+          aria-live="polite"
+        >
+          {status === "pass"
+            ? "All checks passed — the app is connected."
             : status === "fail"
-              ? "border-brand-terracotta bg-brand-terracotta/15 text-brand-burgundy"
-              : "border-brand-burgundy/20 bg-white/60 text-brand-burgundy/70"
-        }`}
-        role="status"
-        aria-live="polite"
-      >
-        {status === "pass"
-          ? "All checks passed — the app is connected."
-          : status === "fail"
-            ? "One or more checks failed. See details below."
-            : "Running checks…"}
-      </div>
+              ? "One or more checks failed. See details below."
+              : "Running checks…"}
+        </div>
 
-      <ul className="space-y-2">
-        {checks.map((check) => (
-          <CheckRow key={check.id} check={check} />
-        ))}
-      </ul>
+        <ul className="space-y-2">
+          {checks.map((check) => (
+            <CheckRow key={check.id} check={check} />
+          ))}
+        </ul>
 
-      <div className="mt-5 space-y-2">
-        <Button
-          onClick={() => void run()}
-          disabled={running}
-          className="w-full bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90"
-        >
-          {running ? "Running…" : "Run checks again"}
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() => void copyReport()}
-          disabled={running}
-          className="w-full border-brand-burgundy/30 bg-transparent text-brand-burgundy"
-        >
-          {copyState === "copied"
-            ? "Copied to clipboard"
-            : copyState === "error"
-              ? "Copy failed — select the text manually"
-              : "Copy report"}
-        </Button>
-        <p className="sr-only" role="status" aria-live="polite">
-          {copyState === "copied" ? "Diagnostics report copied to clipboard." : ""}
-        </p>
+        <div className="mt-5 space-y-2">
+          <Button
+            onClick={() => void run()}
+            disabled={running}
+            className="w-full bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90"
+          >
+            {running ? "Running…" : "Run checks again"}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => void copyReport()}
+            disabled={running}
+            className="w-full border-brand-burgundy/30 bg-transparent text-brand-burgundy"
+          >
+            {copyState === "copied"
+              ? "Copied to clipboard"
+              : copyState === "error"
+                ? "Copy failed — select the text manually"
+                : "Copy report"}
+          </Button>
+          <p className="sr-only" role="status" aria-live="polite">
+            {copyState === "copied" ? "Diagnostics report copied to clipboard." : ""}
+          </p>
 
-        <p className="text-center text-xs text-brand-burgundy/60">
-          Build mode: {build.mode}
-          {ranAt ? ` · Last run ${ranAt}` : ""}
-        </p>
-      </div>
+          <p className="text-center text-xs text-brand-burgundy/60">
+            Build mode: {build.mode}
+            {ranAt ? ` · Last run ${ranAt}` : ""}
+          </p>
+        </div>
       </section>
     </main>
   );
