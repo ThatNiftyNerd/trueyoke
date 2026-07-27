@@ -42,7 +42,7 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
               <button
                 type="button"
                 aria-label="More options"
-                className="rounded-full bg-black/40 p-2 text-white backdrop-blur hover:bg-black/60"
+                className="rounded-full bg-brand-burgundy/60 p-2 text-brand-linen backdrop-blur"
               >
                 <MoreVertical className="h-4 w-4" />
               </button>
