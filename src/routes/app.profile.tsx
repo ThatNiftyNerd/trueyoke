@@ -1,7 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { isCurrentUserAdmin } from "@/features/profile/api";
+import { getCurrentSession, signOut } from "@/features/auth/api";
 
 export const Route = createFileRoute("/app/profile")({
   head: () => ({
@@ -16,17 +17,37 @@ export const Route = createFileRoute("/app/profile")({
 });
 
 function ProfileScreen() {
+  const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [email, setEmail] = useState<string | null>(null);
+  const [signingOut, setSigningOut] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let alive = true;
     isCurrentUserAdmin()
       .then((v) => alive && setIsAdmin(v))
       .catch(() => undefined);
+    getCurrentSession()
+      .then((s) => alive && setEmail(s?.user.email ?? null))
+      .catch(() => undefined);
     return () => {
       alive = false;
     };
   }, []);
+
+  async function handleSignOut() {
+    setError(null);
+    setSigningOut(true);
+    try {
+      await signOut();
+      navigate({ to: "/auth" });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not sign out. Please try again.");
+      setSigningOut(false);
+    }
+  }
+
 
   return (
     <section className="flex flex-col px-4 pt-6">
