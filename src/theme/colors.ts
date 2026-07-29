@@ -36,4 +36,12 @@ export const colors = {
   burgundyInk: "#4A0F18",
 } as const;
 
+/** Dark-mode palette — Deep Charcoal canvas, Vibrant Crimson, Forest Accent. */
+export const darkColors = {
+  background: "#1A1A1A",
+  primary: "#9E2A2B",
+  accent: "#4D6A4D",
+  foreground: "#EFECE6",
+} as const;
+
 export type BrandColor = keyof typeof colors;
