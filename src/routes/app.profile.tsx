@@ -90,7 +90,9 @@ function ProfileScreen() {
         >
           Connection diagnostics
         </Link>
+        <DisplaySettingsPanel />
         {error ? (
+
           <p
             role="alert"
             className="rounded-md border border-brand-terracotta/40 bg-brand-terracotta/10 px-3 py-2 text-sm text-brand-terracotta"
