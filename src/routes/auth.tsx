@@ -1,4 +1,4 @@
-import { redirectIfSignedIn } from "@/features/auth/guards";
+import { redirectIfSignedIn, signedInLandingPath } from "@/features/auth/guards";
 import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -74,8 +74,7 @@ function AuthScreen() {
             displayName: displayName.trim(),
           });
         }
-        const profile = await getOwnProfile();
-        navigate({ to: profile?.profile_complete ? "/app/discover" : "/onboarding" });
+        navigate({ to: await signedInLandingPath() });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
