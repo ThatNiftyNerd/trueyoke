@@ -12,9 +12,7 @@ export function DisplaySettingsPanel() {
   return (
     <section className="rounded-lg border border-border bg-card p-4">
       <h2 className="text-base font-semibold text-card-foreground">Display</h2>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Choose how Yoked looks on this device.
-      </p>
+      <p className="mt-1 text-sm text-muted-foreground">Choose how Yoked looks on this device.</p>
 
       <ToggleGroup
         type="single"

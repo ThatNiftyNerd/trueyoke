@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { DisplaySettingsPanel } from "@/components/app/DisplaySettingsPanel";
+
 import { isCurrentUserAdmin } from "@/features/profile/api";
 import { getCurrentSession, signOut } from "@/features/auth/api";
 
@@ -48,7 +50,6 @@ function ProfileScreen() {
     }
   }
 
-
   return (
     <section className="flex flex-col px-4 pt-6">
       <header className="mb-6 text-center">
@@ -60,7 +61,6 @@ function ProfileScreen() {
       </header>
 
       <div className="space-y-3">
-
         <Button className="w-full bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90">
           Edit profile
         </Button>
@@ -90,6 +90,7 @@ function ProfileScreen() {
         >
           Connection diagnostics
         </Link>
+        <DisplaySettingsPanel />
         {error ? (
           <p
             role="alert"
@@ -106,7 +107,6 @@ function ProfileScreen() {
         >
           {signingOut ? "Signing out…" : "Sign out"}
         </Button>
-
       </div>
 
       <p className="mt-8 text-center text-xs text-brand-burgundy/60">
