@@ -17,22 +17,22 @@ export function MatchRow({ item, dim }: Props) {
     <Link
       to="/chat/$matchId"
       params={{ matchId: match.id }}
-      className={`flex items-center gap-3 rounded-lg border border-brand-burgundy/15 bg-card p-3 transition active:bg-brand-linen ${
+      className={`flex items-center gap-3 rounded-lg border border-app-ink/15 bg-card p-3 transition active:bg-app-canvas ${
         dim ? "opacity-70" : ""
       }`}
     >
-      <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full bg-brand-sage/20">
+      <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full bg-app-accent/20">
         {other.photoSignedUrl ? (
           <img src={other.photoSignedUrl} alt={name} className="h-full w-full object-cover" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center font-serif text-lg text-brand-burgundy/70">
+          <div className="flex h-full w-full items-center justify-center font-serif text-lg text-app-ink/70">
             {initialsOf(other.display_name)}
           </div>
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate font-serif text-base text-brand-burgundy">{name}</p>
-        <p className="truncate text-xs text-brand-burgundy/60">Last activity {relTime}</p>
+        <p className="truncate font-serif text-base text-app-ink">{name}</p>
+        <p className="truncate text-xs text-app-ink/60">Last activity {relTime}</p>
       </div>
     </Link>
   );

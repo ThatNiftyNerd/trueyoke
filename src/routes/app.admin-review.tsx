@@ -61,32 +61,32 @@ function AdminReviewScreen() {
   return (
     <section className="flex flex-col px-4 pt-6">
       <header className="mb-6">
-        <Link to="/app/profile" className="text-sm text-brand-burgundy underline">
+        <Link to="/app/profile" className="text-sm text-app-ink underline">
           ← Back to profile
         </Link>
-        <h1 className="mt-3 font-serif text-2xl text-brand-burgundy">ID review</h1>
+        <h1 className="mt-3 font-serif text-2xl text-app-ink">ID review</h1>
       </header>
 
       {error ? (
-        <p role="alert" className="mb-3 text-sm text-brand-terracotta">
+        <p role="alert" className="mb-3 text-sm text-app-warn">
           {error}
         </p>
       ) : null}
 
       {rows === null ? (
-        <p className="text-sm text-brand-burgundy/60">Loading…</p>
+        <p className="text-sm text-app-ink/60">Loading…</p>
       ) : rows.length === 0 ? (
-        <p className="text-sm text-brand-burgundy/60">No pending submissions.</p>
+        <p className="text-sm text-app-ink/60">No pending submissions.</p>
       ) : (
         <ul className="space-y-6">
           {rows.map((r) => (
             <li
               key={r.id}
-              className="overflow-hidden rounded-lg border border-brand-burgundy/15 bg-card"
+              className="overflow-hidden rounded-lg border border-app-ink/15 bg-card"
             >
               <div className="flex items-baseline justify-between p-3">
-                <span className="font-medium text-brand-burgundy">{r.displayName}</span>
-                <span className="text-xs text-brand-burgundy/60">
+                <span className="font-medium text-app-ink">{r.displayName}</span>
+                <span className="text-xs text-app-ink/60">
                   {new Date(r.createdAt).toLocaleDateString()}
                 </span>
               </div>
@@ -97,7 +97,7 @@ function AdminReviewScreen() {
                   className="w-full object-contain"
                 />
               ) : (
-                <p className="px-3 pb-3 text-sm text-brand-terracotta">Document unavailable.</p>
+                <p className="px-3 pb-3 text-sm text-app-warn">Document unavailable.</p>
               )}
 
               {rejectingId === r.id ? (
@@ -111,7 +111,7 @@ function AdminReviewScreen() {
                   <div className="flex gap-2">
                     <Button
                       size="sm"
-                      className="bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90"
+                      className="bg-app-primary text-app-on-primary hover:bg-app-primary/90"
                       disabled={busyId === r.id}
                       onClick={() => void decide(r.id, "rejected", reason)}
                     >
@@ -120,7 +120,7 @@ function AdminReviewScreen() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="border-brand-burgundy/30 text-brand-burgundy"
+                      className="border-app-ink/30 text-app-ink"
                       onClick={() => {
                         setRejectingId(null);
                         setReason("");
@@ -134,7 +134,7 @@ function AdminReviewScreen() {
                 <div className="flex gap-2 p-3">
                   <Button
                     size="sm"
-                    className="flex-1 bg-brand-sage text-brand-linen hover:bg-brand-sage/90"
+                    className="flex-1 bg-app-accent text-app-on-primary hover:bg-app-accent/90"
                     disabled={busyId === r.id}
                     onClick={() => void decide(r.id, "verified")}
                   >
@@ -143,7 +143,7 @@ function AdminReviewScreen() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="flex-1 border-brand-burgundy/30 text-brand-burgundy"
+                    className="flex-1 border-app-ink/30 text-app-ink"
                     disabled={busyId === r.id}
                     onClick={() => setRejectingId(r.id)}
                   >

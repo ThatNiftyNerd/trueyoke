@@ -30,13 +30,13 @@ export function StepShell({
 }: Props) {
   return (
     <div className="flex flex-1 flex-col">
-      <div className="flex-1 space-y-4 rounded-lg border border-brand-burgundy/10 bg-card/50 p-4">
+      <div className="flex-1 space-y-4 rounded-lg border border-app-ink/10 bg-card/50 p-4">
         {children}
       </div>
       {error ? (
         <p
           role="alert"
-          className="mt-3 rounded-md border border-brand-terracotta/40 bg-brand-terracotta/10 px-3 py-2 text-sm text-brand-terracotta"
+          className="mt-3 rounded-md border border-app-warn/40 bg-app-warn/10 px-3 py-2 text-sm text-app-warn"
         >
           {error}
         </p>
@@ -45,7 +45,7 @@ export function StepShell({
         <Button
           type="button"
           variant="outline"
-          className="border-brand-burgundy/30 text-brand-burgundy"
+          className="border-app-ink/30 text-app-ink"
           disabled={!canGoBack || submitting}
           onClick={onBack}
         >
@@ -55,7 +55,7 @@ export function StepShell({
           type={submitType}
           onClick={onSubmitClick}
           disabled={submitting || disableSubmit}
-          className="bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90"
+          className="bg-app-primary text-app-on-primary hover:bg-app-primary/90"
         >
           {submitting ? "Saving…" : submitLabel}
         </Button>

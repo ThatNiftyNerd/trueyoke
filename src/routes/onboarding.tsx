@@ -75,8 +75,8 @@ function OnboardingWizard() {
 
   if (loading || !profile) {
     return (
-      <main className="flex min-h-[100dvh] items-center justify-center bg-brand-linen">
-        <p className="text-sm text-brand-burgundy/70">Loading…</p>
+      <main className="flex min-h-[100dvh] items-center justify-center bg-app-canvas">
+        <p className="text-sm text-app-ink/70">Loading…</p>
       </main>
     );
   }
@@ -92,13 +92,13 @@ function OnboardingWizard() {
   };
 
   return (
-    <main className="flex min-h-[100dvh] flex-col bg-brand-linen px-6 py-8">
+    <main className="flex min-h-[100dvh] flex-col bg-app-canvas px-6 py-8">
       <header className="mb-6">
-        <p className="text-xs uppercase tracking-widest text-brand-sage">
+        <p className="text-xs uppercase tracking-widest text-app-on-accent">
           Step {index + 1} of {STEPS.length}
         </p>
-        <h1 className="mt-1 font-serif text-2xl text-brand-burgundy">{step.title}</h1>
-        <p className="mt-1 text-sm text-brand-burgundy/70">{step.description}</p>
+        <h1 className="mt-1 font-serif text-2xl text-app-ink">{step.title}</h1>
+        <p className="mt-1 text-sm text-app-ink/70">{step.description}</p>
       </header>
 
       {step.key === "demographics" && <DemographicsStep {...commonProps} />}
@@ -113,7 +113,7 @@ function OnboardingWizard() {
       {finishError ? (
         <p
           role="alert"
-          className="mt-4 rounded-md border border-brand-terracotta/40 bg-brand-terracotta/10 px-3 py-2 text-sm text-brand-terracotta"
+          className="mt-4 rounded-md border border-app-warn/40 bg-app-warn/10 px-3 py-2 text-sm text-app-warn"
         >
           {finishError}
         </p>

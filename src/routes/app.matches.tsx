@@ -42,9 +42,9 @@ function MatchesScreen() {
   return (
     <section className="flex flex-col px-4 pt-6 pb-8">
       <header className="mb-4">
-        <h1 className="font-serif text-2xl text-brand-burgundy">Matches</h1>
+        <h1 className="font-serif text-2xl text-app-ink">Matches</h1>
         <p
-          className={`mt-1 text-sm ${atCap ? "text-brand-terracotta font-medium" : "text-brand-terracotta"}`}
+          className={`mt-1 text-sm ${atCap ? "text-app-warn font-medium" : "text-app-warn"}`}
         >
           <span className="font-mono tabular-nums">{activeCount}</span> of{" "}
           <span className="font-mono tabular-nums">{ACTIVE_MATCH_CAP}</span> active conversations
@@ -53,13 +53,13 @@ function MatchesScreen() {
       </header>
 
       {error ? (
-        <p className="mb-4 rounded border border-brand-terracotta/40 bg-card/60 p-3 text-sm text-brand-terracotta">
+        <p className="mb-4 rounded border border-app-warn/40 bg-card/60 p-3 text-sm text-app-warn">
           {error}
         </p>
       ) : null}
 
       <div className="mb-6">
-        <h2 className="mb-2 text-xs uppercase tracking-wider text-brand-burgundy/60">Active</h2>
+        <h2 className="mb-2 text-xs uppercase tracking-wider text-app-ink/60">Active</h2>
         {items === null ? (
           <SectionSkeleton />
         ) : active.length === 0 ? (
@@ -76,7 +76,7 @@ function MatchesScreen() {
       </div>
 
       <div>
-        <h2 className="mb-2 text-xs uppercase tracking-wider text-brand-burgundy/60">Expired</h2>
+        <h2 className="mb-2 text-xs uppercase tracking-wider text-app-ink/60">Expired</h2>
         {items === null ? (
           <SectionSkeleton />
         ) : expired.length === 0 ? (
@@ -95,7 +95,7 @@ function MatchesScreen() {
 
 function EmptyState({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-lg border border-dashed border-brand-burgundy/20 bg-card/40 p-6 text-center text-sm text-brand-burgundy/60">
+    <div className="rounded-lg border border-dashed border-app-ink/20 bg-card/40 p-6 text-center text-sm text-app-ink/60">
       {children}
     </div>
   );
@@ -103,7 +103,7 @@ function EmptyState({ children }: { children: React.ReactNode }) {
 
 function SectionSkeleton() {
   return (
-    <div className="rounded-lg border border-dashed border-brand-burgundy/10 bg-card/30 p-6 text-center text-sm text-brand-burgundy/40">
+    <div className="rounded-lg border border-dashed border-app-ink/10 bg-card/30 p-6 text-center text-sm text-app-ink/40">
       Loading…
     </div>
   );

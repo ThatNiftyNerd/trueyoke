@@ -23,7 +23,7 @@ const TABS: readonly TabDef[] = [
 export function BottomTabs() {
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-brand-burgundy/10 bg-brand-linen"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-app-ink/10 bg-app-canvas"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Primary"
     >
@@ -34,8 +34,8 @@ export function BottomTabs() {
             <li key={tab.to} className="flex-1">
               <Link
                 to={tab.to}
-                className="flex flex-col items-center gap-1 py-2 text-xs text-brand-burgundy/60"
-                activeProps={{ className: "text-brand-burgundy font-medium" }}
+                className="flex flex-col items-center gap-1 py-2 text-xs text-app-ink/60"
+                activeProps={{ className: "text-app-ink font-medium" }}
               >
                 <Icon className="h-6 w-6" aria-hidden="true" />
                 <span>{tab.label}</span>

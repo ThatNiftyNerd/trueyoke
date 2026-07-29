@@ -52,7 +52,7 @@ export function ReportModal({ open, onOpenChange, reportedName, onSubmit }: Repo
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-brand-burgundy">Report profile</DialogTitle>
+          <DialogTitle className="text-app-ink">Report profile</DialogTitle>
           <DialogDescription>
             Tell us what's wrong with {reportedName ?? "this profile"}. Our team reviews every
             report.
@@ -67,7 +67,7 @@ export function ReportModal({ open, onOpenChange, reportedName, onSubmit }: Repo
           {REPORT_REASONS.map((r) => (
             <div key={r} className="flex items-center gap-2">
               <RadioGroupItem id={`report-${r}`} value={r} />
-              <Label htmlFor={`report-${r}`} className="text-sm text-brand-burgundy">
+              <Label htmlFor={`report-${r}`} className="text-sm text-app-ink">
                 {r}
               </Label>
             </div>
@@ -81,14 +81,14 @@ export function ReportModal({ open, onOpenChange, reportedName, onSubmit }: Repo
           placeholder="Add a short note (optional)"
           className="min-h-[80px]"
         />
-        {error ? <p className="text-xs text-brand-terracotta">{error}</p> : null}
+        {error ? <p className="text-xs text-app-warn">{error}</p> : null}
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={busy}>
             Cancel
           </Button>
           <Button
-            className="bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90"
+            className="bg-app-primary text-app-on-primary hover:bg-app-primary/90"
             onClick={handleSubmit}
             disabled={busy}
           >
@@ -129,19 +129,19 @@ export function BlockModal({ open, onOpenChange, blockedName, onConfirm }: Block
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-brand-burgundy">Block profile</DialogTitle>
+          <DialogTitle className="text-app-ink">Block profile</DialogTitle>
           <DialogDescription>
             You won't see {blockedName ?? "this person"} again, and they won't see you. This can't
             be undone here.
           </DialogDescription>
         </DialogHeader>
-        {error ? <p className="text-xs text-brand-terracotta">{error}</p> : null}
+        {error ? <p className="text-xs text-app-warn">{error}</p> : null}
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={busy}>
             Cancel
           </Button>
           <Button
-            className="bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90"
+            className="bg-app-primary text-app-on-primary hover:bg-app-primary/90"
             onClick={handleConfirm}
             disabled={busy}
           >

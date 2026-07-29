@@ -36,15 +36,15 @@ export function MessageComposer({ disabled, disabledReason, onSend }: Props) {
 
   if (disabled) {
     return (
-      <div className="border-t border-brand-burgundy/10 bg-brand-linen p-3 text-center text-sm text-brand-terracotta">
+      <div className="border-t border-app-ink/10 bg-app-canvas p-3 text-center text-sm text-app-warn">
         {disabledReason ?? "This conversation has ended."}
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border-t border-brand-burgundy/10 bg-brand-linen p-3">
-      {error ? <p className="mb-2 text-xs text-brand-terracotta">{error}</p> : null}
+    <form onSubmit={handleSubmit} className="border-t border-app-ink/10 bg-app-canvas p-3">
+      {error ? <p className="mb-2 text-xs text-app-warn">{error}</p> : null}
       <div className="flex items-center gap-2">
         <input
           type="text"
@@ -52,12 +52,12 @@ export function MessageComposer({ disabled, disabledReason, onSend }: Props) {
           maxLength={MESSAGE_MAX_LENGTH + 50}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Write with intention…"
-          className="flex-1 rounded-full border border-brand-burgundy/20 bg-card px-4 py-2 text-sm outline-none focus:border-brand-burgundy"
+          className="flex-1 rounded-full border border-app-ink/20 bg-card px-4 py-2 text-sm outline-none focus:border-app-ink"
         />
         <button
           type="submit"
           disabled={sending || !value.trim()}
-          className="rounded-full bg-brand-burgundy px-4 py-2 text-sm font-medium text-brand-linen disabled:opacity-50"
+          className="rounded-full bg-app-primary px-4 py-2 text-sm font-medium text-app-on-primary disabled:opacity-50"
         >
           Send
         </button>

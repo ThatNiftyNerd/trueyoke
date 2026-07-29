@@ -58,22 +58,22 @@ export function FaithStep({ profile, onSaved, onNext, onBack, canGoBack }: Props
     <form onSubmit={onSubmit} noValidate className="flex flex-1 flex-col">
       <StepShell onBack={onBack} canGoBack={canGoBack} submitting={isSubmitting} error={error}>
         <div className="space-y-1">
-          <Label className="text-brand-burgundy">Church affiliation</Label>
+          <Label className="text-app-ink">Church affiliation</Label>
           <Input placeholder="Church of Christ" {...register("church_affiliation")} />
         </div>
         <div className="space-y-1">
-          <Label className="text-brand-burgundy">Congregation</Label>
+          <Label className="text-app-ink">Congregation</Label>
           <Input placeholder="Congregation name" {...register("congregation")} />
         </div>
         <div className="space-y-2">
-          <Label className="text-brand-burgundy">Spirituality markers</Label>
+          <Label className="text-app-ink">Spirituality markers</Label>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {SPIRITUALITY_MARKERS.map((m) => {
               const checked = markers.includes(m);
               return (
                 <label
                   key={m}
-                  className="flex items-center gap-2 rounded-md border border-brand-burgundy/10 bg-card/60 px-3 py-2 text-sm text-brand-burgundy"
+                  className="flex items-center gap-2 rounded-md border border-app-ink/10 bg-card/60 px-3 py-2 text-sm text-app-ink"
                 >
                   <Checkbox checked={checked} onCheckedChange={(v) => toggle(m, v === true)} />
                   {m}

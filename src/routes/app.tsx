@@ -16,7 +16,7 @@ export const Route = createFileRoute("/app")({
 
 function AppShell() {
   return (
-    <div className="min-h-[100dvh] bg-brand-linen">
+    <div className="min-h-[100dvh] bg-app-canvas">
       <div className="mx-auto max-w-md pb-24">
         <Outlet />
       </div>
