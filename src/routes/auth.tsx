@@ -1,3 +1,4 @@
+import { redirectIfSignedIn } from "@/features/auth/guards";
 import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,6 @@ import {
   ensureProfileExists,
   getCurrentSession,
 } from "@/features/auth/api";
-import { getOwnProfile } from "@/features/profile/api";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -21,15 +21,7 @@ export const Route = createFileRoute("/auth")({
       { property: "og:description", content: "Sign in or create your Yoked account." },
     ],
   }),
-  beforeLoad: async () => {
-    const session = await getCurrentSession();
-    if (!session) return;
-    const profile = await getOwnProfile();
-    if (profile?.profile_complete) {
-      throw redirect({ to: "/app/discover" });
-    }
-    throw redirect({ to: "/onboarding" });
-  },
+  beforeLoad: () => redirectIfSignedIn(),
   component: AuthScreen,
 });
 

@@ -1,6 +1,6 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { getCurrentSession } from "@/features/auth/api";
+import { requireAuth, redirectIfSignedIn } from "@/features/auth/guards";
 import { getOnboardingProfile, type OnboardingProfile } from "@/features/profile/api";
 import { STEPS, firstIncompleteStepIndex, missingStepTitles } from "@/features/profile/logic";
 import { DemographicsStep } from "@/features/profile/steps/DemographicsStep";
@@ -20,8 +20,9 @@ export const Route = createFileRoute("/onboarding")({
     ],
   }),
   beforeLoad: async () => {
-    const session = await getCurrentSession();
-    if (!session) throw redirect({ to: "/auth" });
+    // Anonymous -> login. Signed in with a finished profile -> Discovery.
+    await requireAuth();
+    await redirectIfSignedIn({ allowOnboarding: true });
   },
   component: OnboardingWizard,
 });

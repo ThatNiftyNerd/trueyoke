@@ -1,7 +1,6 @@
+import { requireCompleteProfile } from "@/features/auth/guards";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { BottomTabs } from "@/components/app/BottomTabs";
-import { getCurrentSession } from "@/features/auth/api";
-import { getOwnProfile } from "@/features/profile/api";
 
 /**
  * Main app shell with mobile bottom-tab navigation.
@@ -11,14 +10,7 @@ import { getOwnProfile } from "@/features/profile/api";
  * /onboarding.
  */
 export const Route = createFileRoute("/app")({
-  beforeLoad: async () => {
-    const session = await getCurrentSession();
-    if (!session) throw redirect({ to: "/auth" });
-    const profile = await getOwnProfile();
-    if (!profile || !profile.profile_complete) {
-      throw redirect({ to: "/onboarding" });
-    }
-  },
+  beforeLoad: requireCompleteProfile,
   component: AppShell,
 });
 

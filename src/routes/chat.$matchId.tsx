@@ -7,7 +7,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getCurrentSession, getCurrentUserId } from "@/features/auth/api";
+import { getCurrentUserId } from "@/features/auth/api";
+import { requireCompleteProfile } from "@/features/auth/guards";
 import {
   getMatchWithOther,
   subscribeToMatchStatus,
@@ -35,10 +36,7 @@ export const Route = createFileRoute("/chat/$matchId")({
       { property: "og:description", content: "Conversation with your match." },
     ],
   }),
-  beforeLoad: async () => {
-    const session = await getCurrentSession();
-    if (!session) throw redirect({ to: "/auth" });
-  },
+  beforeLoad: requireCompleteProfile,
   component: ChatScreen,
 });
 
