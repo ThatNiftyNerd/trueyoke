@@ -3,6 +3,7 @@ import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { onAuthChange } from "@/features/auth/api";
 import { restoreSession, startForegroundSessionRefresh } from "@/features/auth/session";
+import { SplashScreen } from "@/features/auth/SplashScreen";
 
 export const getRouter = () => {
   const queryClient = new QueryClient();
@@ -12,6 +13,11 @@ export const getRouter = () => {
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
+    // Async auth guards resolve behind the same splash instead of flashing a
+    // partially-rendered screen.
+    defaultPendingComponent: SplashScreen,
+    defaultPendingMs: 150,
+    defaultPendingMinMs: 300,
   });
 
   // Single, app-wide auth listener. Every session change (sign-in, sign-out,
