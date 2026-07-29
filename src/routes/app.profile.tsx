@@ -55,8 +55,9 @@ function ProfileScreen() {
         <div className="mx-auto h-24 w-24 rounded-full bg-brand-sage/20" aria-hidden="true" />
         <h1 className="mt-3 font-serif text-2xl text-brand-burgundy">Your profile</h1>
         {/* TODO: display church-verified sage badge when profile.church_verified */}
+        {email ? <p className="mt-1 text-sm text-brand-burgundy/70">{email}</p> : null}
         <p className="mt-1 text-sm text-brand-burgundy/60">Not yet complete</p>
-      </header>
+
 
       <div className="space-y-3">
         <Button className="w-full bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90">
