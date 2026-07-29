@@ -6,6 +6,7 @@ import cssHasPseudo from "css-has-pseudo/browser";
 import "./styles.css";
 import { getRouter } from "./router";
 import { SessionGate } from "./features/auth/SessionGate";
+import { ThemeProvider } from "./theme/ThemeProvider";
 
 // :has() can't be polyfilled at build time (it's a runtime selector-matching
 // feature) -- this is a no-op on browsers/WebView with native support
@@ -20,8 +21,10 @@ if (!rootEl) throw new Error("Root element #root not found");
 
 createRoot(rootEl).render(
   <StrictMode>
-    <SessionGate>
-      <RouterProvider router={router} />
-    </SessionGate>
+    <ThemeProvider>
+      <SessionGate>
+        <RouterProvider router={router} />
+      </SessionGate>
+    </ThemeProvider>
   </StrictMode>,
 );
