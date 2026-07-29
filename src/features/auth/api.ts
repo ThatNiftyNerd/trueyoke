@@ -5,6 +5,7 @@
 import { supabase } from "@/lib/supabase";
 import type { Session } from "@supabase/supabase-js";
 import type { AccountType } from "@/lib/constants";
+import { restoreSession, setCachedSession } from "./session";
 
 export interface SignUpInput {
   email: string;
@@ -24,13 +25,15 @@ export interface EnsureProfileInput {
 }
 
 export async function getCurrentUserId(): Promise<string | null> {
+  // Wait for the persisted session to be rehydrated before hitting the auth
+  // server, otherwise a cold start sends an unauthenticated request.
+  await restoreSession();
   const { data } = await supabase.auth.getUser();
   return data.user?.id ?? null;
 }
 
 export async function getCurrentSession(): Promise<Session | null> {
-  const { data } = await supabase.auth.getSession();
-  return data.session ?? null;
+  return restoreSession();
 }
 
 export async function signUpWithEmail(input: SignUpInput): Promise<void> {
@@ -97,6 +100,7 @@ export async function signOut(): Promise<void> {
  */
 export function onAuthChange(cb: (session: Session | null) => void): () => void {
   const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+    setCachedSession(session);
     cb(session);
   });
   return () => data.subscription.unsubscribe();

@@ -2,6 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { onAuthChange } from "@/features/auth/api";
+import { restoreSession, startForegroundSessionRefresh } from "@/features/auth/session";
 
 export const getRouter = () => {
   const queryClient = new QueryClient();
@@ -19,6 +20,11 @@ export const getRouter = () => {
   onAuthChange(() => {
     router.invalidate();
   });
+
+  // Kick off session rehydration immediately so the first `beforeLoad` guard
+  // resolves against the restored session instead of a null one.
+  void restoreSession();
+  startForegroundSessionRefresh();
 
   return router;
 };
