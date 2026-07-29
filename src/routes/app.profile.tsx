@@ -90,10 +90,23 @@ function ProfileScreen() {
         >
           Connection diagnostics
         </Link>
-        <Button variant="outline" className="w-full border-brand-burgundy/30 text-brand-burgundy">
-          {/* TODO: sign out via features/auth/api.ts */}
-          Sign out
+        {error ? (
+          <p
+            role="alert"
+            className="rounded-md border border-brand-terracotta/40 bg-brand-terracotta/10 px-3 py-2 text-sm text-brand-terracotta"
+          >
+            {error}
+          </p>
+        ) : null}
+        <Button
+          variant="outline"
+          disabled={signingOut}
+          onClick={handleSignOut}
+          className="w-full border-brand-burgundy/30 text-brand-burgundy"
+        >
+          {signingOut ? "Signing out…" : "Sign out"}
         </Button>
+
       </div>
 
       <p className="mt-8 text-center text-xs text-brand-burgundy/60">
