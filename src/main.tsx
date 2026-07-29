@@ -21,8 +21,10 @@ if (!rootEl) throw new Error("Root element #root not found");
 
 createRoot(rootEl).render(
   <StrictMode>
-    <SessionGate>
-      <RouterProvider router={router} />
-    </SessionGate>
+    <ThemeProvider>
+      <SessionGate>
+        <RouterProvider router={router} />
+      </SessionGate>
+    </ThemeProvider>
   </StrictMode>,
 );
