@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { requireAuth, redirectIfSignedIn } from "@/features/auth/guards";
 import { getOnboardingProfile, type OnboardingProfile } from "@/features/profile/api";

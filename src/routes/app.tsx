@@ -1,5 +1,5 @@
 import { requireCompleteProfile } from "@/features/auth/guards";
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { BottomTabs } from "@/components/app/BottomTabs";
 
 /**
