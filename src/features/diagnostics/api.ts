@@ -5,6 +5,7 @@
  * `supabase.from(...)` directly.
  */
 import { supabase } from "@/lib/supabase";
+import { SUPABASE_ANON_KEY, SUPABASE_URL } from "@/lib/supabase-env";
 import {
   formatDuration,
   isSameOrigin,
@@ -14,8 +15,7 @@ import {
   type DiagnosticCheck,
 } from "./logic";
 
-const SUPABASE_URL: string = import.meta.env.VITE_SUPABASE_URL ?? "";
-const SUPABASE_PUBLISHABLE_KEY: string = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? "";
+const SUPABASE_PUBLISHABLE_KEY: string = SUPABASE_ANON_KEY;
 
 function checkUrlConfigured(): DiagnosticCheck {
   const present = SUPABASE_URL.length > 0;
@@ -36,13 +36,14 @@ function checkKeyConfigured(): DiagnosticCheck {
   const present = SUPABASE_PUBLISHABLE_KEY.length > 0;
   return {
     id: "env-key",
-    label: "Publishable key configured",
+    label: "Anon key configured",
     status: present ? "pass" : "fail",
     detail: present
       ? maskValue(SUPABASE_PUBLISHABLE_KEY)
-      : "VITE_SUPABASE_PUBLISHABLE_KEY is missing from this build. Set it in your host's environment variables and rebuild.",
+      : "VITE_SUPABASE_ANON_KEY is missing from this build. Set it in your host's environment variables and rebuild.",
   };
 }
+
 
 /**
  * Lightweight auth-service reachability probe. `getSession()` is local, so we
