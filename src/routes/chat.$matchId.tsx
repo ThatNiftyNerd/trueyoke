@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, MoreHorizontal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -7,7 +7,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getCurrentSession, getCurrentUserId } from "@/features/auth/api";
+import { getCurrentUserId } from "@/features/auth/api";
+import { requireCompleteProfile } from "@/features/auth/guards";
 import {
   getMatchWithOther,
   subscribeToMatchStatus,
@@ -35,10 +36,7 @@ export const Route = createFileRoute("/chat/$matchId")({
       { property: "og:description", content: "Conversation with your match." },
     ],
   }),
-  beforeLoad: async () => {
-    const session = await getCurrentSession();
-    if (!session) throw redirect({ to: "/auth" });
-  },
+  beforeLoad: requireCompleteProfile,
   component: ChatScreen,
 });
 

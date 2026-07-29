@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { redirectIfSignedIn } from "@/features/auth/guards";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -19,6 +20,8 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  // Public welcome screen; signed-in users go straight to the app.
+  beforeLoad: () => redirectIfSignedIn(),
   component: Landing,
 });
 

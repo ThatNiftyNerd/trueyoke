@@ -1,8 +1,8 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getCurrentSession } from "@/features/auth/api";
+import { requireAuth } from "@/features/auth/guards";
 import { getIdVerification, submitIdVerification } from "@/features/profile/api";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -17,10 +17,7 @@ export const Route = createFileRoute("/verify-id")({
       { property: "og:description", content: "Upload a government ID for verification." },
     ],
   }),
-  beforeLoad: async () => {
-    const session = await getCurrentSession();
-    if (!session) throw redirect({ to: "/auth" });
-  },
+  beforeLoad: requireAuth,
   component: VerifyIdScreen,
 });
 
