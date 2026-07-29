@@ -50,7 +50,6 @@ function ProfileScreen() {
     }
   }
 
-
   return (
     <section className="flex flex-col px-4 pt-6">
       <header className="mb-6 text-center">
@@ -62,7 +61,6 @@ function ProfileScreen() {
       </header>
 
       <div className="space-y-3">
-
         <Button className="w-full bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90">
           Edit profile
         </Button>
@@ -94,7 +92,6 @@ function ProfileScreen() {
         </Link>
         <DisplaySettingsPanel />
         {error ? (
-
           <p
             role="alert"
             className="rounded-md border border-brand-terracotta/40 bg-brand-terracotta/10 px-3 py-2 text-sm text-brand-terracotta"
@@ -110,7 +107,6 @@ function ProfileScreen() {
         >
           {signingOut ? "Signing out…" : "Sign out"}
         </Button>
-
       </div>
 
       <p className="mt-8 text-center text-xs text-brand-burgundy/60">
