@@ -49,6 +49,18 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+  --color-app-canvas: var(--app-canvas);
+  --color-app-surface: var(--app-surface);
+  --color-app-ink: var(--app-ink);
+  --color-app-primary: var(--app-primary);
+  --color-app-primary-deep: var(--app-primary-deep);
+  --color-app-on-primary: var(--app-on-primary);
+  --color-app-accent: var(--app-accent);
+  --color-app-on-accent: var(--app-on-accent);
+  --color-app-muted: var(--app-muted);
+  --color-app-subtle: var(--app-subtle);
+  --color-app-warn: var(--app-warn);
+  --color-app-warn-deep: var(--app-warn-deep);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -123,6 +135,22 @@
   --sidebar-accent-foreground: oklch(0.203 0.034 14.1);
   --sidebar-border: oklch(0.353 0.117 17.2 / 15%);
   --sidebar-ring: oklch(0.353 0.117 17.2);
+
+  /* --- Unified app semantic tokens (light) ---------------------------
+   * Every component uses these, never raw brand hexes. Each has a Dark
+   * counterpart below so the whole UI re-themes from one toggle. */
+  --app-canvas: oklch(0.959 0.01 87.5); /* Linen */
+  --app-surface: oklch(0.986 0.005 87.5);
+  --app-ink: oklch(0.353 0.117 17.2); /* Burgundy text */
+  --app-primary: oklch(0.353 0.117 17.2); /* Burgundy fill */
+  --app-primary-deep: oklch(0.271 0.099 16.5); /* Burgundy Ink */
+  --app-on-primary: oklch(0.959 0.01 87.5); /* Linen */
+  --app-accent: oklch(0.7 0.062 144.9); /* Sage */
+  --app-on-accent: oklch(0.428 0.047 155.2); /* Fern */
+  --app-muted: oklch(0.891 0.022 80.7); /* Sand */
+  --app-subtle: oklch(0.617 0.02 78.2); /* Warm Gray */
+  --app-warn: oklch(0.659 0.108 43.4); /* Terracotta */
+  --app-warn-deep: oklch(0.529 0.102 43.3);
 }
 
 .dark {
@@ -158,6 +186,20 @@
   --sidebar-accent-foreground: oklch(0.944 0.009 84.6);
   --sidebar-border: oklch(0.944 0.009 84.6 / 15%);
   --sidebar-ring: oklch(0.468 0.152 24.9);
+
+  /* --- Unified app semantic tokens (dark) --- */
+  --app-canvas: oklch(0.218 0 89.9); /* Deep Charcoal */
+  --app-surface: oklch(0.26 0 89.9);
+  --app-ink: oklch(0.944 0.009 84.6); /* Soft Cream text */
+  --app-primary: oklch(0.468 0.152 24.9); /* Vibrant Crimson */
+  --app-primary-deep: oklch(0.4 0.14 24.9);
+  --app-on-primary: oklch(0.944 0.009 84.6); /* Soft Cream */
+  --app-accent: oklch(0.493 0.057 144.7); /* Forest Accent */
+  --app-on-accent: oklch(0.944 0.009 84.6);
+  --app-muted: oklch(0.3 0 89.9);
+  --app-subtle: oklch(0.7 0.005 89.9);
+  --app-warn: oklch(0.72 0.11 43.4);
+  --app-warn-deep: oklch(0.62 0.11 43.4);
 }
 
 @layer base {
