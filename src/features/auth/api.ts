@@ -5,7 +5,7 @@
 import { supabase } from "@/lib/supabase";
 import type { Session } from "@supabase/supabase-js";
 import type { AccountType } from "@/lib/constants";
-import { restoreSession, setCachedSession } from "./session";
+import { peekSession, restoreSession, setCachedSession } from "./session";
 
 export interface SignUpInput {
   email: string;
@@ -33,7 +33,9 @@ export async function getCurrentUserId(): Promise<string | null> {
 }
 
 export async function getCurrentSession(): Promise<Session | null> {
-  return restoreSession();
+  await restoreSession();
+  // After the initial restore the cache is kept current by onAuthStateChange.
+  return peekSession();
 }
 
 export async function signUpWithEmail(input: SignUpInput): Promise<void> {
