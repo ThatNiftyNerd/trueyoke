@@ -108,9 +108,7 @@ function ChatScreen() {
     return (
       <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-3 bg-app-canvas p-6 text-center">
         <p className="font-serif text-xl text-app-ink">Conversation not found</p>
-        <p className="text-sm text-app-ink/60">
-          It may have ended, or you no longer have access.
-        </p>
+        <p className="text-sm text-app-ink/60">It may have ended, or you no longer have access.</p>
         <Link
           to="/app/matches"
           className="mt-2 rounded-full bg-app-primary px-4 py-2 text-sm text-app-on-primary"

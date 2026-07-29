@@ -144,9 +144,7 @@ function DiscoverScreen() {
         ) : (
           <div className="w-full max-w-sm rounded-2xl border border-dashed border-app-ink/30 bg-card/40 p-10 text-center">
             <p className="font-serif text-lg text-app-ink">No profiles yet</p>
-            <p className="mt-2 text-sm text-app-ink/60">
-              Check back soon as new members join.
-            </p>
+            <p className="mt-2 text-sm text-app-ink/60">Check back soon as new members join.</p>
           </div>
         )}
       </div>

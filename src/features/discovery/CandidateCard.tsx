@@ -59,9 +59,7 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
 
       <div className="space-y-2 p-4">
         <div>
-          <h2 className="font-serif text-xl text-app-ink">
-            {candidate.display_name ?? "Member"}
-          </h2>
+          <h2 className="font-serif text-xl text-app-ink">{candidate.display_name ?? "Member"}</h2>
           <p className="text-sm font-mono tabular-nums text-app-ink/60">
             {cardSubtitle(candidate)}
           </p>

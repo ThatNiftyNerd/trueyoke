@@ -43,9 +43,7 @@ function MatchesScreen() {
     <section className="flex flex-col px-4 pt-6 pb-8">
       <header className="mb-4">
         <h1 className="font-serif text-2xl text-app-ink">Matches</h1>
-        <p
-          className={`mt-1 text-sm ${atCap ? "text-app-warn font-medium" : "text-app-warn"}`}
-        >
+        <p className={`mt-1 text-sm ${atCap ? "text-app-warn font-medium" : "text-app-warn"}`}>
           <span className="font-mono tabular-nums">{activeCount}</span> of{" "}
           <span className="font-mono tabular-nums">{ACTIVE_MATCH_CAP}</span> active conversations
           {atCap ? " — cap reached" : ""}

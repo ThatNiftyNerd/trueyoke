@@ -161,9 +161,7 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
       error={error}
     >
       <div className="space-y-2">
-        <Label className="text-app-ink">
-          Voice intro (up to {VOICE_INTRO_MAX_SECONDS}s)
-        </Label>
+        <Label className="text-app-ink">Voice intro (up to {VOICE_INTRO_MAX_SECONDS}s)</Label>
         <p className="text-xs text-app-ink/60">
           Say hi, share your name, and a sentence about your walk.
         </p>

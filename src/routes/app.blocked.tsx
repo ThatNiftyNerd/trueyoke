@@ -84,9 +84,7 @@ function BlockedScreen() {
                   {initialsOf(r.displayName)}
                 </div>
               )}
-              <span className="flex-1 text-sm font-medium text-app-ink">
-                {r.displayName}
-              </span>
+              <span className="flex-1 text-sm font-medium text-app-ink">{r.displayName}</span>
               <Button
                 variant="outline"
                 size="sm"

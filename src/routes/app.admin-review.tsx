@@ -80,10 +80,7 @@ function AdminReviewScreen() {
       ) : (
         <ul className="space-y-6">
           {rows.map((r) => (
-            <li
-              key={r.id}
-              className="overflow-hidden rounded-lg border border-app-ink/15 bg-card"
-            >
+            <li key={r.id} className="overflow-hidden rounded-lg border border-app-ink/15 bg-card">
               <div className="flex items-baseline justify-between p-3">
                 <span className="font-medium text-app-ink">{r.displayName}</span>
                 <span className="text-xs text-app-ink/60">

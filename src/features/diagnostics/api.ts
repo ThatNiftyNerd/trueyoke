@@ -44,7 +44,6 @@ function checkKeyConfigured(): DiagnosticCheck {
   };
 }
 
-
 /**
  * Lightweight auth-service reachability probe. `getSession()` is local, so we
  * hit the auth settings endpoint to prove the network path actually works.
