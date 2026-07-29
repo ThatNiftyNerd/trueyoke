@@ -94,7 +94,7 @@ export function PhotosStep({ onNext, onBack, canGoBack }: Props) {
       error={error}
     >
       <div className="space-y-2">
-        <Label className="text-brand-burgundy">
+        <Label className="text-app-ink">
           Photos ({photos.length}/{PHOTO_MAX_COUNT})
         </Label>
         <input
@@ -103,9 +103,9 @@ export function PhotosStep({ onNext, onBack, canGoBack }: Props) {
           multiple
           disabled={busy || atCap}
           onChange={onFileChange}
-          className="block w-full text-sm text-brand-burgundy file:mr-3 file:rounded-md file:border-0 file:bg-brand-burgundy file:px-3 file:py-2 file:text-brand-linen"
+          className="block w-full text-sm text-app-ink file:mr-3 file:rounded-md file:border-0 file:bg-app-primary file:px-3 file:py-2 file:text-app-on-primary"
         />
-        <p className="text-xs text-brand-burgundy/60">JPG, PNG, or WEBP. Up to 5 MB each.</p>
+        <p className="text-xs text-app-ink/60">JPG, PNG, or WEBP. Up to 5 MB each.</p>
       </div>
 
       {photos.length > 0 ? (
@@ -113,18 +113,18 @@ export function PhotosStep({ onNext, onBack, canGoBack }: Props) {
           {photos.map((p) => (
             <div
               key={p.id}
-              className="aspect-square overflow-hidden rounded-md border border-brand-burgundy/10 bg-card/60"
+              className="aspect-square overflow-hidden rounded-md border border-app-ink/10 bg-card/60"
             >
               {previews[p.id] ? (
                 <img src={previews[p.id]} alt="" className="h-full w-full object-cover" />
               ) : (
-                <div className="h-full w-full animate-pulse bg-brand-burgundy/5" />
+                <div className="h-full w-full animate-pulse bg-app-primary/5" />
               )}
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-sm text-brand-burgundy/60">No photos yet. This step is optional.</p>
+        <p className="text-sm text-app-ink/60">No photos yet. This step is optional.</p>
       )}
     </StepShell>
   );

@@ -84,17 +84,17 @@ function AuthScreen() {
   }
 
   return (
-    <main className="flex min-h-[100dvh] flex-col bg-brand-linen px-6 py-10">
+    <main className="flex min-h-[100dvh] flex-col bg-app-canvas px-6 py-10">
       <header className="mb-8 text-center">
-        <p className="text-sm uppercase tracking-widest text-brand-sage">Yoked</p>
-        <h1 className="mt-2 font-serif text-2xl text-brand-burgundy">
+        <p className="text-sm uppercase tracking-widest text-app-on-accent">Yoked</p>
+        <h1 className="mt-2 font-serif text-2xl text-app-ink">
           {mode === "signup" ? "Create your account" : "Welcome back"}
         </h1>
       </header>
 
       {mode === "signup" && (
         <section className="mx-auto mb-6 w-full max-w-sm">
-          <p className="mb-2 text-sm font-medium text-brand-burgundy">I am joining as</p>
+          <p className="mb-2 text-sm font-medium text-app-ink">I am joining as</p>
           <div className="grid grid-cols-2 gap-2">
             {ACCOUNT_TYPES.map((type) => (
               <button
@@ -103,8 +103,8 @@ function AuthScreen() {
                 onClick={() => setAccountType(type)}
                 className={
                   accountType === type
-                    ? "rounded-md border border-brand-burgundy bg-brand-burgundy px-3 py-2 text-sm text-brand-linen"
-                    : "rounded-md border border-brand-burgundy/30 bg-transparent px-3 py-2 text-sm text-brand-burgundy"
+                    ? "rounded-md border border-app-ink bg-app-primary px-3 py-2 text-sm text-app-on-primary"
+                    : "rounded-md border border-app-ink/30 bg-transparent px-3 py-2 text-sm text-app-ink"
                 }
               >
                 {type === "match" ? "Match" : "Mentor"}
@@ -154,13 +154,13 @@ function AuthScreen() {
         {error && (
           <p
             role="alert"
-            className="rounded-md border border-brand-terracotta/40 bg-brand-terracotta/10 px-3 py-2 text-sm text-brand-terracotta"
+            className="rounded-md border border-app-warn/40 bg-app-warn/10 px-3 py-2 text-sm text-app-warn"
           >
             {error}
           </p>
         )}
         {notice && (
-          <p className="rounded-md border border-brand-sage/40 bg-brand-sage/10 px-3 py-2 text-sm text-brand-burgundy">
+          <p className="rounded-md border border-app-accent/40 bg-app-accent/10 px-3 py-2 text-sm text-app-ink">
             {notice}
           </p>
         )}
@@ -168,21 +168,21 @@ function AuthScreen() {
         <Button
           type="submit"
           disabled={submitting}
-          className="bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90"
+          className="bg-app-primary text-app-on-primary hover:bg-app-primary/90"
         >
           {submitting ? "Please wait…" : mode === "signup" ? "Create account" : "Sign in"}
         </Button>
 
-        <div className="my-2 flex items-center gap-3 text-xs text-brand-burgundy/50">
-          <span className="h-px flex-1 bg-brand-burgundy/15" />
+        <div className="my-2 flex items-center gap-3 text-xs text-app-ink/50">
+          <span className="h-px flex-1 bg-app-primary/15" />
           or
-          <span className="h-px flex-1 bg-brand-burgundy/15" />
+          <span className="h-px flex-1 bg-app-primary/15" />
         </div>
 
         <Button
           type="button"
           variant="outline"
-          className="border-brand-burgundy/30 text-brand-burgundy"
+          className="border-app-ink/30 text-app-ink"
           onClick={() => {
             // TODO: Google sign-in requires a Capacitor-safe OAuth redirect
             // (custom URL scheme) that hasn't been configured yet. Leaving
@@ -195,7 +195,7 @@ function AuthScreen() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-brand-burgundy/70">
+      <p className="mt-6 text-center text-sm text-app-ink/70">
         {mode === "signup" ? "Already have an account?" : "New to Yoked?"}{" "}
         <button
           type="button"
@@ -210,7 +210,7 @@ function AuthScreen() {
         </button>
       </p>
 
-      <p className="mt-8 text-center text-xs text-brand-burgundy/50">
+      <p className="mt-8 text-center text-xs text-app-ink/50">
         After signing up you'll continue to{" "}
         <Link to="/onboarding" className="underline">
           onboarding

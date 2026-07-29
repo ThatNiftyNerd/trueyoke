@@ -21,8 +21,8 @@ interface Props {
 
 export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, busy }: Props) {
   return (
-    <Card className="w-full max-w-sm overflow-hidden border-brand-burgundy/20 bg-card">
-      <div className="relative aspect-[4/5] w-full bg-brand-linen">
+    <Card className="w-full max-w-sm overflow-hidden border-app-ink/20 bg-card">
+      <div className="relative aspect-[4/5] w-full bg-app-canvas">
         {candidate.photoSignedUrl ? (
           <img
             src={candidate.photoSignedUrl}
@@ -30,8 +30,8 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-brand-sage/20">
-            <span className="font-serif text-6xl text-brand-burgundy/60">
+          <div className="flex h-full w-full items-center justify-center bg-app-accent/20">
+            <span className="font-serif text-6xl text-app-ink/60">
               {initialsOf(candidate.display_name)}
             </span>
           </div>
@@ -42,14 +42,14 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
               <button
                 type="button"
                 aria-label="More options"
-                className="rounded-full bg-brand-burgundy/60 p-2 text-brand-linen backdrop-blur"
+                className="rounded-full bg-app-primary/60 p-2 text-app-on-primary backdrop-blur"
               >
                 <MoreVertical className="h-4 w-4" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onSelect={onReport}>Report</DropdownMenuItem>
-              <DropdownMenuItem onSelect={onBlock} className="text-brand-terracotta">
+              <DropdownMenuItem onSelect={onBlock} className="text-app-warn">
                 Block
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -59,25 +59,23 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
 
       <div className="space-y-2 p-4">
         <div>
-          <h2 className="font-serif text-xl text-brand-burgundy">
-            {candidate.display_name ?? "Member"}
-          </h2>
-          <p className="text-sm font-mono tabular-nums text-brand-burgundy/60">
+          <h2 className="font-serif text-xl text-app-ink">{candidate.display_name ?? "Member"}</h2>
+          <p className="text-sm font-mono tabular-nums text-app-ink/60">
             {cardSubtitle(candidate)}
           </p>
         </div>
         {candidate.bio ? (
-          <p className="text-sm text-brand-burgundy/80">{bioExcerpt(candidate.bio)}</p>
+          <p className="text-sm text-app-ink/80">{bioExcerpt(candidate.bio)}</p>
         ) : null}
       </div>
 
-      <div className="grid grid-cols-2 gap-2 border-t border-brand-burgundy/10 p-3">
+      <div className="grid grid-cols-2 gap-2 border-t border-app-ink/10 p-3">
         <Button
           type="button"
           variant="outline"
           disabled={busy}
           onClick={onPass}
-          className="border-brand-burgundy/30 text-brand-burgundy"
+          className="border-app-ink/30 text-app-ink"
         >
           Pass
         </Button>
@@ -85,7 +83,7 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
           type="button"
           disabled={busy}
           onClick={onLike}
-          className="bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90"
+          className="bg-app-primary text-app-on-primary hover:bg-app-primary/90"
         >
           Like
         </Button>

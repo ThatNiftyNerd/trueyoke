@@ -71,11 +71,11 @@ function DiagnosticsScreen() {
   const status = overallStatus(checks);
 
   return (
-    <main className="min-h-[100dvh] bg-brand-linen">
+    <main className="min-h-[100dvh] bg-app-canvas">
       <section className="mx-auto flex max-w-md flex-col px-4 pb-16 pt-6">
         <header className="mb-5">
-          <h1 className="font-serif text-2xl text-brand-burgundy">Connection diagnostics</h1>
-          <p className="mt-1 text-sm text-brand-burgundy/70">
+          <h1 className="font-serif text-2xl text-app-ink">Connection diagnostics</h1>
+          <p className="mt-1 text-sm text-app-ink/70">
             Confirms this build has its backend settings and can reach the service.
           </p>
         </header>
@@ -83,10 +83,10 @@ function DiagnosticsScreen() {
         <div
           className={`mb-4 rounded-md border px-4 py-3 text-sm font-medium ${
             status === "pass"
-              ? "border-brand-sage bg-brand-sage/15 text-brand-burgundy"
+              ? "border-app-accent bg-app-accent/15 text-app-ink"
               : status === "fail"
-                ? "border-brand-terracotta bg-brand-terracotta/15 text-brand-burgundy"
-                : "border-brand-burgundy/20 bg-card/60 text-brand-burgundy/70"
+                ? "border-app-warn bg-app-warn/15 text-app-ink"
+                : "border-app-ink/20 bg-card/60 text-app-ink/70"
           }`}
           role="status"
           aria-live="polite"
@@ -108,7 +108,7 @@ function DiagnosticsScreen() {
           <Button
             onClick={() => void run()}
             disabled={running}
-            className="w-full bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90"
+            className="w-full bg-app-primary text-app-on-primary hover:bg-app-primary/90"
           >
             {running ? "Running…" : "Run checks again"}
           </Button>
@@ -116,7 +116,7 @@ function DiagnosticsScreen() {
             variant="outline"
             onClick={() => void copyReport()}
             disabled={running}
-            className="w-full border-brand-burgundy/30 bg-transparent text-brand-burgundy"
+            className="w-full border-app-ink/30 bg-transparent text-app-ink"
           >
             {copyState === "copied"
               ? "Copied to clipboard"
@@ -128,7 +128,7 @@ function DiagnosticsScreen() {
             {copyState === "copied" ? "Diagnostics report copied to clipboard." : ""}
           </p>
 
-          <p className="text-center text-xs text-brand-burgundy/60">
+          <p className="text-center text-xs text-app-ink/60">
             Build mode: {build.mode}
             {ranAt ? ` · Last run ${ranAt}` : ""}
           </p>

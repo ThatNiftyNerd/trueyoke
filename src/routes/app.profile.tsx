@@ -53,40 +53,40 @@ function ProfileScreen() {
   return (
     <section className="flex flex-col px-4 pt-6">
       <header className="mb-6 text-center">
-        <div className="mx-auto h-24 w-24 rounded-full bg-brand-sage/20" aria-hidden="true" />
-        <h1 className="mt-3 font-serif text-2xl text-brand-burgundy">Your profile</h1>
+        <div className="mx-auto h-24 w-24 rounded-full bg-app-accent/20" aria-hidden="true" />
+        <h1 className="mt-3 font-serif text-2xl text-app-ink">Your profile</h1>
         {/* TODO: display church-verified sage badge when profile.church_verified */}
-        {email ? <p className="mt-1 text-sm text-brand-burgundy/70">{email}</p> : null}
-        <p className="mt-1 text-sm text-brand-burgundy/60">Not yet complete</p>
+        {email ? <p className="mt-1 text-sm text-app-ink/70">{email}</p> : null}
+        <p className="mt-1 text-sm text-app-ink/60">Not yet complete</p>
       </header>
 
       <div className="space-y-3">
-        <Button className="w-full bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90">
+        <Button className="w-full bg-app-primary text-app-on-primary hover:bg-app-primary/90">
           Edit profile
         </Button>
         <Link
           to="/verify-id"
-          className="block rounded-md border border-brand-sage bg-brand-sage/10 px-4 py-3 text-center text-sm font-medium text-brand-burgundy"
+          className="block rounded-md border border-app-accent bg-app-accent/10 px-4 py-3 text-center text-sm font-medium text-app-ink"
         >
           Verify your ID
         </Link>
         <Link
           to="/app/blocked"
-          className="block rounded-md border border-brand-burgundy/20 px-4 py-3 text-center text-sm font-medium text-brand-burgundy"
+          className="block rounded-md border border-app-ink/20 px-4 py-3 text-center text-sm font-medium text-app-ink"
         >
           Manage blocked users
         </Link>
         {isAdmin ? (
           <Link
             to="/app/admin-review"
-            className="block rounded-md border border-brand-burgundy/20 px-4 py-3 text-center text-sm font-medium text-brand-burgundy"
+            className="block rounded-md border border-app-ink/20 px-4 py-3 text-center text-sm font-medium text-app-ink"
           >
             ID review
           </Link>
         ) : null}
         <Link
           to="/diagnostics"
-          className="block rounded-md border border-brand-burgundy/20 px-4 py-3 text-center text-sm font-medium text-brand-burgundy"
+          className="block rounded-md border border-app-ink/20 px-4 py-3 text-center text-sm font-medium text-app-ink"
         >
           Connection diagnostics
         </Link>
@@ -94,7 +94,7 @@ function ProfileScreen() {
         {error ? (
           <p
             role="alert"
-            className="rounded-md border border-brand-terracotta/40 bg-brand-terracotta/10 px-3 py-2 text-sm text-brand-terracotta"
+            className="rounded-md border border-app-warn/40 bg-app-warn/10 px-3 py-2 text-sm text-app-warn"
           >
             {error}
           </p>
@@ -103,13 +103,13 @@ function ProfileScreen() {
           variant="outline"
           disabled={signingOut}
           onClick={handleSignOut}
-          className="w-full border-brand-burgundy/30 text-brand-burgundy"
+          className="w-full border-app-ink/30 text-app-ink"
         >
           {signingOut ? "Signing out…" : "Sign out"}
         </Button>
       </div>
 
-      <p className="mt-8 text-center text-xs text-brand-burgundy/60">
+      <p className="mt-8 text-center text-xs text-app-ink/60">
         Yoked is a product of House603 Digital Solutions.
       </p>
     </section>

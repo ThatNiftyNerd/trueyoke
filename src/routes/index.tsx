@@ -27,22 +27,22 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-8 bg-brand-linen px-6 text-center">
+    <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-8 bg-app-canvas px-6 text-center">
       <div className="max-w-sm space-y-3">
-        <p className="text-sm uppercase tracking-widest text-brand-sage">Yoked</p>
-        <h1 className="text-4xl font-serif font-semibold text-brand-burgundy">
+        <p className="text-sm uppercase tracking-widest text-app-on-accent">Yoked</p>
+        <h1 className="text-4xl font-serif font-semibold text-app-ink">
           Do not be unequally yoked.
         </h1>
-        <p className="text-brand-burgundy/70">A marriage-minded space for the Lord's church.</p>
+        <p className="text-app-ink/70">A marriage-minded space for the Lord's church.</p>
       </div>
       <div className="flex w-full max-w-sm flex-col gap-3">
         <Link
           to="/auth"
-          className="rounded-md bg-brand-burgundy px-6 py-3 text-brand-linen font-medium"
+          className="rounded-md bg-app-primary px-6 py-3 text-app-on-primary font-medium"
         >
           Get started
         </Link>
-        <Link to="/auth" className="text-sm text-brand-burgundy underline">
+        <Link to="/auth" className="text-sm text-app-ink underline">
           I already have an account
         </Link>
       </div>

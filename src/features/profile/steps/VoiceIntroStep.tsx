@@ -161,23 +161,21 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
       error={error}
     >
       <div className="space-y-2">
-        <Label className="text-brand-burgundy">
-          Voice intro (up to {VOICE_INTRO_MAX_SECONDS}s)
-        </Label>
-        <p className="text-xs text-brand-burgundy/60">
+        <Label className="text-app-ink">Voice intro (up to {VOICE_INTRO_MAX_SECONDS}s)</Label>
+        <p className="text-xs text-app-ink/60">
           Say hi, share your name, and a sentence about your walk.
         </p>
       </div>
 
-      <div className="flex flex-col items-center gap-3 rounded-md border border-brand-burgundy/10 bg-card/60 p-4">
-        <div className="font-mono text-3xl text-brand-burgundy">
+      <div className="flex flex-col items-center gap-3 rounded-md border border-app-ink/10 bg-card/60 p-4">
+        <div className="font-mono text-3xl text-app-ink">
           {String(seconds).padStart(2, "0")}s / {VOICE_INTRO_MAX_SECONDS}s
         </div>
         {state === "recording" ? (
           <Button
             type="button"
             onClick={stop}
-            className="bg-brand-terracotta text-brand-linen hover:bg-brand-terracotta/90"
+            className="bg-app-warn text-app-on-primary hover:bg-app-warn/90"
           >
             Stop
           </Button>
@@ -185,7 +183,7 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
           <Button
             type="button"
             onClick={start}
-            className="bg-brand-burgundy text-brand-linen hover:bg-brand-burgundy/90"
+            className="bg-app-primary text-app-on-primary hover:bg-app-primary/90"
           >
             {state === "recorded" || localUrl || existingUrl ? "Re-record" : "Record"}
           </Button>
@@ -194,19 +192,19 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
 
       {localUrl ? (
         <div className="space-y-1">
-          <Label className="text-brand-burgundy">Preview</Label>
+          <Label className="text-app-ink">Preview</Label>
           <audio controls src={localUrl} className="w-full" />
           <button
             type="button"
             onClick={reset}
-            className="text-xs text-brand-burgundy/70 underline underline-offset-2"
+            className="text-xs text-app-ink/70 underline underline-offset-2"
           >
             Discard recording
           </button>
         </div>
       ) : existingUrl ? (
         <div className="space-y-1">
-          <Label className="text-brand-burgundy">Your saved intro</Label>
+          <Label className="text-app-ink">Your saved intro</Label>
           <audio controls src={existingUrl} className="w-full" />
         </div>
       ) : null}

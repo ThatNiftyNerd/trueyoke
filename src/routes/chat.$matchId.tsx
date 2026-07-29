@@ -98,7 +98,7 @@ function ChatScreen() {
 
   if (item === undefined) {
     return (
-      <main className="flex min-h-[100dvh] items-center justify-center bg-brand-linen text-sm text-brand-burgundy/60">
+      <main className="flex min-h-[100dvh] items-center justify-center bg-app-canvas text-sm text-app-ink/60">
         Loading…
       </main>
     );
@@ -106,14 +106,12 @@ function ChatScreen() {
 
   if (item === null) {
     return (
-      <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-3 bg-brand-linen p-6 text-center">
-        <p className="font-serif text-xl text-brand-burgundy">Conversation not found</p>
-        <p className="text-sm text-brand-burgundy/60">
-          It may have ended, or you no longer have access.
-        </p>
+      <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-3 bg-app-canvas p-6 text-center">
+        <p className="font-serif text-xl text-app-ink">Conversation not found</p>
+        <p className="text-sm text-app-ink/60">It may have ended, or you no longer have access.</p>
         <Link
           to="/app/matches"
-          className="mt-2 rounded-full bg-brand-burgundy px-4 py-2 text-sm text-brand-linen"
+          className="mt-2 rounded-full bg-app-primary px-4 py-2 text-sm text-app-on-primary"
         >
           Back to matches
         </Link>
@@ -155,37 +153,37 @@ function ChatScreen() {
   }
 
   return (
-    <main className="flex min-h-[100dvh] flex-col bg-brand-linen">
-      <header className="flex items-center gap-3 border-b border-brand-burgundy/10 bg-brand-linen px-4 py-3">
-        <Link to="/app/matches" aria-label="Back to matches" className="text-brand-burgundy">
+    <main className="flex min-h-[100dvh] flex-col bg-app-canvas">
+      <header className="flex items-center gap-3 border-b border-app-ink/10 bg-app-canvas px-4 py-3">
+        <Link to="/app/matches" aria-label="Back to matches" className="text-app-ink">
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full bg-brand-sage/20">
+        <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full bg-app-accent/20">
           {other.photoSignedUrl ? (
             <img src={other.photoSignedUrl} alt={name} className="h-full w-full object-cover" />
           ) : (
-            <div className="flex h-full w-full items-center justify-center font-serif text-sm text-brand-burgundy/70">
+            <div className="flex h-full w-full items-center justify-center font-serif text-sm text-app-ink/70">
               {initialsOf(other.display_name)}
             </div>
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate font-serif text-lg text-brand-burgundy">{name}</p>
-          {!isActive ? <p className="text-xs text-brand-terracotta">Conversation ended</p> : null}
+          <p className="truncate font-serif text-lg text-app-ink">{name}</p>
+          {!isActive ? <p className="text-xs text-app-warn">Conversation ended</p> : null}
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
               aria-label="More options"
-              className="rounded-full p-2 text-brand-burgundy hover:bg-brand-burgundy/10"
+              className="rounded-full p-2 text-app-ink hover:bg-app-primary/10"
             >
               <MoreHorizontal className="h-5 w-5" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onSelect={() => setReportOpen(true)}>Report</DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => setBlockOpen(true)} className="text-brand-terracotta">
+            <DropdownMenuItem onSelect={() => setBlockOpen(true)} className="text-app-warn">
               Block
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -194,7 +192,7 @@ function ChatScreen() {
 
       <section ref={scrollerRef} className="flex-1 overflow-y-auto px-4 py-4">
         {messages.length === 0 ? (
-          <div className="mx-auto max-w-sm rounded-lg border border-dashed border-brand-burgundy/20 bg-card/40 p-6 text-center text-sm text-brand-burgundy/60">
+          <div className="mx-auto max-w-sm rounded-lg border border-dashed border-app-ink/20 bg-card/40 p-6 text-center text-sm text-app-ink/60">
             Say hello with intention.
           </div>
         ) : (

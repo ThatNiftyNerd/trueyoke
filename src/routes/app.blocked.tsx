@@ -50,28 +50,28 @@ function BlockedScreen() {
   return (
     <section className="flex flex-col px-4 pt-6">
       <header className="mb-6">
-        <Link to="/app/profile" className="text-sm text-brand-burgundy underline">
+        <Link to="/app/profile" className="text-sm text-app-ink underline">
           ← Back to profile
         </Link>
-        <h1 className="mt-3 font-serif text-2xl text-brand-burgundy">Blocked users</h1>
+        <h1 className="mt-3 font-serif text-2xl text-app-ink">Blocked users</h1>
       </header>
 
       {error ? (
-        <p role="alert" className="mb-3 text-sm text-brand-terracotta">
+        <p role="alert" className="mb-3 text-sm text-app-warn">
           {error}
         </p>
       ) : null}
 
       {rows === null ? (
-        <p className="text-sm text-brand-burgundy/60">Loading…</p>
+        <p className="text-sm text-app-ink/60">Loading…</p>
       ) : rows.length === 0 ? (
-        <p className="text-sm text-brand-burgundy/60">You haven't blocked anyone.</p>
+        <p className="text-sm text-app-ink/60">You haven't blocked anyone.</p>
       ) : (
         <ul className="space-y-3">
           {rows.map((r) => (
             <li
               key={r.blockedId}
-              className="flex items-center gap-3 rounded-lg border border-brand-burgundy/15 bg-card p-3"
+              className="flex items-center gap-3 rounded-lg border border-app-ink/15 bg-card p-3"
             >
               {r.photoSignedUrl ? (
                 <img
@@ -80,17 +80,15 @@ function BlockedScreen() {
                   className="h-12 w-12 rounded-full object-cover"
                 />
               ) : (
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-sage/20 font-serif text-brand-burgundy/70">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-app-accent/20 font-serif text-app-ink/70">
                   {initialsOf(r.displayName)}
                 </div>
               )}
-              <span className="flex-1 text-sm font-medium text-brand-burgundy">
-                {r.displayName}
-              </span>
+              <span className="flex-1 text-sm font-medium text-app-ink">{r.displayName}</span>
               <Button
                 variant="outline"
                 size="sm"
-                className="border-brand-burgundy/30 text-brand-burgundy"
+                className="border-app-ink/30 text-app-ink"
                 disabled={busyId === r.blockedId}
                 onClick={() => void handleUnblock(r.blockedId)}
               >

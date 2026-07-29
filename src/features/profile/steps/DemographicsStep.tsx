@@ -71,10 +71,10 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
             }
             className="flex gap-6"
           >
-            <label className="flex items-center gap-2 text-sm text-brand-burgundy">
+            <label className="flex items-center gap-2 text-sm text-app-ink">
               <RadioGroupItem value="male" /> Male
             </label>
-            <label className="flex items-center gap-2 text-sm text-brand-burgundy">
+            <label className="flex items-center gap-2 text-sm text-app-ink">
               <RadioGroupItem value="female" /> Female
             </label>
           </RadioGroup>
@@ -115,9 +115,9 @@ function Field({
 }) {
   return (
     <div className="space-y-1">
-      <Label className="text-brand-burgundy">{label}</Label>
+      <Label className="text-app-ink">{label}</Label>
       {children}
-      {error ? <p className="text-xs text-brand-terracotta">{error}</p> : null}
+      {error ? <p className="text-xs text-app-warn">{error}</p> : null}
     </div>
   );
 }

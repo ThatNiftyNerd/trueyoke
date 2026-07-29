@@ -57,8 +57,8 @@ export function LifeVerseStep({ profile, onSaved, onNext, onBack, canGoBack }: P
       <StepShell onBack={onBack} canGoBack={canGoBack} submitting={isSubmitting} error={error}>
         <div className="space-y-3">
           <div className="flex items-baseline justify-between">
-            <Label className="text-brand-burgundy">Life verse</Label>
-            <span className="text-xs text-brand-burgundy/60">
+            <Label className="text-app-ink">Life verse</Label>
+            <span className="text-xs text-app-ink/60">
               {len}/{LIFE_VERSE_MAX}
             </span>
           </div>
@@ -85,7 +85,7 @@ export function LifeVerseStep({ profile, onSaved, onNext, onBack, canGoBack }: P
                 placeholder="John 3:16 — For God so loved the world…"
                 {...register("life_verse")}
               />
-              <p className="text-xs text-brand-burgundy/60">
+              <p className="text-xs text-app-ink/60">
                 Include the reference and, if you like, the verse text.
               </p>
             </>
@@ -99,7 +99,7 @@ export function LifeVerseStep({ profile, onSaved, onNext, onBack, canGoBack }: P
           )}
 
           {errors.life_verse?.message ? (
-            <p className="text-xs text-brand-terracotta">{errors.life_verse.message}</p>
+            <p className="text-xs text-app-warn">{errors.life_verse.message}</p>
           ) : null}
         </div>
       </StepShell>

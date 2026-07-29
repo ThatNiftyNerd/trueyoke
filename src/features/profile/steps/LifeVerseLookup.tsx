@@ -55,9 +55,7 @@ export function LifeVerseLookup({ onResolved }: Props) {
     fetchChapter(bookId, chapterNum, translation)
       .then((result) => alive && setChapterData(result))
       .catch(
-        (err) =>
-          alive &&
-          setError(err instanceof Error ? err.message : "Could not load chapter"),
+        (err) => alive && setError(err instanceof Error ? err.message : "Could not load chapter"),
       )
       .finally(() => {
         if (alive) setLoading(false);
@@ -161,9 +159,9 @@ export function LifeVerseLookup({ onResolved }: Props) {
 
       {showFallbackNotice ? (
         <p className="text-xs text-muted-foreground">
-          Live lookup for {translation} isn't available yet (it requires a licensed API key). Showing
-          the King James wording below — you can still tag it as {translation} and hand-edit the text
-          if you prefer that translation's phrasing.
+          Live lookup for {translation} isn't available yet (it requires a licensed API key).
+          Showing the King James wording below — you can still tag it as {translation} and hand-edit
+          the text if you prefer that translation's phrasing.
         </p>
       ) : null}
 

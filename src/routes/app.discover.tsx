@@ -109,13 +109,13 @@ function DiscoverScreen() {
   return (
     <section className="flex min-h-[calc(100dvh-6rem)] flex-col px-4 pt-6">
       <header className="mb-4 flex items-center justify-between">
-        <h1 className="font-serif text-2xl text-brand-burgundy">Discover</h1>
+        <h1 className="font-serif text-2xl text-app-ink">Discover</h1>
         <Button
           type="button"
           variant="outline"
           size="sm"
           disabled
-          className="border-brand-burgundy/30 text-brand-burgundy"
+          className="border-app-ink/30 text-app-ink"
         >
           {/* TODO: open distance / compatibility filter sheet */}
           Filters
@@ -124,7 +124,7 @@ function DiscoverScreen() {
 
       <div className="flex flex-1 flex-col items-center justify-center gap-3 pb-6">
         {loading ? (
-          <p className="text-sm text-brand-burgundy/60">Loading…</p>
+          <p className="text-sm text-app-ink/60">Loading…</p>
         ) : current ? (
           <>
             <CandidateCard
@@ -136,17 +136,15 @@ function DiscoverScreen() {
               busy={busy}
             />
             {error ? (
-              <p role="alert" className="max-w-sm text-center text-sm text-brand-terracotta">
+              <p role="alert" className="max-w-sm text-center text-sm text-app-warn">
                 {error}
               </p>
             ) : null}
           </>
         ) : (
-          <div className="w-full max-w-sm rounded-2xl border border-dashed border-brand-burgundy/30 bg-card/40 p-10 text-center">
-            <p className="font-serif text-lg text-brand-burgundy">No profiles yet</p>
-            <p className="mt-2 text-sm text-brand-burgundy/60">
-              Check back soon as new members join.
-            </p>
+          <div className="w-full max-w-sm rounded-2xl border border-dashed border-app-ink/30 bg-card/40 p-10 text-center">
+            <p className="font-serif text-lg text-app-ink">No profiles yet</p>
+            <p className="mt-2 text-sm text-app-ink/60">Check back soon as new members join.</p>
           </div>
         )}
       </div>
