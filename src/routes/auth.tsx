@@ -218,17 +218,13 @@ function AuthScreen() {
         <Button
           type="button"
           variant="outline"
+          disabled={submitting}
           className="border-app-ink/30 text-app-ink"
-          onClick={() => {
-            // TODO: Google sign-in requires a Capacitor-safe OAuth redirect
-            // (custom URL scheme) that hasn't been configured yet. Leaving
-            // this as an explicit notice rather than a silent no-op.
-            setError(null);
-            setNotice("Google sign-in isn't set up yet. Use email for now.");
-          }}
+          onClick={handleGoogle}
         >
           Continue with Google
         </Button>
+
       </form>
 
       <p className="mt-6 text-center text-sm text-app-ink/70">
