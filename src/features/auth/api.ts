@@ -4,8 +4,18 @@
  */
 import { supabase } from "@/lib/supabase";
 import type { Session } from "@supabase/supabase-js";
+import { Capacitor } from "@capacitor/core";
+import { Browser } from "@capacitor/browser";
 import type { AccountType } from "@/lib/constants";
 import { peekSession, restoreSession, setCachedSession } from "./session";
+
+/**
+ * Deep link the OAuth provider redirects back to on Android. Must match the
+ * intent-filter on MainActivity (scheme `app.trueyoke.mobile`, host
+ * `auth-callback`) and the Supabase Auth "Additional redirect URLs" list.
+ */
+export const NATIVE_OAUTH_REDIRECT_URL = "app.trueyoke.mobile://auth-callback";
+
 
 export interface SignUpInput {
   email: string;
