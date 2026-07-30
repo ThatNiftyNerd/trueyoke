@@ -8,9 +8,9 @@ import { MatchRow } from "@/features/matches/MatchRow";
 export const Route = createFileRoute("/app/matches")({
   head: () => ({
     meta: [
-      { title: "Matches — Yoked" },
+      { title: "Matches — TrueYoke" },
       { name: "description", content: "Your active and expired matches." },
-      { property: "og:title", content: "Matches — Yoked" },
+      { property: "og:title", content: "Matches — TrueYoke" },
       { property: "og:description", content: "Your active and expired matches." },
     ],
   }),

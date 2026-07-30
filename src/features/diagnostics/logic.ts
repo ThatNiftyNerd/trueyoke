@@ -86,7 +86,7 @@ export interface ReportContext {
  */
 export function buildReport(checks: readonly DiagnosticCheck[], context: ReportContext): string {
   const lines: string[] = [
-    "Yoked — connection diagnostics report",
+    "TrueYoke — connection diagnostics report",
     `Generated: ${new Date().toISOString()}`,
     `Last run: ${context.ranAt ?? "not run yet"}`,
     `Build mode: ${context.mode}${context.dev ? " (dev)" : ""}`,

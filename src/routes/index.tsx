@@ -4,17 +4,17 @@ import { redirectIfSignedIn } from "@/features/auth/guards";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Yoked — Faith-centered relationships" },
+      { title: "TrueYoke — Faith-centered relationships" },
       {
         name: "description",
         content:
-          "Yoked helps Church of Christ and conservative Christian singles pursue marriage-minded relationships with accountability.",
+          "TrueYoke helps Church of Christ and conservative Christian singles pursue marriage-minded relationships with accountability.",
       },
-      { property: "og:title", content: "Yoked — Faith-centered relationships" },
+      { property: "og:title", content: "TrueYoke — Faith-centered relationships" },
       {
         property: "og:description",
         content:
-          "Yoked helps Church of Christ and conservative Christian singles pursue marriage-minded relationships with accountability.",
+          "TrueYoke helps Church of Christ and conservative Christian singles pursue marriage-minded relationships with accountability.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -29,7 +29,7 @@ function Landing() {
   return (
     <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-8 bg-app-canvas px-6 text-center">
       <div className="max-w-sm space-y-3">
-        <p className="text-sm uppercase tracking-widest text-app-on-accent">Yoked</p>
+        <p className="text-sm uppercase tracking-widest text-app-on-accent">TrueYoke</p>
         <h1 className="text-4xl font-serif font-semibold text-app-ink">
           Do not be unequally yoked.
         </h1>

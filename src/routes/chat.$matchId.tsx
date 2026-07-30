@@ -30,9 +30,9 @@ import { formatReason, type ReportReason } from "@/features/safety/logic";
 export const Route = createFileRoute("/chat/$matchId")({
   head: () => ({
     meta: [
-      { title: "Chat — Yoked" },
+      { title: "Chat — TrueYoke" },
       { name: "description", content: "Conversation with your match." },
-      { property: "og:title", content: "Chat — Yoked" },
+      { property: "og:title", content: "Chat — TrueYoke" },
       { property: "og:description", content: "Conversation with your match." },
     ],
   }),
