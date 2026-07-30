@@ -116,7 +116,7 @@ export function PhotosStep({ onNext, onBack, canGoBack }: Props) {
               className="aspect-square overflow-hidden rounded-md border border-app-ink/10 bg-card/60"
             >
               {previews[p.id] ? (
-                <img src={previews[p.id]} alt="" className="h-full w-full object-cover" />
+                <img src={previews[p.id]} alt="Your uploaded profile photo" className="h-full w-full object-cover" />
               ) : (
                 <div className="h-full w-full animate-pulse bg-app-primary/5" />
               )}
