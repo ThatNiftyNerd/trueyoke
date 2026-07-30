@@ -1,6 +1,6 @@
 import { redirectIfSignedIn, signedInLandingPath } from "@/features/auth/guards";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,9 +8,13 @@ import { ACCOUNT_TYPES, type AccountType } from "@/lib/constants";
 import {
   signUpWithEmail,
   signInWithEmail,
+  signInWithGoogle,
   ensureProfileExists,
+  ensureOAuthProfile,
   getCurrentSession,
+  onAuthChange,
 } from "@/features/auth/api";
+
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -38,11 +42,43 @@ function AuthScreen() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
+  // A Google session can land here either from the web redirect back to
+  // /auth or from the native deep-link exchange. Either way, bootstrap the
+  // profile row once and then hand off to the shared landing rule.
+  useEffect(() => {
+    return onAuthChange((session) => {
+      if (!session) return;
+      void (async () => {
+        try {
+          await ensureOAuthProfile();
+          navigate({ to: await signedInLandingPath() });
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Sign-in failed. Please try again.");
+        } finally {
+          setSubmitting(false);
+        }
+      })();
+    });
+  }, [navigate]);
+
+  async function handleGoogle() {
+    setError(null);
+    setNotice(null);
+    setSubmitting(true);
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Google sign-in failed. Please try again.");
+      setSubmitting(false);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setNotice(null);
     setSubmitting(true);
+
     try {
       if (mode === "signup") {
         if (!displayName.trim()) {
