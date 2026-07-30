@@ -1,5 +1,5 @@
 /**
- * Yoked — "Grounded Growth" palette.
+ * TrueYoke — "Grounded Growth" palette.
  *
  * Single source of truth for brand colors. Every component MUST reference
  * these tokens (or the matching Tailwind utility classes: `bg-brand-burgundy`,

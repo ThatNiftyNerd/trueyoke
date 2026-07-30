@@ -1,5 +1,5 @@
 -- ============================================================================
--- YOKED MVP — Supabase / Postgres schema
+-- TRUEYOKE MVP — Supabase / Postgres schema
 -- Run in the Supabase SQL editor (or `supabase db push`).
 -- Implements the core-loop data model + Intentionality Circuit Breaker.
 -- ============================================================================

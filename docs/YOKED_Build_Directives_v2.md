@@ -1,4 +1,4 @@
-# YOKED — Build Directives v2 (Lovable + Capacitor + GitHub CI/CD)
+# TRUEYOKE — Build Directives v2 (Lovable + Capacitor + GitHub CI/CD)
 
 **Author:** Senior Mobile App Developer / Acting Agile PM
 **Supersedes:** `YOKED_72hr_Build_Plan.md` (Expo/EAS version)

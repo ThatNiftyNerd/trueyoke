@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Yoked</string>
-    <string name="title_activity_main">Yoked</string>
-    <string name="package_name">app.yoked.mobile</string>
-    <string name="custom_url_scheme">app.yoked.mobile</string>
-    <string name="app_description">Yoked is a product of House603 Digital Solutions.</string>
+    <string name="app_name">TrueYoke</string>
+    <string name="title_activity_main">TrueYoke</string>
+    <string name="package_name">app.trueyoke.mobile</string>
+    <string name="custom_url_scheme">app.trueyoke.mobile</string>
+    <string name="app_description">TrueYoke is a product of House603 Digital Solutions.</string>
 </resources>

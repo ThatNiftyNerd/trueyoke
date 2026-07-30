@@ -1,6 +1,6 @@
-# Yoked (MVP)
+# TrueYoke (MVP)
 
-Yoked is a purpose-built relationship and marriage-oriented mobile application for members of the
+TrueYoke is a purpose-built relationship and marriage-oriented mobile application for members of the
 Church of Christ and broader conservative Christian communities. It prioritizes spiritual alignment
 and "marriage-mindedness" over casual dating mechanics: verified profiles, a mandatory Life Verse and
 voice introduction, and an "Intentionality Circuit Breaker" (3-active-chat cap + 72h expiry) that keeps
@@ -13,8 +13,11 @@ Full product requirements: [`docs/YOKED prd.pdf`](docs/YOKED%20prd.pdf) and
 
 This repo is connected to Lovable's GitHub sync — every AI-generated change in the Lovable project
 lands here as a real commit. (Note: this repo was created by Lovable under the internal project label
-"Faithful Union" and was renamed to `yoked` to match the actual product name — the app itself is Yoked,
-always has been.)
+"Faithful Union" and was renamed to `yoked` to match the product name at the time.)
+
+Naming history, continued: the product was renamed again from **Yoked** to **TrueYoke** (final, locked in).
+All user-facing copy, the Capacitor `appId` (`app.trueyoke.mobile`), and the Android app name now read
+TrueYoke; older `YOKED_*` doc filenames and the archived `legacy/` prototype keep their historical names.
 
 ## Current build plan
 
