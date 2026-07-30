@@ -112,6 +112,8 @@ function ProfileScreen() {
       <p className="mt-8 text-center text-xs text-app-ink/60">
         TrueYoke is a product of House603 Digital Solutions.
       </p>
+
+      <CopyrightNotice className="mt-2 pb-4" />
     </section>
   );
 }

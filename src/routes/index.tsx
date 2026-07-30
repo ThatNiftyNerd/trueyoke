@@ -46,6 +46,8 @@ function Landing() {
           I already have an account
         </Link>
       </div>
+
+      <CopyrightNotice className="mt-4" />
     </main>
   );
 }
