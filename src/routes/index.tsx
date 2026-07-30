@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { redirectIfSignedIn } from "@/features/auth/guards";
+import { CopyrightNotice } from "@/components/app/CopyrightNotice";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -46,6 +47,8 @@ function Landing() {
           I already have an account
         </Link>
       </div>
+
+      <CopyrightNotice className="mt-4" />
     </main>
   );
 }

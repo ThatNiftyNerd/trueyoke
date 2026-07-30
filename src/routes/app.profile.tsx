@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DisplaySettingsPanel } from "@/components/app/DisplaySettingsPanel";
+import { CopyrightNotice } from "@/components/app/CopyrightNotice";
 
 import { isCurrentUserAdmin } from "@/features/profile/api";
 import { getCurrentSession, signOut } from "@/features/auth/api";
@@ -112,6 +113,8 @@ function ProfileScreen() {
       <p className="mt-8 text-center text-xs text-app-ink/60">
         TrueYoke is a product of House603 Digital Solutions.
       </p>
+
+      <CopyrightNotice className="mt-2 pb-4" />
     </section>
   );
 }
