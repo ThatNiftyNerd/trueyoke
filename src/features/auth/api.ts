@@ -117,3 +117,82 @@ export function onAuthChange(cb: (session: Session | null) => void): () => void 
   });
   return () => data.subscription.unsubscribe();
 }
+
+/**
+ * Google OAuth.
+ *
+ * The Supabase client is created with the default PKCE flow and
+ * `detectSessionInUrl: true` (see `src/lib/supabase.ts`), so:
+ *  - on web we simply hand the browser to the provider and supabase-js picks
+ *    the `?code=` back up on return;
+ *  - on native we must keep control of the browser (`skipBrowserRedirect`),
+ *    open the system browser ourselves, and complete the PKCE exchange from
+ *    the `appUrlOpen` deep link (see `features/auth/deep-link.ts`).
+ */
+export async function signInWithGoogle(): Promise<void> {
+  const native = Capacitor.isNativePlatform();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: native ? NATIVE_OAUTH_REDIRECT_URL : `${window.location.origin}/auth`,
+      skipBrowserRedirect: native,
+    },
+  });
+  if (error) throw error;
+  if (!data.url) throw new Error("Google sign-in is unavailable right now. Please try again.");
+
+  if (native) {
+    await Browser.open({ url: data.url });
+  } else {
+    window.location.href = data.url;
+  }
+}
+
+/**
+ * Completes the PKCE exchange for an OAuth redirect that came back through a
+ * native deep link. Returns true when a session was established.
+ */
+export async function completeOAuthRedirect(url: string): Promise<boolean> {
+  const parsed = new URL(url);
+  const code = parsed.searchParams.get("code");
+  if (!code) return false;
+
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+  if (error) throw error;
+  setCachedSession(data.session ?? null);
+  return Boolean(data.session);
+}
+
+/** Best-effort display name from the provider identity, never empty. */
+function displayNameFromSession(session: Session): string {
+  const meta = session.user.user_metadata as Record<string, unknown> | null;
+  const candidate =
+    (typeof meta?.full_name === "string" && meta.full_name) ||
+    (typeof meta?.name === "string" && meta.name) ||
+    session.user.email?.split("@")[0];
+  return (candidate || "Friend").trim().slice(0, 80);
+}
+
+/**
+ * First-time OAuth user bootstrap. Idempotent: inserts a minimal `profiles`
+ * row only when none exists, so sign-in is never blocked on the account-type
+ * choice — onboarding still collects that (and everything else).
+ */
+export async function ensureOAuthProfile(): Promise<void> {
+  const session = await getCurrentSession();
+  if (!session) return;
+
+  const { data: existing, error: selErr } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", session.user.id)
+    .maybeSingle();
+  if (selErr) throw new Error(selErr.message);
+  if (existing) return;
+
+  const { error: insErr } = await supabase.from("profiles").insert({
+    id: session.user.id,
+    display_name: displayNameFromSession(session),
+  });
+  if (insErr) throw new Error(insErr.message);
+}
