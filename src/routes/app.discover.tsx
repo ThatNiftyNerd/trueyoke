@@ -17,9 +17,9 @@ import { formatReason, type ReportReason } from "@/features/safety/logic";
 export const Route = createFileRoute("/app/discover")({
   head: () => ({
     meta: [
-      { title: "Discover — Yoked" },
+      { title: "Discover — TrueYoke" },
       { name: "description", content: "Discover marriage-minded members." },
-      { property: "og:title", content: "Discover — Yoked" },
+      { property: "og:title", content: "Discover — TrueYoke" },
       { property: "og:description", content: "Discover marriage-minded members." },
     ],
   }),

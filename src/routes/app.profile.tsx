@@ -9,10 +9,10 @@ import { getCurrentSession, signOut } from "@/features/auth/api";
 export const Route = createFileRoute("/app/profile")({
   head: () => ({
     meta: [
-      { title: "Your profile — Yoked" },
-      { name: "description", content: "View and edit your Yoked profile." },
-      { property: "og:title", content: "Your profile — Yoked" },
-      { property: "og:description", content: "View and edit your Yoked profile." },
+      { title: "Your profile — TrueYoke" },
+      { name: "description", content: "View and edit your TrueYoke profile." },
+      { property: "og:title", content: "Your profile — TrueYoke" },
+      { property: "og:description", content: "View and edit your TrueYoke profile." },
     ],
   }),
   component: ProfileScreen,
@@ -110,7 +110,7 @@ function ProfileScreen() {
       </div>
 
       <p className="mt-8 text-center text-xs text-app-ink/60">
-        Yoked is a product of House603 Digital Solutions.
+        TrueYoke is a product of House603 Digital Solutions.
       </p>
     </section>
   );

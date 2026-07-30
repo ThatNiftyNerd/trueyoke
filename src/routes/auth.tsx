@@ -15,10 +15,10 @@ import {
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Yoked" },
-      { name: "description", content: "Sign in or create your Yoked account." },
-      { property: "og:title", content: "Sign in — Yoked" },
-      { property: "og:description", content: "Sign in or create your Yoked account." },
+      { title: "Sign in — TrueYoke" },
+      { name: "description", content: "Sign in or create your TrueYoke account." },
+      { property: "og:title", content: "Sign in — TrueYoke" },
+      { property: "og:description", content: "Sign in or create your TrueYoke account." },
     ],
   }),
   beforeLoad: () => redirectIfSignedIn(),
@@ -86,7 +86,7 @@ function AuthScreen() {
   return (
     <main className="flex min-h-[100dvh] flex-col bg-app-canvas px-6 py-10">
       <header className="mb-8 text-center">
-        <p className="text-sm uppercase tracking-widest text-app-on-accent">Yoked</p>
+        <p className="text-sm uppercase tracking-widest text-app-on-accent">TrueYoke</p>
         <h1 className="mt-2 font-serif text-2xl text-app-ink">
           {mode === "signup" ? "Create your account" : "Welcome back"}
         </h1>
@@ -196,7 +196,7 @@ function AuthScreen() {
       </form>
 
       <p className="mt-6 text-center text-sm text-app-ink/70">
-        {mode === "signup" ? "Already have an account?" : "New to Yoked?"}{" "}
+        {mode === "signup" ? "Already have an account?" : "New to TrueYoke?"}{" "}
         <button
           type="button"
           className="underline"

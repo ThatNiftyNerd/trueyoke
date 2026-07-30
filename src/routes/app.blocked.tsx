@@ -7,12 +7,12 @@ import { initialsOf } from "@/features/discovery/logic";
 export const Route = createFileRoute("/app/blocked")({
   head: () => ({
     meta: [
-      { title: "Blocked users — Yoked" },
-      { name: "description", content: "Review and unblock people you've blocked on Yoked." },
-      { property: "og:title", content: "Blocked users — Yoked" },
+      { title: "Blocked users — TrueYoke" },
+      { name: "description", content: "Review and unblock people you've blocked on TrueYoke." },
+      { property: "og:title", content: "Blocked users — TrueYoke" },
       {
         property: "og:description",
-        content: "Review and unblock people you've blocked on Yoked.",
+        content: "Review and unblock people you've blocked on TrueYoke.",
       },
     ],
   }),

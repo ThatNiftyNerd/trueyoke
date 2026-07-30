@@ -12,9 +12,9 @@ import {
 export const Route = createFileRoute("/app/admin-review")({
   head: () => ({
     meta: [
-      { title: "ID review — Yoked" },
+      { title: "ID review — TrueYoke" },
       { name: "description", content: "Review pending ID verification submissions." },
-      { property: "og:title", content: "ID review — Yoked" },
+      { property: "og:title", content: "ID review — TrueYoke" },
       { property: "og:description", content: "Review pending ID verification submissions." },
     ],
   }),

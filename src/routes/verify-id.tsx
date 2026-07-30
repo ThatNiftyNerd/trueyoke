@@ -11,9 +11,9 @@ type IdStatus = Database["public"]["Enums"]["id_status"];
 export const Route = createFileRoute("/verify-id")({
   head: () => ({
     meta: [
-      { title: "Verify your ID — Yoked" },
+      { title: "Verify your ID — TrueYoke" },
       { name: "description", content: "Upload a government ID for verification." },
-      { property: "og:title", content: "Verify your ID — Yoked" },
+      { property: "og:title", content: "Verify your ID — TrueYoke" },
       { property: "og:description", content: "Upload a government ID for verification." },
     ],
   }),
@@ -65,7 +65,7 @@ function VerifyIdScreen() {
         </Link>
         <h1 className="mt-4 font-serif text-2xl text-app-ink">Verify your ID</h1>
         <p className="mt-1 text-sm text-app-ink/70">
-          A quick check keeps Yoked safe for the church.
+          A quick check keeps TrueYoke safe for the church.
         </p>
       </header>
 

@@ -9,12 +9,12 @@ import { buildReport, overallStatus, type DiagnosticCheck } from "@/features/dia
 export const Route = createFileRoute("/diagnostics")({
   head: () => ({
     meta: [
-      { title: "Connection diagnostics — Yoked" },
-      { name: "description", content: "Check that Yoked can reach its backend services." },
-      { property: "og:title", content: "Connection diagnostics — Yoked" },
+      { title: "Connection diagnostics — TrueYoke" },
+      { name: "description", content: "Check that TrueYoke can reach its backend services." },
+      { property: "og:title", content: "Connection diagnostics — TrueYoke" },
       {
         property: "og:description",
-        content: "Check that Yoked can reach its backend services.",
+        content: "Check that TrueYoke can reach its backend services.",
       },
     ],
   }),

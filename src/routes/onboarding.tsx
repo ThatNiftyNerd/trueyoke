@@ -13,10 +13,10 @@ import { VoiceIntroStep } from "@/features/profile/steps/VoiceIntroStep";
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
-      { title: "Build your profile — Yoked" },
-      { name: "description", content: "Walk through your Yoked profile step by step." },
-      { property: "og:title", content: "Build your profile — Yoked" },
-      { property: "og:description", content: "Walk through your Yoked profile step by step." },
+      { title: "Build your profile — TrueYoke" },
+      { name: "description", content: "Walk through your TrueYoke profile step by step." },
+      { property: "og:title", content: "Build your profile — TrueYoke" },
+      { property: "og:description", content: "Walk through your TrueYoke profile step by step." },
     ],
   }),
   beforeLoad: async () => {
