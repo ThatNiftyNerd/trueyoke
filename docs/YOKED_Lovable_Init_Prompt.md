@@ -5,7 +5,7 @@ This is Sprint 0 only: scaffolding, architecture, theme, and empty routed screen
 ---
 
 ```
-Initialize a new project called "Yoked" — a faith-centered relationship/marriage app for Church of Christ
+Initialize a new project called "TrueYoke" — a faith-centered relationship/marriage app for Church of Christ
 and conservative Christian communities. This first message is SCAFFOLDING ONLY: set up architecture, theme,
 navigation, and empty screens. Do not implement any feature logic yet — I will send small, scoped prompts
 for each feature afterward. Do not take creative liberties beyond what's specified below; if something is
