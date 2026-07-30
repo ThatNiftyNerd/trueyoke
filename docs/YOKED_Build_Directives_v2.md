@@ -175,7 +175,7 @@ Lives in `src/theme/colors.ts` and, since this is now a Tailwind project, also m
 
 ### Sprint 3 — Hours 50–68, Safety, Polish, Ship
 - Report/block flows, `expire-stale-chats` Edge Function deployed and scheduled.
-- Empty/loading/error states, palette QA against §5, app icon + splash from `Yoked official Logo.jpeg`.
+- Empty/loading/error states, palette QA against §5, app icon + splash from `TrueYoke official Logo.jpeg`.
 - Seed demo profiles. Final signed release `.apk` built via `android-build.yml`, installed and smoke-tested on a real Android 11 device.
 - **Gate:** signed APK installs clean, full loop runs end-to-end, CI is green on `main`.
 
