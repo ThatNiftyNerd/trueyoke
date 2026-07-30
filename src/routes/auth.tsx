@@ -15,7 +15,6 @@ import {
   onAuthChange,
 } from "@/features/auth/api";
 
-
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
@@ -224,7 +223,6 @@ function AuthScreen() {
         >
           Continue with Google
         </Button>
-
       </form>
 
       <p className="mt-6 text-center text-sm text-app-ink/70">

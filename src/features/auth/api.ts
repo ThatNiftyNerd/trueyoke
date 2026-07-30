@@ -16,7 +16,6 @@ import { peekSession, restoreSession, setCachedSession } from "./session";
  */
 export const NATIVE_OAUTH_REDIRECT_URL = "app.trueyoke.mobile://auth-callback";
 
-
 export interface SignUpInput {
   email: string;
   password: string;

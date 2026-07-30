@@ -18,7 +18,6 @@ cssHasPseudo(document);
 // Catches the native OAuth redirect (no-op on web).
 startOAuthDeepLinkListener();
 
-
 const router = getRouter();
 
 const rootEl = document.getElementById("root");
