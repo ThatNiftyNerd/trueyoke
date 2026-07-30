@@ -1,5 +1,5 @@
 /**
- * Hand-typed row shapes for the Yoked schema.
+ * Hand-typed row shapes for the TrueYoke schema.
  *
  * These mirror the hand-designed schema described in the project brief. Once
  * the schema is applied to the database, regenerate `src/integrations/supabase/types.ts`

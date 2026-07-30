@@ -1,4 +1,4 @@
-package app.yoked.mobile;
+package app.trueyoke.mobile;
 
 import com.getcapacitor.BridgeActivity;
 
