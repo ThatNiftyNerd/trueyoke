@@ -6,6 +6,7 @@ import cssHasPseudo from "css-has-pseudo/browser";
 import "./styles.css";
 import { getRouter } from "./router";
 import { SessionGate } from "./features/auth/SessionGate";
+import { startOAuthDeepLinkListener } from "./features/auth/deep-link";
 import { ThemeProvider } from "./theme/ThemeProvider";
 
 // :has() can't be polyfilled at build time (it's a runtime selector-matching
@@ -13,6 +14,10 @@ import { ThemeProvider } from "./theme/ThemeProvider";
 // (Chrome 105+) and only does work on older engines (relevant down to the
 // Android 11 floor, see postcss.config.js).
 cssHasPseudo(document);
+
+// Catches the native OAuth redirect (no-op on web).
+startOAuthDeepLinkListener();
+
 
 const router = getRouter();
 
