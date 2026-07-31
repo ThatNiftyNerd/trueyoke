@@ -44,14 +44,14 @@ function PrivacyScreen() {
         <p className="mt-6 text-sm leading-relaxed text-app-ink/80">
           TrueYoke is operated by House603 Digital Solutions (&ldquo;House603,&rdquo;
           &ldquo;we,&rdquo; &ldquo;us&rdquo;). This policy explains what personal data TrueYoke
-          collects, why, how it is protected, and the rights you have over it under the Nigeria
-          Data Protection Act, 2023 (&ldquo;NDPA&rdquo;).
+          collects, why, how it is protected, and the rights you have over it under the Nigeria Data
+          Protection Act, 2023 (&ldquo;NDPA&rdquo;).
         </p>
 
         <Section title="1. Who we are">
           <p>
-            House603 Digital Solutions is the data controller for TrueYoke. For any privacy
-            question or to exercise a right described below, contact our Data Protection Officer at
+            House603 Digital Solutions is the data controller for TrueYoke. For any privacy question
+            or to exercise a right described below, contact our Data Protection Officer at
             privacy@trueyoke.app.
           </p>
         </Section>

@@ -43,7 +43,6 @@ export interface OAuthConsentInput {
   privacyPolicyVersion: string;
 }
 
-
 export async function getCurrentUserId(): Promise<string | null> {
   // Wait for the persisted session to be rehydrated before hitting the auth
   // server, otherwise a cold start sends an unauthenticated request.
@@ -78,7 +77,6 @@ export async function signUpWithEmail(input: SignUpInput): Promise<void> {
     });
     if (upsertErr) throw new Error(upsertErr.message);
   }
-
 }
 
 export async function signInWithEmail(input: SignInInput): Promise<void> {
@@ -239,4 +237,3 @@ export async function deleteOwnAccount(): Promise<void> {
   if (payload?.error) throw new Error(payload.error);
   await signOut();
 }
-

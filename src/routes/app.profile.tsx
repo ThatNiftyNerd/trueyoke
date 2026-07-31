@@ -173,8 +173,8 @@ function ProfileScreen() {
             <AlertDialogHeader>
               <AlertDialogTitle>Delete your account?</AlertDialogTitle>
               <AlertDialogDescription>
-                This permanently deletes your profile, photos, matches, and messages. This can&apos;t
-                be undone.
+                This permanently deletes your profile, photos, matches, and messages. This
+                can&apos;t be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
