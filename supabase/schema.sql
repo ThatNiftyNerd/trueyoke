@@ -52,6 +52,10 @@ create table public.profiles (
   -- mentor-only (deferred UI, schema forward-compatible)
   mentor_role          text,                 -- elder | preacher | deacon
 
+  -- NDPA 2023 consent (explicit consent captured before profile creation)
+  privacy_accepted_at    timestamptz,
+  privacy_policy_version text,
+
   created_at           timestamptz not null default now(),
   updated_at           timestamptz not null default now()
 );
@@ -314,6 +318,11 @@ create policy "profiles_read"   on public.profiles for select to authenticated
   using (id = auth.uid() or not public.is_blocked(id));
 create policy "profiles_insert" on public.profiles for insert to authenticated with check (auth.uid() = id);
 create policy "profiles_update" on public.profiles for update to authenticated using (auth.uid() = id);
+-- ...but you must still be able to see the profiles YOU blocked, so the
+-- "Blocked users" screen can list them (is_blocked() is symmetric and would
+-- otherwise hide them from you too).
+create policy "profiles_read_own_blocklist" on public.profiles for select to authenticated
+  using (exists (select 1 from public.blocks b where b.blocker_id = auth.uid() and b.blocked_id = profiles.id));
 
 -- is_admin / church_verified must never be client-settable (only via direct
 -- SQL/dashboard as postgres/service_role, which bypasses grants entirely).
@@ -329,18 +338,24 @@ grant insert (
   id, account_type, display_name, age, gender, location_label, latitude, longitude,
   blood_group, genotype, nationality, qualification, occupation, bio,
   marriage_intentions, church_affiliation, congregation, spirituality_markers,
-  life_verse, voice_intro_url, mentor_role, created_at, updated_at, profile_complete
+  life_verse, voice_intro_url, mentor_role, created_at, updated_at, profile_complete,
+  privacy_accepted_at, privacy_policy_version
 ) on public.profiles to authenticated, anon;
 
 grant update (
   id, account_type, display_name, age, gender, location_label, latitude, longitude,
   blood_group, genotype, nationality, qualification, occupation, bio,
   marriage_intentions, church_affiliation, congregation, spirituality_markers,
-  life_verse, voice_intro_url, mentor_role, created_at, updated_at, profile_complete
+  life_verse, voice_intro_url, mentor_role, created_at, updated_at, profile_complete,
+  privacy_accepted_at, privacy_policy_version
 ) on public.profiles to authenticated, anon;
 
--- photos: read all (needed in discovery), write only your own.
-create policy "photos_read"   on public.photos for select to authenticated using (true);
+-- photos: readable by any authenticated user EXCEPT for a profile involved in
+-- a block with you (mirrors profiles_read), write only your own.
+create policy "photos_read"   on public.photos for select to authenticated
+  using (profile_id = auth.uid() or not public.is_blocked(profile_id));
+create policy "photos_read_own_blocklist" on public.photos for select to authenticated
+  using (exists (select 1 from public.blocks b where b.blocker_id = auth.uid() and b.blocked_id = photos.profile_id));
 create policy "photos_write"  on public.photos for all    to authenticated
   using (exists (select 1 from public.profiles p where p.id = photos.profile_id and p.id = auth.uid()))
   with check (exists (select 1 from public.profiles p where p.id = photos.profile_id and p.id = auth.uid()));
@@ -374,6 +389,8 @@ create policy "messages_send" on public.messages for insert to authenticated
 -- reports / blocks: insert-only by the acting user; read only your own.
 create policy "reports_insert" on public.reports for insert to authenticated with check (auth.uid() = reporter_id);
 create policy "reports_read"   on public.reports for select to authenticated using (auth.uid() = reporter_id);
+-- moderators read every report for the safety queue.
+create policy "reports_admin_read" on public.reports for select to authenticated using (public.is_admin());
 create policy "blocks_owner"   on public.blocks  for all    to authenticated
   using (auth.uid() = blocker_id) with check (auth.uid() = blocker_id);
 
@@ -393,6 +410,11 @@ create policy "id_verifications_admin_update" on public.id_verifications
 -- vouchers: the match user manages their own voucher requests.
 create policy "vouchers_owner" on public.vouchers for all to authenticated
   using (auth.uid() = match_user_id) with check (auth.uid() = match_user_id);
+-- the nominated mentor reads and answers the voucher request addressed to them.
+create policy "vouchers_mentor_read" on public.vouchers for select to authenticated
+  using (mentor_id = auth.uid());
+create policy "vouchers_mentor_update" on public.vouchers for update to authenticated
+  using (mentor_id = auth.uid()) with check (mentor_id = auth.uid());
 
 -- ============================================================================
 -- STORAGE — photo and voice-intro buckets (PRD 3.2 / 3.4)
@@ -408,10 +430,25 @@ values
   ('voice-intros', 'voice-intros', false, 3145728, array['audio/webm','audio/mp4','audio/mpeg','audio/wav','audio/ogg'])
 on conflict (id) do nothing;
 
--- photos: any authenticated user may read (needed for discovery cards),
--- but a user may only write/modify/delete inside their own folder.
+-- photos: any authenticated user may read (needed for discovery cards) unless
+-- a block exists in either direction, and a user may only write/modify/delete
+-- inside their own folder.
 create policy "photos_storage_select" on storage.objects for select to authenticated
-  using (bucket_id = 'photos');
+  using (
+    bucket_id = 'photos'
+    and (
+      (storage.foldername(name))[1] = auth.uid()::text
+      or not public.is_blocked(((storage.foldername(name))[1])::uuid)
+    ));
+
+create policy "photos_storage_select_own_blocklist" on storage.objects for select to authenticated
+  using (
+    bucket_id = 'photos'
+    and exists (
+      select 1 from public.blocks b
+      where b.blocker_id = auth.uid()
+        and b.blocked_id = ((storage.foldername(objects.name))[1])::uuid
+    ));
 
 create policy "photos_storage_insert_own" on storage.objects for insert to authenticated
   with check (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text);
@@ -426,7 +463,12 @@ create policy "photos_storage_delete_own" on storage.objects for delete to authe
 -- voice-intros: same pattern — readable by any authenticated user, writable
 -- only within the uploader's own folder.
 create policy "voice_storage_select" on storage.objects for select to authenticated
-  using (bucket_id = 'voice-intros');
+  using (
+    bucket_id = 'voice-intros'
+    and (
+      (storage.foldername(name))[1] = auth.uid()::text
+      or not public.is_blocked(((storage.foldername(name))[1])::uuid)
+    ));
 
 create policy "voice_storage_insert_own" on storage.objects for insert to authenticated
   with check (bucket_id = 'voice-intros' and (storage.foldername(name))[1] = auth.uid()::text);
@@ -482,3 +524,14 @@ create policy "id_doc_storage_delete_own" on storage.objects for delete to authe
 -- actual image.
 create policy "id_doc_storage_select_admin" on storage.objects for select to authenticated
   using (bucket_id = 'id-verification' and public.is_admin());
+
+-- ============================================================================
+-- EDGE FUNCTIONS
+-- ============================================================================
+-- expire-stale-chats : 72h Intentionality Circuit Breaker sweep (see above).
+-- delete-account     : NDPA right to erasure. Authenticates the caller from
+--                      their JWT, clears every object under `{auth.uid()}/`
+--                      in the photos / voice-intros / id-verification buckets
+--                      (Storage is not covered by DB cascade), then calls
+--                      auth.admin.deleteUser(), which cascades every public
+--                      table row via the FK on auth.users.

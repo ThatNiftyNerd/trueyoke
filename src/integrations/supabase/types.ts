@@ -234,6 +234,8 @@ export type Database = {
           mentor_role: string | null
           nationality: string | null
           occupation: string | null
+          privacy_accepted_at: string | null
+          privacy_policy_version: string | null
           profile_complete: boolean | null
           qualification: string | null
           spirituality_markers: string[] | null
@@ -262,6 +264,8 @@ export type Database = {
           mentor_role?: string | null
           nationality?: string | null
           occupation?: string | null
+          privacy_accepted_at?: string | null
+          privacy_policy_version?: string | null
           profile_complete?: boolean | null
           qualification?: string | null
           spirituality_markers?: string[] | null
@@ -290,6 +294,8 @@ export type Database = {
           mentor_role?: string | null
           nationality?: string | null
           occupation?: string | null
+          privacy_accepted_at?: string | null
+          privacy_policy_version?: string | null
           profile_complete?: boolean | null
           qualification?: string | null
           spirituality_markers?: string[] | null

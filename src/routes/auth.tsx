@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ACCOUNT_TYPES, type AccountType } from "@/lib/constants";
+import { PrivacyConsentCheckbox } from "@/components/app/PrivacyConsentCheckbox";
 import {
+  PRIVACY_POLICY_VERSION,
+  hasProfileRow,
   signUpWithEmail,
   signInWithEmail,
   signInWithGoogle,
@@ -40,6 +43,11 @@ function AuthScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  // Google has no form step, so a brand-new OAuth user (session but no
+  // profiles row) gets a one-time consent interstitial before bootstrap.
+  const [oauthConsentPending, setOauthConsentPending] = useState(false);
+  const [oauthConsent, setOauthConsent] = useState(false);
 
   // A Google session can land here either from the web redirect back to
   // /auth or from the native deep-link exchange. Either way, bootstrap the
@@ -49,8 +57,12 @@ function AuthScreen() {
       if (!session) return;
       void (async () => {
         try {
-          await ensureOAuthProfile();
-          navigate({ to: await signedInLandingPath() });
+          // Returning users already consented — only ask brand-new ones.
+          if (await hasProfileRow()) {
+            navigate({ to: await signedInLandingPath() });
+            return;
+          }
+          setOauthConsentPending(true);
         } catch (err) {
           setError(err instanceof Error ? err.message : "Sign-in failed. Please try again.");
         } finally {
@@ -59,6 +71,23 @@ function AuthScreen() {
       })();
     });
   }, [navigate]);
+
+  async function handleOAuthConsent() {
+    setError(null);
+    setSubmitting(true);
+    try {
+      await ensureOAuthProfile({
+        privacyAcceptedAt: new Date().toISOString(),
+        privacyPolicyVersion: PRIVACY_POLICY_VERSION,
+      });
+      setOauthConsentPending(false);
+      navigate({ to: await signedInLandingPath() });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Sign-in failed. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   async function handleGoogle() {
     setError(null);
@@ -83,11 +112,16 @@ function AuthScreen() {
         if (!displayName.trim()) {
           throw new Error("Please enter a display name.");
         }
+        if (!privacyAccepted) {
+          throw new Error("Please accept the Privacy Policy to continue.");
+        }
         await signUpWithEmail({
           email,
           password,
           accountType,
           displayName: displayName.trim(),
+          privacyAcceptedAt: new Date().toISOString(),
+          privacyPolicyVersion: PRIVACY_POLICY_VERSION,
         });
         const session = await getCurrentSession();
         if (session) {
@@ -116,6 +150,43 @@ function AuthScreen() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (oauthConsentPending) {
+    return (
+      <main className="flex min-h-[100dvh] flex-col justify-center bg-app-canvas px-6 py-10">
+        <div className="mx-auto w-full max-w-sm">
+          <h1 className="font-serif text-2xl text-app-ink">One last thing</h1>
+          <p className="mt-2 text-sm text-app-ink/70">
+            Before we create your TrueYoke profile, please review and accept how we handle your
+            data.
+          </p>
+          <div className="mt-6">
+            <PrivacyConsentCheckbox
+              id="privacy-consent-oauth"
+              checked={oauthConsent}
+              onCheckedChange={setOauthConsent}
+              disabled={submitting}
+            />
+          </div>
+          {error && (
+            <p
+              role="alert"
+              className="mt-4 rounded-md border border-app-warn/40 bg-app-warn/10 px-3 py-2 text-sm text-app-warn"
+            >
+              {error}
+            </p>
+          )}
+          <Button
+            className="mt-6 w-full bg-app-primary text-app-on-primary hover:bg-app-primary/90"
+            disabled={submitting || !oauthConsent}
+            onClick={handleOAuthConsent}
+          >
+            {submitting ? "Please wait…" : "Agree and continue"}
+          </Button>
+        </div>
+      </main>
+    );
   }
 
   return (
@@ -186,6 +257,14 @@ function AuthScreen() {
           />
         </div>
 
+        {mode === "signup" && (
+          <PrivacyConsentCheckbox
+            checked={privacyAccepted}
+            onCheckedChange={setPrivacyAccepted}
+            disabled={submitting}
+          />
+        )}
+
         {error && (
           <p
             role="alert"
@@ -202,7 +281,7 @@ function AuthScreen() {
 
         <Button
           type="submit"
-          disabled={submitting}
+          disabled={submitting || (mode === "signup" && !privacyAccepted)}
           className="bg-app-primary text-app-on-primary hover:bg-app-primary/90"
         >
           {submitting ? "Please wait…" : mode === "signup" ? "Create account" : "Sign in"}

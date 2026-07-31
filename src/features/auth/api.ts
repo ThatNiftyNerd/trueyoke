@@ -16,11 +16,16 @@ import { peekSession, restoreSession, setCachedSession } from "./session";
  */
 export const NATIVE_OAUTH_REDIRECT_URL = "app.trueyoke.mobile://auth-callback";
 
+/** Version stamped on `profiles.privacy_policy_version` at consent time. */
+export const PRIVACY_POLICY_VERSION = "v1";
+
 export interface SignUpInput {
   email: string;
   password: string;
   accountType: AccountType;
   displayName: string;
+  privacyAcceptedAt: string;
+  privacyPolicyVersion: string;
 }
 
 export interface SignInInput {
@@ -31,6 +36,11 @@ export interface SignInInput {
 export interface EnsureProfileInput {
   accountType: AccountType;
   displayName: string;
+}
+
+export interface OAuthConsentInput {
+  privacyAcceptedAt: string;
+  privacyPolicyVersion: string;
 }
 
 export async function getCurrentUserId(): Promise<string | null> {
@@ -62,6 +72,8 @@ export async function signUpWithEmail(input: SignUpInput): Promise<void> {
       id: data.user.id,
       account_type: input.accountType,
       display_name: input.displayName,
+      privacy_accepted_at: input.privacyAcceptedAt,
+      privacy_policy_version: input.privacyPolicyVersion,
     });
     if (upsertErr) throw new Error(upsertErr.message);
   }
@@ -172,12 +184,26 @@ function displayNameFromSession(session: Session): string {
   return (candidate || "Friend").trim().slice(0, 80);
 }
 
+/** True when a `profiles` row already exists for the current session. */
+export async function hasProfileRow(): Promise<boolean> {
+  const session = await getCurrentSession();
+  if (!session) return false;
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", session.user.id)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return Boolean(data);
+}
+
 /**
  * First-time OAuth user bootstrap. Idempotent: inserts a minimal `profiles`
  * row only when none exists, so sign-in is never blocked on the account-type
- * choice — onboarding still collects that (and everything else).
+ * choice — onboarding still collects that (and everything else). The NDPA
+ * consent stamp is supplied by the one-time interstitial on `/auth`.
  */
-export async function ensureOAuthProfile(): Promise<void> {
+export async function ensureOAuthProfile(consent: OAuthConsentInput): Promise<void> {
   const session = await getCurrentSession();
   if (!session) return;
 
@@ -192,6 +218,22 @@ export async function ensureOAuthProfile(): Promise<void> {
   const { error: insErr } = await supabase.from("profiles").insert({
     id: session.user.id,
     display_name: displayNameFromSession(session),
+    privacy_accepted_at: consent.privacyAcceptedAt,
+    privacy_policy_version: consent.privacyPolicyVersion,
   });
   if (insErr) throw new Error(insErr.message);
+}
+
+/**
+ * NDPA right to erasure. The Edge Function always acts on the authenticated
+ * caller — no id is sent — then we drop the local session.
+ */
+export async function deleteOwnAccount(): Promise<void> {
+  const { data, error } = await supabase.functions.invoke("delete-account", {
+    method: "POST",
+  });
+  if (error) throw new Error(error.message);
+  const payload = data as { ok?: boolean; error?: string } | null;
+  if (payload?.error) throw new Error(payload.error);
+  await signOut();
 }

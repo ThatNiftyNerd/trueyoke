@@ -311,3 +311,96 @@ export async function reviewIdVerification(
     .eq("id", verificationId);
   if (error) throw new Error(error.message);
 }
+
+// -------- Data export (NDPA right of access) -------------------------------
+
+/**
+ * Gathers everything the caller's own account holds and serializes it as
+ * pretty-printed JSON. Every read goes through the same RLS-scoped client the
+ * app uses, so nothing outside the caller's own data can be returned; match
+ * rows are trimmed to the caller's side only (no counterpart profile fields).
+ */
+export async function exportOwnData(): Promise<string> {
+  const userId = await getCurrentUserId();
+  if (!userId) throw new Error("Not authenticated");
+
+  const [profileRes, photosRes, idRes, matchesRes, blocksRes, reportsRes] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+    supabase.from("photos").select("*").eq("profile_id", userId).order("position"),
+    supabase
+      .from("id_verifications")
+      .select("id, status, rejection_reason, created_at, reviewed_at")
+      .eq("profile_id", userId)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("matches")
+      .select("id, user_a_id, user_b_id, status, last_activity_at, created_at")
+      .or(`user_a_id.eq.${userId},user_b_id.eq.${userId}`),
+    supabase.from("blocks").select("*").eq("blocker_id", userId),
+    supabase.from("reports").select("*").eq("reporter_id", userId),
+  ]);
+
+  for (const res of [profileRes, photosRes, idRes, matchesRes, blocksRes, reportsRes]) {
+    if (res.error) throw new Error(res.error.message);
+  }
+
+  const profile = profileRes.data as Tables<"profiles"> | null;
+  const photoRows = photosRes.data ?? [];
+  const matchRows = matchesRes.data ?? [];
+
+  const photos = await Promise.all(
+    photoRows.map(async (p) => ({
+      id: p.id,
+      position: p.position,
+      storage_path: p.storage_path,
+      created_at: p.created_at,
+      signed_url: await getPhotoSignedUrl(p.storage_path),
+    })),
+  );
+
+  const voiceIntro = profile?.voice_intro_url
+    ? {
+        storage_path: profile.voice_intro_url,
+        signed_url: await getVoiceIntroSignedUrl(profile.voice_intro_url),
+      }
+    : null;
+
+  const matchIds = matchRows.map((m) => m.id);
+  let messages: Array<{
+    id: string;
+    match_id: string;
+    sender_id: string;
+    body: string;
+    created_at: string;
+  }> = [];
+  if (matchIds.length > 0) {
+    const { data, error } = await supabase
+      .from("messages")
+      .select("id, match_id, sender_id, body, created_at")
+      .in("match_id", matchIds)
+      .order("created_at", { ascending: true });
+    if (error) throw new Error(error.message);
+    messages = data ?? [];
+  }
+
+  const payload = {
+    exported_at: new Date().toISOString(),
+    account_id: userId,
+    profile,
+    photos,
+    voice_intro: voiceIntro,
+    id_verifications: idRes.data ?? [],
+    matches: matchRows.map((m) => ({
+      id: m.id,
+      counterpart_id: m.user_a_id === userId ? m.user_b_id : m.user_a_id,
+      status: m.status,
+      last_activity_at: m.last_activity_at,
+      created_at: m.created_at,
+    })),
+    messages,
+    blocks: blocksRes.data ?? [],
+    reports_filed: reportsRes.data ?? [],
+  };
+
+  return JSON.stringify(payload, null, 2);
+}
