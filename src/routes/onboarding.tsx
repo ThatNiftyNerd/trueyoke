@@ -70,6 +70,10 @@ function OnboardingWizard() {
     }
     // Last step just saved — refetch to read the DB-generated profile_complete.
     const fresh = await getOnboardingProfile();
+    if (!fresh) {
+      navigate({ to: "/auth", replace: true });
+      return;
+    }
     setProfile(fresh);
     if (fresh?.profile_complete) {
       navigate({ to: "/app/discover" });
