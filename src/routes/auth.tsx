@@ -27,7 +27,9 @@ export const Route = createFileRoute("/auth")({
       { property: "og:description", content: "Sign in or create your TrueYoke account." },
     ],
   }),
-  beforeLoad: () => redirectIfSignedIn(),
+  // A signed-in user with no profile must be allowed to render this route:
+  // AuthScreen owns the required consent interstitial and profile bootstrap.
+  beforeLoad: () => redirectIfSignedIn({ allowAuth: true }),
   component: AuthScreen,
 });
 

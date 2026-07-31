@@ -9,10 +9,16 @@ import { redirect } from "@tanstack/react-router";
 import { getCurrentSession } from "./api";
 import { getOwnProfile } from "@/features/profile/api";
 
-/** Where a signed-in user belongs, based on how far onboarding got. */
-export async function signedInLandingPath(): Promise<"/app/discover" | "/onboarding"> {
+/**
+ * Where a signed-in user belongs, including the pre-profile consent state.
+ * A missing row is deliberately different from an incomplete row: `/auth`
+ * owns consent and profile bootstrap, while `/onboarding` edits an existing
+ * profile.
+ */
+export async function signedInLandingPath(): Promise<"/auth" | "/app/discover" | "/onboarding"> {
   const profile = await getOwnProfile();
-  return profile?.profile_complete ? "/app/discover" : "/onboarding";
+  if (!profile) return "/auth";
+  return profile.profile_complete ? "/app/discover" : "/onboarding";
 }
 
 /**
@@ -31,7 +37,10 @@ export async function requireAuth(): Promise<void> {
 export async function requireCompleteProfile(): Promise<void> {
   await requireAuth();
   const profile = await getOwnProfile();
-  if (!profile || !profile.profile_complete) {
+  if (!profile) {
+    throw redirect({ to: "/auth" });
+  }
+  if (!profile.profile_complete) {
     throw redirect({ to: "/onboarding" });
   }
 }
@@ -40,10 +49,14 @@ export async function requireCompleteProfile(): Promise<void> {
  * Public entry points (welcome screen, auth screen, onboarding). Signed-in
  * users are moved straight along: to Discovery once onboarding is done.
  */
-export async function redirectIfSignedIn(options?: { allowOnboarding?: boolean }): Promise<void> {
+export async function redirectIfSignedIn(options?: {
+  allowAuth?: boolean;
+  allowOnboarding?: boolean;
+}): Promise<void> {
   const session = await getCurrentSession();
   if (!session) return;
   const target = await signedInLandingPath();
+  if (options?.allowAuth && target === "/auth") return;
   if (options?.allowOnboarding && target === "/onboarding") return;
   throw redirect({ to: target });
 }
