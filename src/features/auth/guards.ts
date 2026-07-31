@@ -15,9 +15,7 @@ import { getOwnProfile } from "@/features/profile/api";
  * owns consent and profile bootstrap, while `/onboarding` edits an existing
  * profile.
  */
-export async function signedInLandingPath(): Promise<
-  "/auth" | "/app/discover" | "/onboarding"
-> {
+export async function signedInLandingPath(): Promise<"/auth" | "/app/discover" | "/onboarding"> {
   const profile = await getOwnProfile();
   if (!profile) return "/auth";
   return profile.profile_complete ? "/app/discover" : "/onboarding";
