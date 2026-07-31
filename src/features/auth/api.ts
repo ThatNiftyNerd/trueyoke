@@ -73,9 +73,12 @@ export async function signUpWithEmail(input: SignUpInput): Promise<void> {
       id: data.user.id,
       account_type: input.accountType,
       display_name: input.displayName,
+      privacy_accepted_at: input.privacyAcceptedAt,
+      privacy_policy_version: input.privacyPolicyVersion,
     });
     if (upsertErr) throw new Error(upsertErr.message);
   }
+
 }
 
 export async function signInWithEmail(input: SignInInput): Promise<void> {
