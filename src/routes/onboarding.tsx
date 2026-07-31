@@ -35,16 +35,28 @@ function OnboardingWizard() {
   const [finishError, setFinishError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       try {
         const p = await getOnboardingProfile();
+        if (cancelled) return;
+        if (!p) {
+          // Signed in but no `profiles` row yet — the consent step never ran.
+          // /auth owns that flow (consent interstitial -> ensureOAuthProfile),
+          // so send them there instead of spinning forever.
+          navigate({ to: "/auth", replace: true });
+          return;
+        }
         setProfile(p);
         setIndex(firstIncompleteStepIndex(p));
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     })();
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate]);
 
   const applyPatch = (patch: Partial<OnboardingProfile>) => {
     setProfile((prev) => (prev ? { ...prev, ...patch } : prev));
