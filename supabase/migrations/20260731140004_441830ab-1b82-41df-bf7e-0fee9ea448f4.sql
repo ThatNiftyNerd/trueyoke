@@ -1,0 +1,2 @@
+grant insert (privacy_accepted_at, privacy_policy_version) on public.profiles to authenticated, anon;
+grant update (privacy_accepted_at, privacy_policy_version) on public.profiles to authenticated, anon;
