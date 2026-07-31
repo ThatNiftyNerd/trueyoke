@@ -89,10 +89,12 @@ function PrivacyScreen() {
 
         <Section title="4. Who processes it on our behalf">
           <p>
-            TrueYoke&apos;s database, authentication, and file storage are hosted by Supabase, our
-            infrastructure processor. Supabase may process and store data outside Nigeria. Where
-            this occurs, we rely on the processor&apos;s contractual data-protection commitments as
-            the transfer safeguard required under the NDPA.
+            TrueYoke's database, authentication, and file storage are hosted by Supabase, our
+            infrastructure processor, on servers located in the European Union (AWS eu-north-1,
+            Stockholm, Sweden). Because this is outside Nigeria, the transfer is subject to the
+            NDPA's cross-border transfer rules. We rely on our processor's contractual
+            data-protection commitments as the transfer safeguard while we complete a formal
+            adequacy assessment and documentation for this transfer.
           </p>
         </Section>
 
