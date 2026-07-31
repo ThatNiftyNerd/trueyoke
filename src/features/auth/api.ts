@@ -16,11 +16,16 @@ import { peekSession, restoreSession, setCachedSession } from "./session";
  */
 export const NATIVE_OAUTH_REDIRECT_URL = "app.trueyoke.mobile://auth-callback";
 
+/** Version stamped on `profiles.privacy_policy_version` at consent time. */
+export const PRIVACY_POLICY_VERSION = "v1";
+
 export interface SignUpInput {
   email: string;
   password: string;
   accountType: AccountType;
   displayName: string;
+  privacyAcceptedAt: string;
+  privacyPolicyVersion: string;
 }
 
 export interface SignInInput {
@@ -32,6 +37,12 @@ export interface EnsureProfileInput {
   accountType: AccountType;
   displayName: string;
 }
+
+export interface OAuthConsentInput {
+  privacyAcceptedAt: string;
+  privacyPolicyVersion: string;
+}
+
 
 export async function getCurrentUserId(): Promise<string | null> {
   // Wait for the persisted session to be rehydrated before hitting the auth
