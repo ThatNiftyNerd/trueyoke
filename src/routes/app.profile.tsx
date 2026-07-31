@@ -4,8 +4,21 @@ import { Button } from "@/components/ui/button";
 import { DisplaySettingsPanel } from "@/components/app/DisplaySettingsPanel";
 import { CopyrightNotice } from "@/components/app/CopyrightNotice";
 
-import { isCurrentUserAdmin } from "@/features/profile/api";
-import { getCurrentSession, signOut } from "@/features/auth/api";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { copyText } from "@/features/diagnostics/clipboard";
+import { exportOwnData, isCurrentUserAdmin } from "@/features/profile/api";
+import { deleteOwnAccount, getCurrentSession, signOut } from "@/features/auth/api";
 
 export const Route = createFileRoute("/app/profile")({
   head: () => ({
@@ -25,6 +38,10 @@ function ProfileScreen() {
   const [email, setEmail] = useState<string | null>(null);
   const [signingOut, setSigningOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [exportJson, setExportJson] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -48,6 +65,31 @@ function ProfileScreen() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not sign out. Please try again.");
       setSigningOut(false);
+    }
+  }
+
+  async function handleExport() {
+    setError(null);
+    setExporting(true);
+    setCopied(false);
+    try {
+      setExportJson(await exportOwnData());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not prepare your data export.");
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  async function handleDelete() {
+    setError(null);
+    setDeleting(true);
+    try {
+      await deleteOwnAccount();
+      navigate({ to: "/" });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not delete your account.");
+      setDeleting(false);
     }
   }
 
@@ -85,6 +127,14 @@ function ProfileScreen() {
             ID review
           </Link>
         ) : null}
+        <button
+          type="button"
+          onClick={handleExport}
+          disabled={exporting}
+          className="block w-full rounded-md border border-app-ink/20 px-4 py-3 text-center text-sm font-medium text-app-ink"
+        >
+          {exporting ? "Preparing…" : "Download my data"}
+        </button>
         <Link
           to="/diagnostics"
           className="block rounded-md border border-app-ink/20 px-4 py-3 text-center text-sm font-medium text-app-ink"
@@ -108,7 +158,54 @@ function ProfileScreen() {
         >
           {signingOut ? "Signing out…" : "Sign out"}
         </Button>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="outline"
+              disabled={deleting}
+              className="w-full border-app-warn/50 text-app-warn hover:bg-app-warn/10 hover:text-app-warn"
+            >
+              {deleting ? "Deleting…" : "Delete my account"}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This permanently deletes your profile, photos, matches, and messages. This can&apos;t
+                be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-app-warn text-app-on-primary hover:bg-app-warn/90"
+                onClick={handleDelete}
+              >
+                Delete permanently
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
+
+      <Dialog open={exportJson !== null} onOpenChange={(open) => !open && setExportJson(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Your data</DialogTitle>
+          </DialogHeader>
+          <pre className="max-h-[50vh] overflow-auto rounded-md bg-app-ink/5 p-3 text-left text-xs text-app-ink">
+            {exportJson}
+          </pre>
+          <Button
+            className="bg-app-primary text-app-on-primary hover:bg-app-primary/90"
+            onClick={async () => setCopied(await copyText(exportJson ?? ""))}
+          >
+            {copied ? "Copied" : "Copy to clipboard"}
+          </Button>
+        </DialogContent>
+      </Dialog>
 
       <p className="mt-8 text-center text-xs text-app-ink/60">
         TrueYoke is a product of House603 Digital Solutions.
