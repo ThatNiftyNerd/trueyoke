@@ -10,11 +10,14 @@ import type { AccountType } from "@/lib/constants";
 import { peekSession, restoreSession, setCachedSession } from "./session";
 
 /**
- * Deep link the OAuth provider redirects back to on Android. Must match the
- * intent-filter on MainActivity (scheme `app.trueyoke.mobile`, host
- * `auth-callback`) and the Supabase Auth "Additional redirect URLs" list.
+ * Deep link the OAuth provider redirects back to on Android. This is an
+ * Android App Link (https), not a custom URI scheme: the auth redirect
+ * allow-list already covers `https://trueyoke.app/**`, whereas custom schemes
+ * cannot be added there. Verified via
+ * `public/.well-known/assetlinks.json` + the `autoVerify` intent-filter on
+ * MainActivity.
  */
-export const NATIVE_OAUTH_REDIRECT_URL = "app.trueyoke.mobile://auth-callback";
+export const NATIVE_OAUTH_REDIRECT_URL = "https://trueyoke.app/auth";
 
 /** Version stamped on `profiles.privacy_policy_version` at consent time. */
 export const PRIVACY_POLICY_VERSION = "v1";
