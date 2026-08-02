@@ -60,7 +60,7 @@ export const SignupEmail = ({
             Welcome to{' '}
             <Link href={siteUrl} style={link}>
               <strong>{siteName}</strong>
-            </Link>{' '}
+            </Link>
             , a place for faithful, intentional relationships.
           </Text>
           <Text style={text}>
