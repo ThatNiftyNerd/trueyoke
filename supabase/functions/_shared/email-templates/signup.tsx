@@ -60,8 +60,8 @@ export const SignupEmail = ({
             Welcome to{' '}
             <Link href={siteUrl} style={link}>
               <strong>{siteName}</strong>
-            </Link>{' '}
-            — a place for faithful, intentional relationships.
+            </Link>
+            , a place for faithful, intentional relationships.
           </Text>
           <Text style={text}>
             Confirm <strong>{recipient}</strong> to finish setting up your account:
@@ -71,7 +71,7 @@ export const SignupEmail = ({
           </Button>
           <Text style={verse}>
             &ldquo;Two are better than one, because they have a good reward for their
-            labor.&rdquo; — Ecclesiastes 4:9
+            labor.&rdquo; (Ecclesiastes 4:9)
           </Text>
         </Section>
         <Hr style={hr} />
