@@ -10,11 +10,14 @@ import type { AccountType } from "@/lib/constants";
 import { peekSession, restoreSession, setCachedSession } from "./session";
 
 /**
- * Deep link the OAuth provider redirects back to on Android. Must match the
- * intent-filter on MainActivity (scheme `app.trueyoke.mobile`, host
- * `auth-callback`) and the Supabase Auth "Additional redirect URLs" list.
+ * Deep link the OAuth provider redirects back to on Android. This is an
+ * Android App Link (https), not a custom URI scheme: the auth redirect
+ * allow-list already covers `https://trueyoke.app/**`, whereas custom schemes
+ * cannot be added there. Verified via
+ * `public/.well-known/assetlinks.json` + the `autoVerify` intent-filter on
+ * MainActivity.
  */
-export const NATIVE_OAUTH_REDIRECT_URL = "app.trueyoke.mobile://auth-callback";
+export const NATIVE_OAUTH_REDIRECT_URL = "https://trueyoke.app/auth";
 
 /** Version stamped on `profiles.privacy_policy_version` at consent time. */
 export const PRIVACY_POLICY_VERSION = "v1";
@@ -161,11 +164,14 @@ export async function signInWithGoogle(): Promise<void> {
 
 /**
  * Completes the PKCE exchange for an OAuth redirect that came back through a
- * native deep link. Returns true when a session was established.
+ * native deep link. Scheme-agnostic: works for both the https App Link and the
+ * legacy custom scheme, and reads `code` from the query string or the URL
+ * fragment. Returns true when a session was established.
  */
 export async function completeOAuthRedirect(url: string): Promise<boolean> {
   const parsed = new URL(url);
-  const code = parsed.searchParams.get("code");
+  const hashParams = new URLSearchParams(parsed.hash.replace(/^#/, ""));
+  const code = parsed.searchParams.get("code") ?? hashParams.get("code");
   if (!code) return false;
 
   const { data, error } = await supabase.auth.exchangeCodeForSession(code);
