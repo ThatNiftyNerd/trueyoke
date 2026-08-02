@@ -164,11 +164,14 @@ export async function signInWithGoogle(): Promise<void> {
 
 /**
  * Completes the PKCE exchange for an OAuth redirect that came back through a
- * native deep link. Returns true when a session was established.
+ * native deep link. Scheme-agnostic: works for both the https App Link and the
+ * legacy custom scheme, and reads `code` from the query string or the URL
+ * fragment. Returns true when a session was established.
  */
 export async function completeOAuthRedirect(url: string): Promise<boolean> {
   const parsed = new URL(url);
-  const code = parsed.searchParams.get("code");
+  const hashParams = new URLSearchParams(parsed.hash.replace(/^#/, ""));
+  const code = parsed.searchParams.get("code") ?? hashParams.get("code");
   if (!code) return false;
 
   const { data, error } = await supabase.auth.exchangeCodeForSession(code);

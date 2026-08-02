@@ -1,10 +1,12 @@
 /**
  * Native deep-link catcher for the OAuth redirect.
  *
- * Android routes `app.trueyoke.mobile://auth-callback?code=…` back into the
- * app (see the intent-filter on MainActivity). Capacitor surfaces it as an
- * `appUrlOpen` event, which we hand to the PKCE exchange. On web this is a
- * no-op — supabase-js's own `detectSessionInUrl` handles the return trip.
+ * Android routes `https://trueyoke.app/auth?code=…` back into the app via the
+ * verified App Link intent-filter on MainActivity (the legacy
+ * `app.trueyoke.mobile://auth-callback` scheme is still registered and also
+ * handled here). Capacitor surfaces either one as an `appUrlOpen` event, which
+ * we hand to the PKCE exchange — the handler is scheme-agnostic. On web this
+ * is a no-op — supabase-js's own `detectSessionInUrl` handles the return trip.
  */
 import { Capacitor } from "@capacitor/core";
 import { App } from "@capacitor/app";
