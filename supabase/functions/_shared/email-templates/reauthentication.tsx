@@ -7,10 +7,28 @@ import {
   Container,
   Head,
   Heading,
+  Hr,
   Html,
+  Img,
   Preview,
+  Section,
   Text,
 } from 'npm:@react-email/components@0.0.22'
+
+import {
+  LOGO_URL,
+  TAGLINE,
+  card,
+  code,
+  container,
+  footer,
+  h1,
+  hr,
+  logo,
+  main,
+  tagline,
+  text,
+} from './brand.ts'
 
 interface ReauthenticationEmailProps {
   token: string
@@ -19,15 +37,20 @@ interface ReauthenticationEmailProps {
 export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Your verification code</Preview>
+    <Preview>Your TrueYoke verification code</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Confirm reauthentication</Heading>
-        <Text style={text}>Use the code below to confirm your identity:</Text>
-        <Text style={codeStyle}>{token}</Text>
+        <Img src={LOGO_URL} width="72" height="72" alt="TrueYoke" style={logo} />
+        <Text style={tagline}>{TAGLINE}</Text>
+        <Section style={card}>
+          <Heading style={h1}>Confirm it&apos;s you</Heading>
+          <Text style={text}>Enter this code to confirm your identity:</Text>
+          <Text style={code}>{token}</Text>
+        </Section>
+        <Hr style={hr} />
         <Text style={footer}>
-          This code will expire shortly. If you didn't request this, you can
-          safely ignore this email.
+          This code expires shortly. If you didn&apos;t request it, you can safely ignore
+          this email.
         </Text>
       </Container>
     </Body>
@@ -35,26 +58,3 @@ export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => 
 )
 
 export default ReauthenticationEmail
-
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const codeStyle = {
-  fontFamily: 'Courier, monospace',
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 30px',
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }

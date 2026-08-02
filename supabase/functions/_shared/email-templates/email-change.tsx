@@ -8,11 +8,28 @@ import {
   Container,
   Head,
   Heading,
+  Hr,
   Html,
-  Link,
+  Img,
   Preview,
+  Section,
   Text,
 } from 'npm:@react-email/components@0.0.22'
+
+import {
+  LOGO_URL,
+  TAGLINE,
+  button,
+  card,
+  container,
+  footer,
+  h1,
+  hr,
+  logo,
+  main,
+  tagline,
+  text,
+} from './brand.ts'
 
 interface EmailChangeEmailProps {
   siteName: string
@@ -37,27 +54,21 @@ export const EmailChangeEmail = ({
     <Preview>Confirm your email change for {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Confirm your email change</Heading>
-        <Text style={text}>
-          You requested to change your email address for {siteName} from{' '}
-          <Link href={`mailto:${oldEmail}`} style={link}>
-            {oldEmail}
-          </Link>{' '}
-          to{' '}
-          <Link href={`mailto:${newEmail}`} style={link}>
-            {newEmail}
-          </Link>
-          .
-        </Text>
-        <Text style={text}>
-          Click the button below to confirm this change:
-        </Text>
-        <Button style={button} href={confirmationUrl}>
-          Confirm Email Change
-        </Button>
+        <Img src={LOGO_URL} width="72" height="72" alt={siteName} style={logo} />
+        <Text style={tagline}>{TAGLINE}</Text>
+        <Section style={card}>
+          <Heading style={h1}>Confirm your email change</Heading>
+          <Text style={text}>
+            You asked to change the email on your {siteName} account from{' '}
+            <strong>{oldEmail}</strong> to <strong>{newEmail}</strong>.
+          </Text>
+          <Button style={button} href={confirmationUrl}>
+            Confirm the change
+          </Button>
+        </Section>
+        <Hr style={hr} />
         <Text style={footer}>
-          If you didn't request this change, please secure your account
-          immediately.
+          If you didn&apos;t request this change, please secure your account right away.
         </Text>
       </Container>
     </Body>
@@ -65,28 +76,3 @@ export const EmailChangeEmail = ({
 )
 
 export default EmailChangeEmail
-
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const link = { color: 'inherit', textDecoration: 'underline' }
-const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
-  fontSize: '14px',
-  borderRadius: '8px',
-  padding: '12px 20px',
-  textDecoration: 'none',
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
