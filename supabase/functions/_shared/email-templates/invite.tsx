@@ -61,8 +61,8 @@ export const InviteEmail = ({ siteName, siteUrl, confirmationUrl }: InviteEmailP
             Accept the invitation
           </Button>
           <Text style={verse}>
-            &ldquo;Encourage one another and build each other up.&rdquo; — 1 Thessalonians
-            5:11
+            &ldquo;Encourage one another and build each other up.&rdquo; (1 Thessalonians
+            5:11)
           </Text>
         </Section>
         <Hr style={hr} />

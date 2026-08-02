@@ -56,7 +56,7 @@ export const RecoveryEmail = ({ siteName, confirmationUrl }: RecoveryEmailProps)
         </Section>
         <Hr style={hr} />
         <Text style={footer}>
-          If you didn&apos;t request this, you can safely ignore this email — your password
+          If you didn&apos;t request this, you can safely ignore this email. Your password
           won&apos;t change.
         </Text>
       </Container>
