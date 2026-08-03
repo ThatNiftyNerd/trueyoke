@@ -53,6 +53,9 @@ export async function redirectIfSignedIn(options?: {
   allowAuth?: boolean;
   allowOnboarding?: boolean;
 }): Promise<void> {
+  // A password-recovery session must stay on /auth so the "Set new password"
+  // form can render.
+  if (isRecoverySession()) return;
   const session = await getCurrentSession();
   if (!session) return;
   const target = await signedInLandingPath();
