@@ -99,6 +99,7 @@ function AuthScreen() {
     setSubmitting(true);
     try {
       await updatePassword(newPassword);
+      clearRecoverySession();
       setRecoveryPending(false);
       navigate({ to: await signedInLandingPath() });
     } catch (err) {
