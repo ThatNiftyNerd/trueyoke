@@ -8,7 +8,13 @@
 import { redirect } from "@tanstack/react-router";
 import { getCurrentSession } from "./api";
 import { getOwnProfile } from "@/features/profile/api";
-import { isRecoverySession } from "./session";
+
+function isRecoveryUrl(): boolean {
+  if (typeof window === "undefined") return false;
+  const hash = window.location.hash.replace(/^#/, "");
+  const hashParams = new URLSearchParams(hash);
+  return window.location.search.includes("type=recovery") || hashParams.get("type") === "recovery";
+}
 
 /**
  * Where a signed-in user belongs, including the pre-profile consent state.
@@ -54,11 +60,9 @@ export async function redirectIfSignedIn(options?: {
   allowAuth?: boolean;
   allowOnboarding?: boolean;
 }): Promise<void> {
+  if (isRecoveryUrl()) return;
   const session = await getCurrentSession();
   if (!session) return;
-  // Session restoration processes recovery links asynchronously. Check only
-  // after it resolves so the PASSWORD_RECOVERY event has set the shared flag.
-  if (isRecoverySession()) return;
   const target = await signedInLandingPath();
   if (options?.allowAuth && target === "/auth") return;
   if (options?.allowOnboarding && target === "/onboarding") return;
