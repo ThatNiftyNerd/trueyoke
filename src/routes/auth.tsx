@@ -204,6 +204,112 @@ function AuthScreen() {
     }
   }
 
+  if (recoveryPending) {
+    return (
+      <main className="flex min-h-[100dvh] flex-col justify-center bg-app-canvas px-6 py-10">
+        <div className="mx-auto w-full max-w-sm">
+          <h1 className="font-serif text-2xl text-app-ink">Set new password</h1>
+          <p className="mt-2 text-sm text-app-ink/70">
+            Choose a new password for your TrueYoke account.
+          </p>
+          <div className="mt-6 space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="newPassword">New password</Label>
+              <Input
+                id="newPassword"
+                type="password"
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="confirmPassword">Confirm password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+          </div>
+          {error && (
+            <p
+              role="alert"
+              className="mt-4 rounded-md border border-app-warn/40 bg-app-warn/10 px-3 py-2 text-sm text-app-warn"
+            >
+              {error}
+            </p>
+          )}
+          <Button
+            className="mt-6 w-full bg-app-primary text-app-on-primary hover:bg-app-primary/90"
+            disabled={submitting}
+            onClick={handleUpdatePassword}
+          >
+            {submitting ? "Please wait…" : "Update password"}
+          </Button>
+        </div>
+      </main>
+    );
+  }
+
+  if (mode === "forgot") {
+    return (
+      <main className="flex min-h-[100dvh] flex-col justify-center bg-app-canvas px-6 py-10">
+        <div className="mx-auto w-full max-w-sm">
+          <h1 className="font-serif text-2xl text-app-ink">Reset your password</h1>
+          <p className="mt-2 text-sm text-app-ink/70">
+            Enter your email and we'll send you a link to set a new password.
+          </p>
+          <form className="mt-6 flex flex-col gap-4" onSubmit={handleForgotPassword}>
+            <div className="space-y-1.5">
+              <Label htmlFor="reset-email">Email</Label>
+              <Input
+                id="reset-email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            {error && (
+              <p
+                role="alert"
+                className="rounded-md border border-app-warn/40 bg-app-warn/10 px-3 py-2 text-sm text-app-warn"
+              >
+                {error}
+              </p>
+            )}
+
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="bg-app-primary text-app-on-primary hover:bg-app-primary/90"
+            >
+              {submitting ? "Please wait…" : "Send reset link"}
+            </Button>
+          </form>
+          <p className="mt-6 text-center text-sm text-app-ink/70">
+            <button
+              type="button"
+              className="underline"
+              onClick={() => {
+                setError(null);
+                setNotice(null);
+                setMode("signin");
+              }}
+            >
+              Back to sign in
+            </button>
+          </p>
+        </div>
+      </main>
+    );
+  }
+
   if (oauthConsentPending) {
     return (
       <main className="flex min-h-[100dvh] flex-col justify-center bg-app-canvas px-6 py-10">
