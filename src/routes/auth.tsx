@@ -123,7 +123,6 @@ function AuthScreen() {
     }
   }
 
-
   async function handleOAuthConsent() {
     setError(null);
     setSubmitting(true);
@@ -428,8 +427,6 @@ function AuthScreen() {
             Forgot password?
           </button>
         )}
-
-
 
         {mode === "signup" && (
           <PrivacyConsentCheckbox
