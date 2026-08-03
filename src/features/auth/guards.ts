@@ -54,11 +54,11 @@ export async function redirectIfSignedIn(options?: {
   allowAuth?: boolean;
   allowOnboarding?: boolean;
 }): Promise<void> {
-  // A password-recovery session must stay on /auth so the "Set new password"
-  // form can render.
-  if (isRecoverySession()) return;
   const session = await getCurrentSession();
   if (!session) return;
+  // Session restoration processes recovery links asynchronously. Check only
+  // after it resolves so the PASSWORD_RECOVERY event has set the shared flag.
+  if (isRecoverySession()) return;
   const target = await signedInLandingPath();
   if (options?.allowAuth && target === "/auth") return;
   if (options?.allowOnboarding && target === "/onboarding") return;
