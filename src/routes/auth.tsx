@@ -18,6 +18,7 @@ import {
   onAuthChange,
   requestPasswordReset,
   updatePassword,
+  clearRecoverySession,
 } from "@/features/auth/api";
 
 export const Route = createFileRoute("/auth")({
@@ -98,6 +99,7 @@ function AuthScreen() {
     setSubmitting(true);
     try {
       await updatePassword(newPassword);
+      clearRecoverySession();
       setRecoveryPending(false);
       navigate({ to: await signedInLandingPath() });
     } catch (err) {

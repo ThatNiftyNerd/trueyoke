@@ -8,6 +8,7 @@
 import { redirect } from "@tanstack/react-router";
 import { getCurrentSession } from "./api";
 import { getOwnProfile } from "@/features/profile/api";
+import { isRecoverySession } from "./session";
 
 /**
  * Where a signed-in user belongs, including the pre-profile consent state.
@@ -53,6 +54,9 @@ export async function redirectIfSignedIn(options?: {
   allowAuth?: boolean;
   allowOnboarding?: boolean;
 }): Promise<void> {
+  // A password-recovery session must stay on /auth so the "Set new password"
+  // form can render.
+  if (isRecoverySession()) return;
   const session = await getCurrentSession();
   if (!session) return;
   const target = await signedInLandingPath();
