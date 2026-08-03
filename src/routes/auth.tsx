@@ -16,6 +16,8 @@ import {
   ensureOAuthProfile,
   getCurrentSession,
   onAuthChange,
+  requestPasswordReset,
+  updatePassword,
 } from "@/features/auth/api";
 
 export const Route = createFileRoute("/auth")({
@@ -33,7 +35,7 @@ export const Route = createFileRoute("/auth")({
   component: AuthScreen,
 });
 
-type Mode = "signin" | "signup";
+type Mode = "signin" | "signup" | "forgot";
 
 function AuthScreen() {
   const navigate = useNavigate();
@@ -50,16 +52,25 @@ function AuthScreen() {
   // profiles row) gets a one-time consent interstitial before bootstrap.
   const [oauthConsentPending, setOauthConsentPending] = useState(false);
   const [oauthConsent, setOauthConsent] = useState(false);
+  // A recovery link establishes a real session; we must intercept it and ask
+  // for a new password instead of navigating into the app.
+  const [recoveryPending, setRecoveryPending] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   // A Google session can land here either from the web redirect back to
   // /auth or from the native deep-link exchange. Either way, bootstrap the
   // profile row once and then hand off to the shared landing rule.
   useEffect(() => {
-    return onAuthChange((session) => {
+    return onAuthChange((session, event) => {
       if (!session) return;
+      if (event === "PASSWORD_RECOVERY") {
+        setRecoveryPending(true);
+        return;
+      }
       void (async () => {
         try {
-          // Returning users already consented — only ask brand-new ones.
+          // Returning users already consented, only ask brand-new ones.
           if (await hasProfileRow()) {
             navigate({ to: await signedInLandingPath() });
             return;
@@ -73,6 +84,44 @@ function AuthScreen() {
       })();
     });
   }, [navigate]);
+
+  async function handleUpdatePassword() {
+    setError(null);
+    if (newPassword.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await updatePassword(newPassword);
+      setRecoveryPending(false);
+      navigate({ to: await signedInLandingPath() });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not update password. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleForgotPassword(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setNotice(null);
+    setSubmitting(true);
+    try {
+      await requestPasswordReset(email);
+      setNotice("If an account exists for that email, we've sent a password reset link.");
+      setMode("signin");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   async function handleOAuthConsent() {
     setError(null);
@@ -152,6 +201,112 @@ function AuthScreen() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (recoveryPending) {
+    return (
+      <main className="flex min-h-[100dvh] flex-col justify-center bg-app-canvas px-6 py-10">
+        <div className="mx-auto w-full max-w-sm">
+          <h1 className="font-serif text-2xl text-app-ink">Set new password</h1>
+          <p className="mt-2 text-sm text-app-ink/70">
+            Choose a new password for your TrueYoke account.
+          </p>
+          <div className="mt-6 space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="newPassword">New password</Label>
+              <Input
+                id="newPassword"
+                type="password"
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="confirmPassword">Confirm password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+          </div>
+          {error && (
+            <p
+              role="alert"
+              className="mt-4 rounded-md border border-app-warn/40 bg-app-warn/10 px-3 py-2 text-sm text-app-warn"
+            >
+              {error}
+            </p>
+          )}
+          <Button
+            className="mt-6 w-full bg-app-primary text-app-on-primary hover:bg-app-primary/90"
+            disabled={submitting}
+            onClick={handleUpdatePassword}
+          >
+            {submitting ? "Please wait…" : "Update password"}
+          </Button>
+        </div>
+      </main>
+    );
+  }
+
+  if (mode === "forgot") {
+    return (
+      <main className="flex min-h-[100dvh] flex-col justify-center bg-app-canvas px-6 py-10">
+        <div className="mx-auto w-full max-w-sm">
+          <h1 className="font-serif text-2xl text-app-ink">Reset your password</h1>
+          <p className="mt-2 text-sm text-app-ink/70">
+            Enter your email and we'll send you a link to set a new password.
+          </p>
+          <form className="mt-6 flex flex-col gap-4" onSubmit={handleForgotPassword}>
+            <div className="space-y-1.5">
+              <Label htmlFor="reset-email">Email</Label>
+              <Input
+                id="reset-email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            {error && (
+              <p
+                role="alert"
+                className="rounded-md border border-app-warn/40 bg-app-warn/10 px-3 py-2 text-sm text-app-warn"
+              >
+                {error}
+              </p>
+            )}
+
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="bg-app-primary text-app-on-primary hover:bg-app-primary/90"
+            >
+              {submitting ? "Please wait…" : "Send reset link"}
+            </Button>
+          </form>
+          <p className="mt-6 text-center text-sm text-app-ink/70">
+            <button
+              type="button"
+              className="underline"
+              onClick={() => {
+                setError(null);
+                setNotice(null);
+                setMode("signin");
+              }}
+            >
+              Back to sign in
+            </button>
+          </p>
+        </div>
+      </main>
+    );
   }
 
   if (oauthConsentPending) {
@@ -258,6 +413,20 @@ function AuthScreen() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+
+        {mode === "signin" && (
+          <button
+            type="button"
+            className="self-start text-sm text-app-ink/70 underline"
+            onClick={() => {
+              setError(null);
+              setNotice(null);
+              setMode("forgot");
+            }}
+          >
+            Forgot password?
+          </button>
+        )}
 
         {mode === "signup" && (
           <PrivacyConsentCheckbox
