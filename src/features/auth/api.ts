@@ -157,9 +157,17 @@ export function onAuthChange(
 ): () => void {
   const { data } = supabase.auth.onAuthStateChange((event, session) => {
     setCachedSession(session);
+    // Set synchronously in the shared dispatch so route guards see it before
+    // any subscriber's async work resolves.
+    if (event === "PASSWORD_RECOVERY") setRecoverySession(true);
     cb(session, event);
   });
   return () => data.subscription.unsubscribe();
+}
+
+/** Clears the recovery flag once the user has actually set a new password. */
+export function clearRecoverySession(): void {
+  setRecoverySession(false);
 }
 
 /**
