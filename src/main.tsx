@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider } from "@tanstack/react-router";
 import cssHasPseudo from "css-has-pseudo/browser";
 
+import "./features/auth/recovery-detect";
 import "./styles.css";
 import { getRouter } from "./router";
 import { SessionGate } from "./features/auth/SessionGate";

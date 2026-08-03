@@ -7,14 +7,8 @@
  */
 import { redirect } from "@tanstack/react-router";
 import { getCurrentSession } from "./api";
+import { isRecoveryRedirect } from "./recovery-detect";
 import { getOwnProfile } from "@/features/profile/api";
-
-function isRecoveryUrl(): boolean {
-  if (typeof window === "undefined") return false;
-  const hash = window.location.hash.replace(/^#/, "");
-  const hashParams = new URLSearchParams(hash);
-  return window.location.search.includes("type=recovery") || hashParams.get("type") === "recovery";
-}
 
 /**
  * Where a signed-in user belongs, including the pre-profile consent state.
@@ -60,7 +54,7 @@ export async function redirectIfSignedIn(options?: {
   allowAuth?: boolean;
   allowOnboarding?: boolean;
 }): Promise<void> {
-  if (isRecoveryUrl()) return;
+  if (isRecoveryRedirect) return;
   const session = await getCurrentSession();
   if (!session) return;
   const target = await signedInLandingPath();
