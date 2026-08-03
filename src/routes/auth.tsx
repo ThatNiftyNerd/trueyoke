@@ -18,6 +18,7 @@ import {
   onAuthChange,
   requestPasswordReset,
   updatePassword,
+  clearRecoverySession,
 } from "@/features/auth/api";
 
 export const Route = createFileRoute("/auth")({
