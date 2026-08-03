@@ -162,7 +162,6 @@ export function onAuthChange(
   return () => data.subscription.unsubscribe();
 }
 
-
 /**
  * Google OAuth.
  *
