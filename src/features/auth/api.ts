@@ -3,7 +3,7 @@
  * No component may call `supabase.auth.*` directly.
  */
 import { supabase } from "@/lib/supabase";
-import type { Session } from "@supabase/supabase-js";
+import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { Capacitor } from "@capacitor/core";
 import { Browser } from "@capacitor/browser";
 import type { AccountType } from "@/lib/constants";
@@ -131,13 +131,33 @@ export async function signOut(): Promise<void> {
 }
 
 /**
+ * Sends the branded recovery email. The redirect lands on `/auth`, which is
+ * covered by the verified Android App Link intent-filter, so the existing
+ * deep-link handler completes the PKCE exchange with no native changes.
+ */
+export async function requestPasswordReset(email: string): Promise<void> {
+  const native = Capacitor.isNativePlatform();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: native ? NATIVE_OAUTH_REDIRECT_URL : `${window.location.origin}/auth`,
+  });
+  if (error) throw error;
+}
+
+export async function updatePassword(newPassword: string): Promise<void> {
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) throw error;
+}
+
+/**
  * Subscribe to auth state changes. Returns an unsubscribe function.
  * Used exactly once at the router layer to invalidate route guards.
  */
-export function onAuthChange(cb: (session: Session | null) => void): () => void {
-  const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+export function onAuthChange(
+  cb: (session: Session | null, event: AuthChangeEvent) => void,
+): () => void {
+  const { data } = supabase.auth.onAuthStateChange((event, session) => {
     setCachedSession(session);
-    cb(session);
+    cb(session, event);
   });
   return () => data.subscription.unsubscribe();
 }
