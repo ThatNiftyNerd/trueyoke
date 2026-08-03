@@ -68,6 +68,12 @@ export async function signUpWithEmail(input: SignUpInput): Promise<void> {
   });
   if (error) throw error;
 
+  // Populate the session cache synchronously from the response so route
+  // guards (which read peekSession()) see it before the async
+  // onAuthStateChange listener fires. Without this, navigation races ahead
+  // of the event and guards bounce the user back to /auth.
+  setCachedSession(data.session ?? null);
+
   // Only when a session came back immediately (email confirmation is off) do
   // we have an authenticated auth.uid() to satisfy the RLS insert policy.
   if (data.session && data.user) {
@@ -83,11 +89,15 @@ export async function signUpWithEmail(input: SignUpInput): Promise<void> {
 }
 
 export async function signInWithEmail(input: SignInInput): Promise<void> {
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: input.email,
     password: input.password,
   });
   if (error) throw error;
+
+  // Populate the session cache synchronously from the response so route
+  // guards see it before the async onAuthStateChange listener fires.
+  setCachedSession(data.session ?? null);
 }
 
 /**
