@@ -415,6 +415,22 @@ function AuthScreen() {
           />
         </div>
 
+        {mode === "signin" && (
+          <button
+            type="button"
+            className="self-start text-sm text-app-ink/70 underline"
+            onClick={() => {
+              setError(null);
+              setNotice(null);
+              setMode("forgot");
+            }}
+          >
+            Forgot password?
+          </button>
+        )}
+
+
+
         {mode === "signup" && (
           <PrivacyConsentCheckbox
             checked={privacyAccepted}
