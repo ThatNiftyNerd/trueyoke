@@ -20,7 +20,6 @@ let restorePromise: Promise<Session | null> | undefined;
 let cachedSession: Session | null = null;
 let restored = false;
 
-
 /**
  * Resolves once the persisted session (if any) has been rehydrated.
  * Memoised: concurrent callers share one restore, later calls are a no-op.
