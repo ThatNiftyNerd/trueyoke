@@ -19,6 +19,19 @@ const RESTORE_TIMEOUT_MS = 5000;
 let restorePromise: Promise<Session | null> | undefined;
 let cachedSession: Session | null = null;
 let restored = false;
+let recoverySession = false;
+
+/**
+ * True while a password-recovery session is in progress. Route guards back off
+ * so `/auth` can render the "Set new password" form instead of redirecting.
+ */
+export function setRecoverySession(value: boolean): void {
+  recoverySession = value;
+}
+
+export function isRecoverySession(): boolean {
+  return recoverySession;
+}
 
 /**
  * Resolves once the persisted session (if any) has been rehydrated.
