@@ -16,6 +16,8 @@ import {
   ensureOAuthProfile,
   getCurrentSession,
   onAuthChange,
+  requestPasswordReset,
+  updatePassword,
 } from "@/features/auth/api";
 
 export const Route = createFileRoute("/auth")({
