@@ -8,6 +8,7 @@
 import { redirect } from "@tanstack/react-router";
 import { getCurrentSession } from "./api";
 import { getOwnProfile } from "@/features/profile/api";
+import { isRecoverySession } from "./session";
 
 /**
  * Where a signed-in user belongs, including the pre-profile consent state.
