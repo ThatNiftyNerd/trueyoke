@@ -89,11 +89,15 @@ export async function signUpWithEmail(input: SignUpInput): Promise<void> {
 }
 
 export async function signInWithEmail(input: SignInInput): Promise<void> {
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: input.email,
     password: input.password,
   });
   if (error) throw error;
+
+  // Populate the session cache synchronously from the response so route
+  // guards see it before the async onAuthStateChange listener fires.
+  setCachedSession(data.session ?? null);
 }
 
 /**
