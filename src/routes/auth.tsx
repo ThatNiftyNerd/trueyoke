@@ -18,8 +18,8 @@ import {
   onAuthChange,
   requestPasswordReset,
   updatePassword,
-  clearRecoverySession,
 } from "@/features/auth/api";
+import { isRecoveryRedirect } from "@/features/auth/recovery-detect";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -63,9 +63,9 @@ function AuthScreen() {
   // /auth or from the native deep-link exchange. Either way, bootstrap the
   // profile row once and then hand off to the shared landing rule.
   useEffect(() => {
-    return onAuthChange((session, event) => {
+    return onAuthChange((session) => {
       if (!session) return;
-      if (event === "PASSWORD_RECOVERY") {
+      if (isRecoveryRedirect) {
         setRecoveryPending(true);
         return;
       }
@@ -99,7 +99,6 @@ function AuthScreen() {
     setSubmitting(true);
     try {
       await updatePassword(newPassword);
-      clearRecoverySession();
       setRecoveryPending(false);
       navigate({ to: await signedInLandingPath() });
     } catch (err) {
