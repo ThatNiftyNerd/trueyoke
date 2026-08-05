@@ -28,7 +28,7 @@ function AppShell() {
         type="button"
         aria-label="Notifications"
         onClick={() => setOpen(true)}
-        className="fixed right-4 top-4 z-40 rounded-full bg-app-canvas/90 p-2 text-app-ink shadow-sm backdrop-blur hover:bg-app-primary/10"
+        className="app-glass fixed right-4 top-4 z-40 rounded-full p-2 text-app-ink hover:bg-app-primary/10"
       >
         <Bell className="h-5 w-5" />
         {badge > 0 ? (
