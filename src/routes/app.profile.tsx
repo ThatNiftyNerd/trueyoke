@@ -127,6 +127,10 @@ function ProfileScreen() {
         >
           Manage blocked users
         </Link>
+        {profile?.account_type === "match" && profile.profile_complete === true ? (
+          <MentorSelect />
+        ) : null}
+
         {isAdmin ? (
           <Link
             to="/app/admin-review"
