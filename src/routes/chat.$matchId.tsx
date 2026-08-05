@@ -23,9 +23,11 @@ import {
 } from "@/features/chat/api";
 import { MessageBubble } from "@/features/chat/MessageBubble";
 import { MessageComposer } from "@/features/chat/MessageComposer";
+import { markMatchRead } from "@/features/notifications/api";
 import { BlockModal, ReportModal } from "@/features/safety/ReportBlockModals";
 import { blockProfile, isBlockedWith, reportProfile } from "@/features/safety/api";
 import { formatReason, type ReportReason } from "@/features/safety/logic";
+
 
 export const Route = createFileRoute("/chat/$matchId")({
   head: () => ({
