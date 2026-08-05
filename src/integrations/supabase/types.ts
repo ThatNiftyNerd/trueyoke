@@ -498,7 +498,7 @@ export type Database = {
           created_at: string
           endorsement: string | null
           id: string
-          invitee_email: string
+          invitee_email: string | null
           match_user_id: string
           mentor_id: string | null
           status: string
@@ -507,7 +507,7 @@ export type Database = {
           created_at?: string
           endorsement?: string | null
           id?: string
-          invitee_email: string
+          invitee_email?: string | null
           match_user_id: string
           mentor_id?: string | null
           status?: string
@@ -516,7 +516,7 @@ export type Database = {
           created_at?: string
           endorsement?: string | null
           id?: string
-          invitee_email?: string
+          invitee_email?: string | null
           match_user_id?: string
           mentor_id?: string | null
           status?: string

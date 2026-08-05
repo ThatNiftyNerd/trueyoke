@@ -17,8 +17,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { copyText } from "@/features/diagnostics/clipboard";
-import { exportOwnData, isCurrentUserAdmin } from "@/features/profile/api";
+import { exportOwnData, getOwnProfile, isCurrentUserAdmin } from "@/features/profile/api";
+import type { OwnProfile } from "@/features/profile/api";
+import { MentorSelect } from "@/features/vouchers/MentorSelect";
 import { deleteOwnAccount, getCurrentSession, signOut } from "@/features/auth/api";
+
 
 export const Route = createFileRoute("/app/profile")({
   head: () => ({
@@ -36,6 +39,7 @@ function ProfileScreen() {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
+  const [profile, setProfile] = useState<OwnProfile | null>(null);
   const [signingOut, setSigningOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [exportJson, setExportJson] = useState<string | null>(null);
@@ -48,6 +52,9 @@ function ProfileScreen() {
     isCurrentUserAdmin()
       .then((v) => alive && setIsAdmin(v))
       .catch(() => undefined);
+    getOwnProfile()
+      .then((p) => alive && setProfile(p))
+      .catch(() => undefined);
     getCurrentSession()
       .then((s) => alive && setEmail(s?.user.email ?? null))
       .catch(() => undefined);
@@ -55,6 +62,7 @@ function ProfileScreen() {
       alive = false;
     };
   }, []);
+
 
   async function handleSignOut() {
     setError(null);
@@ -119,6 +127,10 @@ function ProfileScreen() {
         >
           Manage blocked users
         </Link>
+        {profile?.account_type === "match" && profile.profile_complete === true ? (
+          <MentorSelect />
+        ) : null}
+
         {isAdmin ? (
           <Link
             to="/app/admin-review"
