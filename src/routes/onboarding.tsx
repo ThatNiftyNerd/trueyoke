@@ -112,7 +112,7 @@ function OnboardingWizard() {
     <main className="flex min-h-[100dvh] flex-col bg-app-canvas px-6 py-8">
       <header className="mb-6">
         <p className="text-xs uppercase tracking-widest text-app-on-accent">
-          Step {index + 1} of {STEPS.length}
+          Step {index + 1} of {steps.length}
         </p>
         <h1 className="mt-1 font-serif text-2xl text-app-ink">{step.title}</h1>
         <p className="mt-1 text-sm text-app-ink/70">{step.description}</p>
