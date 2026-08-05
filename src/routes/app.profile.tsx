@@ -17,8 +17,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { copyText } from "@/features/diagnostics/clipboard";
-import { exportOwnData, isCurrentUserAdmin } from "@/features/profile/api";
+import { exportOwnData, getOwnProfile, isCurrentUserAdmin } from "@/features/profile/api";
+import type { OwnProfile } from "@/features/profile/api";
+import { MentorSelect } from "@/features/vouchers/MentorSelect";
 import { deleteOwnAccount, getCurrentSession, signOut } from "@/features/auth/api";
+
 
 export const Route = createFileRoute("/app/profile")({
   head: () => ({
