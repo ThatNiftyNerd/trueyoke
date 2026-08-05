@@ -83,7 +83,11 @@ export function SelfieCapture() {
 
       <div className="mt-2 h-28 w-28 overflow-hidden rounded-md border border-app-ink/10 bg-app-primary/5">
         {previewUrl ? (
-          <img src={previewUrl} alt="Your current profile photo" className="h-full w-full object-cover" />
+          <img
+            src={previewUrl}
+            alt="Your current profile photo"
+            className="h-full w-full object-cover"
+          />
         ) : (
           <div className="flex h-full w-full items-center justify-center px-2 text-center text-xs text-app-ink/60">
             {photo ? "Loading…" : "No photo yet"}

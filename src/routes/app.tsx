@@ -43,8 +43,12 @@ function AppShell() {
         onOpenChange={setOpen}
         onItemsChange={(items: ActivityItem[]) =>
           setBadge(
-            items.filter((i) => i.kind === "unread_messages" || i.kind === "voucher_request")
-              .length,
+            items.filter(
+              (i) =>
+                i.kind === "unread_messages" ||
+                i.kind === "voucher_request" ||
+                i.kind === "photo_update_needed",
+            ).length,
           )
         }
       />
