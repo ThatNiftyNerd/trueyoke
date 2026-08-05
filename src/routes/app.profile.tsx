@@ -20,6 +20,7 @@ import { copyText } from "@/features/diagnostics/clipboard";
 import { exportOwnData, getOwnProfile, isCurrentUserAdmin } from "@/features/profile/api";
 import type { OwnProfile } from "@/features/profile/api";
 import { MentorSelect } from "@/features/vouchers/MentorSelect";
+import { SelfieCapture } from "@/features/profile/SelfieCapture";
 import { deleteOwnAccount, getCurrentSession, signOut } from "@/features/auth/api";
 
 export const Route = createFileRoute("/app/profile")({
@@ -125,6 +126,9 @@ function ProfileScreen() {
         >
           Manage blocked users
         </Link>
+        {profile?.account_type === "match" && profile.profile_complete === true ? (
+          <SelfieCapture />
+        ) : null}
         {profile?.account_type === "match" && profile.profile_complete === true ? (
           <MentorSelect />
         ) : null}

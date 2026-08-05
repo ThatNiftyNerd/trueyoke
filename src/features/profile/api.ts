@@ -81,14 +81,14 @@ export async function updateOwnProfile(patch: TablesUpdate<"profiles">): Promise
 
 // -------- Photos ----------------------------------------------------------
 
-export type PhotoRow = Pick<Tables<"photos">, "id" | "storage_path" | "position">;
+export type PhotoRow = Pick<Tables<"photos">, "id" | "storage_path" | "position" | "created_at">;
 
 export async function listOwnPhotos(): Promise<PhotoRow[]> {
   const userId = await getCurrentUserId();
   if (!userId) return [];
   const { data, error } = await supabase
     .from("photos")
-    .select("id, storage_path, position")
+    .select("id, storage_path, position, created_at")
     .eq("profile_id", userId)
     .order("position", { ascending: true });
   if (error) throw new Error(error.message);
@@ -116,10 +116,40 @@ export async function uploadOwnPhoto(
   const { data, error: insErr } = await supabase
     .from("photos")
     .insert({ profile_id: userId, storage_path: path, position })
-    .select("id, storage_path, position")
+    .select("id, storage_path, position, created_at")
     .single();
   if (insErr) throw new Error(insErr.message);
   return data;
+}
+
+/**
+ * Removes a photo the caller owns: storage object first, then the row.
+ * Owner-scoped defensively, same as `updateOwnProfile` (RLS also enforces it).
+ */
+export async function deleteOwnPhoto(photoId: string, storagePath: string): Promise<void> {
+  const userId = await getCurrentUserId();
+  if (!userId) throw new Error("Not authenticated");
+  const { error: rmErr } = await supabase.storage.from("photos").remove([storagePath]);
+  if (rmErr) throw new Error(rmErr.message);
+  const { error } = await supabase
+    .from("photos")
+    .delete()
+    .eq("id", photoId)
+    .eq("profile_id", userId);
+  if (error) throw new Error(error.message);
+}
+
+/**
+ * Match accounts keep exactly one current photo: a live selfie. Clears every
+ * existing photo, then uploads the new one at position 0. Callers gate who
+ * may use this (match accounts only).
+ */
+export async function replaceOwnSelfie(file: File, extension: string): Promise<PhotoRow> {
+  const existing = await listOwnPhotos();
+  for (const photo of existing) {
+    await deleteOwnPhoto(photo.id, photo.storage_path);
+  }
+  return uploadOwnPhoto(file, extension, 0);
 }
 
 export async function getPhotoSignedUrl(

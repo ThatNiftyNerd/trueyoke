@@ -9,7 +9,7 @@
  */
 import { supabase } from "@/lib/supabase";
 import { getCurrentUserId } from "@/features/auth/api";
-import { getPhotoSignedUrl } from "@/features/profile/api";
+import { getPhotoSignedUrl, listOwnPhotos } from "@/features/profile/api";
 import { listOwnMatches } from "@/features/matches/api";
 import { getOwnMentorRequest } from "@/features/vouchers/api";
 
@@ -22,6 +22,7 @@ export type ActivityItem =
       count: number;
     }
   | { kind: "pending_mentor_request"; mentorName: string; status: string }
+  | { kind: "photo_update_needed" }
   | {
       kind: "voucher_request";
       voucherId: string;
@@ -95,6 +96,20 @@ export async function getMatchActivity(): Promise<ActivityItem[]> {
         });
       }
     });
+  }
+
+  // Match accounts carry a single live selfie; nudge them when it predates
+  // their newest active match (or when they have no photo at all).
+  if (matches.length > 0) {
+    const ownPhotos = await listOwnPhotos();
+    const primary = ownPhotos.find((p) => p.position === 0);
+    const newestMatchAt = matches.reduce<string>(
+      (acc, m) => (m.match.created_at > acc ? m.match.created_at : acc),
+      EPOCH,
+    );
+    if (!primary || primary.created_at < newestMatchAt) {
+      items.push({ kind: "photo_update_needed" });
+    }
   }
 
   const request = await getOwnMentorRequest();

@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { requireAuth, redirectIfSignedIn } from "@/features/auth/guards";
 import { getOnboardingProfile, type OnboardingProfile } from "@/features/profile/api";
-import { STEPS, firstIncompleteStepIndex, missingStepTitles } from "@/features/profile/logic";
+import { stepsFor, firstIncompleteStepIndex, missingStepTitles } from "@/features/profile/logic";
 import { DemographicsStep } from "@/features/profile/steps/DemographicsStep";
 import { PhotosStep } from "@/features/profile/steps/PhotosStep";
 import { BioStep } from "@/features/profile/steps/BioStep";
@@ -64,7 +64,7 @@ function OnboardingWizard() {
 
   const goNext = async () => {
     setFinishError(null);
-    if (index < STEPS.length - 1) {
+    if (index < stepsFor(profile?.account_type).length - 1) {
       setIndex(index + 1);
       return;
     }
@@ -97,7 +97,8 @@ function OnboardingWizard() {
     );
   }
 
-  const step = STEPS[index];
+  const steps = stepsFor(profile.account_type);
+  const step = steps[index];
   const canGoBack = index > 0;
   const commonProps = {
     profile,
@@ -111,7 +112,7 @@ function OnboardingWizard() {
     <main className="flex min-h-[100dvh] flex-col bg-app-canvas px-6 py-8">
       <header className="mb-6">
         <p className="text-xs uppercase tracking-widest text-app-on-accent">
-          Step {index + 1} of {STEPS.length}
+          Step {index + 1} of {steps.length}
         </p>
         <h1 className="mt-1 font-serif text-2xl text-app-ink">{step.title}</h1>
         <p className="mt-1 text-sm text-app-ink/70">{step.description}</p>

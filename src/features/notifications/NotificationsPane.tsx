@@ -177,6 +177,25 @@ export function NotificationsPane({ open, onOpenChange, onItemsChange }: Notific
                 );
               }
 
+              if (item.kind === "photo_update_needed") {
+                return (
+                  <li key="photo-update">
+                    <button
+                      type="button"
+                      className="flex w-full items-center gap-3 rounded-md border border-app-ink/15 px-3 py-2 text-left hover:bg-app-primary/5"
+                      onClick={() => {
+                        onOpenChange(false);
+                        navigate({ to: "/app/profile" });
+                      }}
+                    >
+                      <span className="min-w-0 flex-1 text-sm text-app-ink">
+                        Take a fresh photo for your new match
+                      </span>
+                    </button>
+                  </li>
+                );
+              }
+
               return (
                 <li
                   key={`a-${item.id}-${idx}`}
