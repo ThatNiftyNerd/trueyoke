@@ -238,3 +238,19 @@
   }
 }
 
+@layer components {
+  .app-glass {
+    background-color: var(--color-glass-surface);
+    border: 1px solid var(--color-glass-border);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .app-glass {
+      background-color: var(--color-app-surface);
+    }
+  }
+}
+
+
