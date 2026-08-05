@@ -123,3 +123,20 @@ export function subscribeToMatchStatus(
     supabase.removeChannel(channel);
   };
 }
+
+/**
+ * Cheap existence check: does the caller have at least one active match?
+ * Head-only count — avoids the participant/photo resolution `listOwnMatches`
+ * does, which this caller never needs.
+ */
+export async function hasAnyActiveMatch(): Promise<boolean> {
+  const userId = await getCurrentUserId();
+  if (!userId) return false;
+  const { count, error } = await supabase
+    .from("matches")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "active")
+    .or(`user_a_id.eq.${userId},user_b_id.eq.${userId}`);
+  if (error) throw new Error(error.message);
+  return (count ?? 0) > 0;
+}
