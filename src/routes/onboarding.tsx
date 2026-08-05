@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { requireAuth, redirectIfSignedIn } from "@/features/auth/guards";
 import { getOnboardingProfile, type OnboardingProfile } from "@/features/profile/api";
-import { STEPS, firstIncompleteStepIndex, missingStepTitles } from "@/features/profile/logic";
+import { stepsFor, firstIncompleteStepIndex, missingStepTitles } from "@/features/profile/logic";
 import { DemographicsStep } from "@/features/profile/steps/DemographicsStep";
 import { PhotosStep } from "@/features/profile/steps/PhotosStep";
 import { BioStep } from "@/features/profile/steps/BioStep";
