@@ -22,7 +22,6 @@ import type { OwnProfile } from "@/features/profile/api";
 import { MentorSelect } from "@/features/vouchers/MentorSelect";
 import { deleteOwnAccount, getCurrentSession, signOut } from "@/features/auth/api";
 
-
 export const Route = createFileRoute("/app/profile")({
   head: () => ({
     meta: [
@@ -62,7 +61,6 @@ function ProfileScreen() {
       alive = false;
     };
   }, []);
-
 
   async function handleSignOut() {
     setError(null);
