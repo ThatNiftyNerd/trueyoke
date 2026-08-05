@@ -97,7 +97,8 @@ function OnboardingWizard() {
     );
   }
 
-  const step = STEPS[index];
+  const steps = stepsFor(profile.account_type);
+  const step = steps[index];
   const canGoBack = index > 0;
   const commonProps = {
     profile,
