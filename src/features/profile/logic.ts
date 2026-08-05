@@ -72,24 +72,37 @@ export const STEPS: readonly StepMeta[] = [
 ];
 
 /**
+ * Steps for a given account type. "match" accounts no longer upload a gallery
+ * during onboarding — they take a live selfie later, after their first match.
+ */
+export function stepsFor(
+  accountType: OnboardingProfile["account_type"] | null | undefined,
+): readonly StepMeta[] {
+  return accountType === "match" ? STEPS.filter((s) => s.key !== "photos") : STEPS;
+}
+
+/**
  * Resume-in-progress landing index: the first step whose required fields are
  * not yet all present on the profile. When everything is filled, returns the
  * last step's index so the user can review before Finish.
  */
 export function firstIncompleteStepIndex(profile: OnboardingProfile | null): number {
   if (!profile) return 0;
-  for (let i = 0; i < STEPS.length; i++) {
-    const meta = STEPS[i];
+  const steps = stepsFor(profile.account_type);
+  for (let i = 0; i < steps.length; i++) {
+    const meta = steps[i];
     const missing = meta.requiredFields.some((f) => profile[f] == null);
     if (missing) return i;
   }
-  return STEPS.length - 1;
+  return steps.length - 1;
 }
 
 /** Which steps still have required fields missing — used for Finish error UI. */
 export function missingStepTitles(profile: OnboardingProfile | null): string[] {
   if (!profile) return STEPS.map((s) => s.title);
-  return STEPS.filter((s) => s.requiredFields.some((f) => profile[f] == null)).map((s) => s.title);
+  return stepsFor(profile.account_type)
+    .filter((s) => s.requiredFields.some((f) => profile[f] == null))
+    .map((s) => s.title);
 }
 
 // -------- Photo upload UX constraints (bucket enforces the real limits) --
