@@ -59,9 +59,7 @@ export function NotificationsPane({ open, onOpenChange, onItemsChange }: Notific
       try {
         const profile = await getOwnProfile();
         const list =
-          profile?.account_type === "mentor"
-            ? await getMentorActivity()
-            : await getMatchActivity();
+          profile?.account_type === "mentor" ? await getMentorActivity() : await getMatchActivity();
         if (!alive) return;
         setItems(list);
         onItemsChange?.(list);

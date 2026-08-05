@@ -28,7 +28,6 @@ import { BlockModal, ReportModal } from "@/features/safety/ReportBlockModals";
 import { blockProfile, isBlockedWith, reportProfile } from "@/features/safety/api";
 import { formatReason, type ReportReason } from "@/features/safety/logic";
 
-
 export const Route = createFileRoute("/chat/$matchId")({
   head: () => ({
     meta: [
@@ -68,7 +67,6 @@ function ChatScreen() {
       if (!m) return;
       setStatus(m.match.status);
       const [history, isBlk] = await Promise.all([
-
         listMessages(matchId),
         isBlockedWith(m.other.id),
       ]);
