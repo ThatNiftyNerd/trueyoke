@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          active: boolean
+          body: string
+          created_at: string
+          id: string
+          title: string
+        }
+        Insert: {
+          active?: boolean
+          body: string
+          created_at?: string
+          id?: string
+          title: string
+        }
+        Update: {
+          active?: boolean
+          body?: string
+          created_at?: string
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
       blocks: {
         Row: {
           blocked_id: string
@@ -179,6 +203,39 @@ export type Database = {
           {
             foreignKeyName: "id_verifications_reviewed_by_fkey"
             columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      match_reads: {
+        Row: {
+          last_read_at: string
+          match_id: string
+          user_id: string
+        }
+        Insert: {
+          last_read_at?: string
+          match_id: string
+          user_id: string
+        }
+        Update: {
+          last_read_at?: string
+          match_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_reads_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_reads_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
