@@ -61,12 +61,14 @@ function ChatScreen() {
       const uid = await getCurrentUserId();
       if (cancelled) return;
       setUserId(uid);
+      if (uid) void markMatchRead(matchId).catch(() => undefined);
       const m = await getMatchWithOther(matchId);
       if (cancelled) return;
       setItem(m);
       if (!m) return;
       setStatus(m.match.status);
       const [history, isBlk] = await Promise.all([
+
         listMessages(matchId),
         isBlockedWith(m.other.id),
       ]);
