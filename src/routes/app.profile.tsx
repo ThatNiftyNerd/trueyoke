@@ -39,6 +39,7 @@ function ProfileScreen() {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
+  const [profile, setProfile] = useState<OwnProfile | null>(null);
   const [signingOut, setSigningOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [exportJson, setExportJson] = useState<string | null>(null);
@@ -51,6 +52,9 @@ function ProfileScreen() {
     isCurrentUserAdmin()
       .then((v) => alive && setIsAdmin(v))
       .catch(() => undefined);
+    getOwnProfile()
+      .then((p) => alive && setProfile(p))
+      .catch(() => undefined);
     getCurrentSession()
       .then((s) => alive && setEmail(s?.user.email ?? null))
       .catch(() => undefined);
@@ -58,6 +62,7 @@ function ProfileScreen() {
       alive = false;
     };
   }, []);
+
 
   async function handleSignOut() {
     setError(null);
