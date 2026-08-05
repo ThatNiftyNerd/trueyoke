@@ -61,6 +61,8 @@
   --color-app-subtle: var(--app-subtle);
   --color-app-warn: var(--app-warn);
   --color-app-warn-deep: var(--app-warn-deep);
+  --color-glass-surface: var(--glass-surface);
+  --color-glass-border: var(--glass-border);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -151,6 +153,10 @@
   --app-subtle: oklch(0.617 0.02 78.2); /* Warm Gray */
   --app-warn: oklch(0.659 0.108 43.4); /* Terracotta */
   --app-warn-deep: oklch(0.529 0.102 43.3);
+
+  /* Liquid-glass surfaces (chrome + overlays only). */
+  --glass-surface: oklch(0.986 0.005 87.5 / 55%);
+  --glass-border: oklch(0.353 0.117 17.2 / 12%);
 }
 
 .dark {
@@ -200,6 +206,9 @@
   --app-subtle: oklch(0.7 0.005 89.9);
   --app-warn: oklch(0.72 0.11 43.4);
   --app-warn-deep: oklch(0.62 0.11 43.4);
+
+  --glass-surface: oklch(0.26 0 89.9 / 55%);
+  --glass-border: oklch(0.944 0.009 84.6 / 12%);
 }
 
 @layer base {
@@ -228,4 +237,20 @@
     stroke-width: 1.8;
   }
 }
+
+@layer components {
+  .app-glass {
+    background-color: var(--color-glass-surface);
+    border: 1px solid var(--color-glass-border);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .app-glass {
+      background-color: var(--color-app-surface);
+    }
+  }
+}
+
 

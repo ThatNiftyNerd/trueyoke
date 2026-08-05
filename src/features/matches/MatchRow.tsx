@@ -17,7 +17,7 @@ export function MatchRow({ item, dim }: Props) {
     <Link
       to="/chat/$matchId"
       params={{ matchId: match.id }}
-      className={`flex items-center gap-3 rounded-lg border border-app-ink/15 bg-card p-3 transition active:bg-app-canvas ${
+      className={`app-glass flex items-center gap-3 rounded-lg p-3 transition active:bg-app-canvas ${
         dim ? "opacity-70" : ""
       }`}
     >
