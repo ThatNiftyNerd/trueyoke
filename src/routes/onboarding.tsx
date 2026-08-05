@@ -64,7 +64,7 @@ function OnboardingWizard() {
 
   const goNext = async () => {
     setFinishError(null);
-    if (index < STEPS.length - 1) {
+    if (index < stepsFor(profile?.account_type).length - 1) {
       setIndex(index + 1);
       return;
     }
