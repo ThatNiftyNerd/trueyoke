@@ -20,6 +20,7 @@ import {
   updatePassword,
 } from "@/features/auth/api";
 import { isRecoveryRedirect } from "@/features/auth/recovery-detect";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
