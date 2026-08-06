@@ -20,6 +20,7 @@ import {
   updatePassword,
 } from "@/features/auth/api";
 import { isRecoveryRedirect } from "@/features/auth/recovery-detect";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -215,9 +216,8 @@ function AuthScreen() {
           <div className="mt-6 space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="newPassword">New password</Label>
-              <Input
+              <PasswordInput
                 id="newPassword"
-                type="password"
                 autoComplete="new-password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
@@ -225,9 +225,8 @@ function AuthScreen() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="confirmPassword">Confirm password</Label>
-              <Input
+              <PasswordInput
                 id="confirmPassword"
-                type="password"
                 autoComplete="new-password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -405,9 +404,8 @@ function AuthScreen() {
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="password">Password</Label>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             autoComplete={mode === "signup" ? "new-password" : "current-password"}
             required
             value={password}
