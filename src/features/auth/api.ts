@@ -61,10 +61,13 @@ export async function getCurrentSession(): Promise<Session | null> {
 }
 
 export async function signUpWithEmail(input: SignUpInput): Promise<void> {
+  const native = Capacitor.isNativePlatform();
   const { data, error } = await supabase.auth.signUp({
     email: input.email,
     password: input.password,
-    options: { emailRedirectTo: `${window.location.origin}/onboarding` },
+    options: {
+      emailRedirectTo: native ? NATIVE_OAUTH_REDIRECT_URL : `${window.location.origin}/onboarding`,
+    },
   });
   if (error) throw error;
 
