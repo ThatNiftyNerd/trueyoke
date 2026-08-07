@@ -38,12 +38,12 @@ function Landing() {
       </div>
       <div className="flex w-full max-w-sm flex-col gap-3">
         <Link
-          to="/auth"
+          to="/choose-type"
           className="rounded-md bg-app-primary px-6 py-3 text-app-on-primary font-medium"
         >
           Get started
         </Link>
-        <Link to="/auth" className="text-sm text-app-ink underline">
+        <Link to="/auth" search={{ mode: "signin" }} className="text-sm text-app-ink underline">
           I already have an account
         </Link>
       </div>

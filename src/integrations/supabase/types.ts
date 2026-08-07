@@ -14,6 +14,197 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          admin_user_id: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          target_id: string | null
+          target_table: string | null
+        }
+        Insert: {
+          action: string
+          admin_user_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_audit_log_admin_user_id_fkey"
+            columns: ["admin_user_id"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_permissions: {
+        Row: {
+          description: string | null
+          id: string
+          key: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          key: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          key?: string
+        }
+        Relationships: []
+      }
+      admin_role_permissions: {
+        Row: {
+          permission_id: string
+          role_id: string
+        }
+        Insert: {
+          permission_id: string
+          role_id: string
+        }
+        Update: {
+          permission_id?: string
+          role_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_role_permissions_permission_id_fkey"
+            columns: ["permission_id"]
+            isOneToOne: false
+            referencedRelation: "admin_permissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_role_permissions_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "admin_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_roles: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          key: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          key: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          key?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      admin_user_roles: {
+        Row: {
+          admin_user_id: string
+          granted_at: string
+          granted_by: string | null
+          role_id: string
+        }
+        Insert: {
+          admin_user_id: string
+          granted_at?: string
+          granted_by?: string | null
+          role_id: string
+        }
+        Update: {
+          admin_user_id?: string
+          granted_at?: string
+          granted_by?: string | null
+          role_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_user_roles_admin_user_id_fkey"
+            columns: ["admin_user_id"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_user_roles_granted_by_fkey"
+            columns: ["granted_by"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_user_roles_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "admin_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_users: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          display_name: string
+          id: string
+          is_active: boolean
+          is_super_admin: boolean
+          last_login_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          display_name: string
+          id: string
+          is_active?: boolean
+          is_super_admin?: boolean
+          last_login_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          display_name?: string
+          id?: string
+          is_active?: boolean
+          is_super_admin?: boolean
+          last_login_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_users_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcements: {
         Row: {
           active: boolean
@@ -204,7 +395,7 @@ export type Database = {
             foreignKeyName: "id_verifications_reviewed_by_fkey"
             columns: ["reviewed_by"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "admin_users"
             referencedColumns: ["id"]
           },
         ]
@@ -357,6 +548,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_status: string
           account_type: Database["public"]["Enums"]["account_type"]
           age: number | null
           bio: string | null
@@ -383,10 +575,13 @@ export type Database = {
           profile_complete: boolean | null
           qualification: string | null
           spirituality_markers: string[] | null
+          status_changed_at: string | null
+          status_changed_by: string | null
           updated_at: string
           voice_intro_url: string | null
         }
         Insert: {
+          account_status?: string
           account_type?: Database["public"]["Enums"]["account_type"]
           age?: number | null
           bio?: string | null
@@ -413,10 +608,13 @@ export type Database = {
           profile_complete?: boolean | null
           qualification?: string | null
           spirituality_markers?: string[] | null
+          status_changed_at?: string | null
+          status_changed_by?: string | null
           updated_at?: string
           voice_intro_url?: string | null
         }
         Update: {
+          account_status?: string
           account_type?: Database["public"]["Enums"]["account_type"]
           age?: number | null
           bio?: string | null
@@ -443,32 +641,57 @@ export type Database = {
           profile_complete?: boolean | null
           qualification?: string | null
           spirituality_markers?: string[] | null
+          status_changed_at?: string | null
+          status_changed_by?: string | null
           updated_at?: string
           voice_intro_url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_status_changed_by_fkey"
+            columns: ["status_changed_by"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reports: {
         Row: {
+          action_taken: string | null
           created_at: string
           id: string
           reason: string | null
           reported_id: string
           reporter_id: string
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
         }
         Insert: {
+          action_taken?: string | null
           created_at?: string
           id?: string
           reason?: string | null
           reported_id: string
           reporter_id: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
         }
         Update: {
+          action_taken?: string | null
           created_at?: string
           id?: string
           reason?: string | null
           reported_id?: string
           reporter_id?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
         }
         Relationships: [
           {
@@ -483,6 +706,13 @@ export type Database = {
             columns: ["reporter_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
             referencedColumns: ["id"]
           },
         ]
@@ -600,6 +830,149 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_analytics_engagement: {
+        Args: never
+        Returns: {
+          metric: string
+          value: number
+        }[]
+      }
+      admin_analytics_match_voucher_summary: {
+        Args: never
+        Returns: {
+          count: number
+          metric: string
+          status: string
+        }[]
+      }
+      admin_analytics_reports_summary: {
+        Args: never
+        Returns: {
+          count: number
+          status: string
+        }[]
+      }
+      admin_analytics_retention: {
+        Args: never
+        Returns: {
+          cohort: string
+          retained: number
+          retention_pct: number
+          total: number
+        }[]
+      }
+      admin_analytics_signups_over_time: {
+        Args: { p_days?: number }
+        Returns: {
+          day: string
+          signups: number
+        }[]
+      }
+      admin_analytics_verification_rates: {
+        Args: never
+        Returns: {
+          count: number
+          status: string
+        }[]
+      }
+      admin_assign_role: {
+        Args: { p_admin_user_id: string; p_role_id: string }
+        Returns: undefined
+      }
+      admin_get_audit_log: {
+        Args: {
+          p_action_filter?: string
+          p_admin_user_id_filter?: string
+          p_limit?: number
+          p_offset?: number
+        }
+        Returns: {
+          action: string
+          admin_email: string
+          admin_user_id: string
+          created_at: string
+          id: string
+          metadata: Json
+          target_id: string
+          target_table: string
+        }[]
+      }
+      admin_get_profile_sensitive_fields: {
+        Args: { p_profile_id: string }
+        Returns: {
+          blood_group: string
+          genotype: string
+        }[]
+      }
+      admin_list_admins: {
+        Args: never
+        Returns: {
+          created_at: string
+          display_name: string
+          email: string
+          id: string
+          is_active: boolean
+          is_super_admin: boolean
+          last_login_at: string
+          roles: string[]
+        }[]
+      }
+      admin_list_roles: {
+        Args: never
+        Returns: {
+          description: string
+          id: string
+          key: string
+          name: string
+          permissions: string[]
+        }[]
+      }
+      admin_resolve_report: {
+        Args: {
+          p_action_taken?: string
+          p_report_id: string
+          p_resolution_notes?: string
+          p_status: string
+        }
+        Returns: undefined
+      }
+      admin_reveal_verification_document: {
+        Args: { p_verification_id: string }
+        Returns: string
+      }
+      admin_review_verification: {
+        Args: {
+          p_new_status: string
+          p_rejection_reason?: string
+          p_verification_id: string
+        }
+        Returns: undefined
+      }
+      admin_revoke_role: {
+        Args: { p_admin_user_id: string; p_role_id: string }
+        Returns: undefined
+      }
+      admin_set_account_status: {
+        Args: { p_new_status: string; p_profile_id: string; p_reason?: string }
+        Returns: undefined
+      }
+      admin_set_admin_active: {
+        Args: {
+          p_admin_user_id: string
+          p_is_active: boolean
+          p_reason?: string
+        }
+        Returns: undefined
+      }
+      admin_set_match_status: {
+        Args: { p_match_id: string; p_new_status: string; p_reason?: string }
+        Returns: undefined
+      }
+      admin_set_voucher_status: {
+        Args: { p_new_status: string; p_reason?: string; p_voucher_id: string }
+        Returns: undefined
+      }
+      admin_touch_last_login: { Args: never; Returns: undefined }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -609,8 +982,23 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      has_admin_permission: {
+        Args: { permission_key: string }
+        Returns: boolean
+      }
+      is_active_admin: { Args: never; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       is_blocked: { Args: { other_id: string }; Returns: boolean }
+      is_super_admin: { Args: never; Returns: boolean }
+      log_admin_action: {
+        Args: {
+          p_action: string
+          p_metadata?: Json
+          p_target_id: string
+          p_target_table: string
+        }
+        Returns: string
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string

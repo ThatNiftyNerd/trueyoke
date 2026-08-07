@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ACCOUNT_TYPES, type AccountType } from "@/lib/constants";
+import { type AccountType } from "@/lib/constants";
 import { PrivacyConsentCheckbox } from "@/components/app/PrivacyConsentCheckbox";
 import {
   PRIVACY_POLICY_VERSION,
@@ -22,7 +22,20 @@ import {
 import { isRecoveryRedirect } from "@/features/auth/recovery-detect";
 import { PasswordInput } from "@/components/ui/password-input";
 
+type AuthSearch = {
+  type?: AccountType;
+  mode?: "signin" | "signup";
+};
+
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>): AuthSearch => {
+    const type = search.type;
+    const mode = search.mode;
+    return {
+      type: type === "match" || type === "mentor" ? type : undefined,
+      mode: mode === "signin" || mode === "signup" ? mode : undefined,
+    };
+  },
   head: () => ({
     meta: [
       { title: "Sign in — TrueYoke" },
@@ -41,8 +54,10 @@ type Mode = "signin" | "signup" | "forgot";
 
 function AuthScreen() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<Mode>("signup");
-  const [accountType, setAccountType] = useState<AccountType>("match");
+  const search = Route.useSearch();
+  const [mode, setMode] = useState<Mode>(search.mode ?? "signup");
+  const [accountType] = useState<AccountType>(search.type ?? "match");
+
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -355,28 +370,6 @@ function AuthScreen() {
         </h1>
       </header>
 
-      {mode === "signup" && (
-        <section className="mx-auto mb-6 w-full max-w-sm">
-          <p className="mb-2 text-sm font-medium text-app-ink">I am joining as</p>
-          <div className="grid grid-cols-2 gap-2">
-            {ACCOUNT_TYPES.map((type) => (
-              <button
-                key={type}
-                type="button"
-                onClick={() => setAccountType(type)}
-                className={
-                  accountType === type
-                    ? "rounded-md border border-app-ink bg-app-primary px-3 py-2 text-sm text-app-on-primary"
-                    : "rounded-md border border-app-ink/30 bg-transparent px-3 py-2 text-sm text-app-ink"
-                }
-              >
-                {type === "match" ? "Match" : "Mentor"}
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
-
       <form className="mx-auto flex w-full max-w-sm flex-col gap-4" onSubmit={handleSubmit}>
         {mode === "signup" && (
           <div className="space-y-1.5">
@@ -482,7 +475,12 @@ function AuthScreen() {
           onClick={() => {
             setError(null);
             setNotice(null);
-            setMode(mode === "signup" ? "signin" : "signup");
+            if (mode === "signup") {
+              setMode("signin");
+            } else {
+              // Signup always needs an account type, so route through the picker.
+              navigate({ to: "/choose-type" });
+            }
           }}
         >
           {mode === "signup" ? "Sign in" : "Create one"}
