@@ -257,10 +257,13 @@ export async function hasProfileRow(): Promise<boolean> {
 }
 
 /**
- * First-time OAuth user bootstrap. Idempotent: inserts a minimal `profiles`
- * row only when none exists, so sign-in is never blocked on the account-type
- * choice — onboarding still collects that (and everything else). The NDPA
- * consent stamp is supplied by the one-time interstitial on `/auth`.
+ * First-time user bootstrap behind the "One last thing" interstitial. Shared
+ * by two flows: Google OAuth sign-in, and email/password signup returning from
+ * email confirmation. Idempotent: inserts a minimal `profiles` row only when
+ * none exists. `account_type` and `display_name` are read from
+ * `user_metadata` when we stamped them at signup; otherwise account type stays
+ * deferred to onboarding and the name falls back to the provider identity.
+ * The NDPA consent stamp is supplied by the interstitial.
  */
 export async function ensureOAuthProfile(consent: OAuthConsentInput): Promise<void> {
   const session = await getCurrentSession();
@@ -274,9 +277,11 @@ export async function ensureOAuthProfile(consent: OAuthConsentInput): Promise<vo
   if (selErr) throw new Error(selErr.message);
   if (existing) return;
 
+  const accountType = accountTypeFromSession(session);
   const { error: insErr } = await supabase.from("profiles").insert({
     id: session.user.id,
     display_name: displayNameFromSession(session),
+    ...(accountType ? { account_type: accountType } : {}),
     privacy_accepted_at: consent.privacyAcceptedAt,
     privacy_policy_version: consent.privacyPolicyVersion,
   });
