@@ -28,6 +28,7 @@ export type ActivityItem =
       voucherId: string;
       matchName: string;
       matchPhotoUrl: string | null;
+      requestNote: string | null;
     }
   | { kind: "announcement"; id: string; title: string; body: string; createdAt: string };
 
@@ -137,8 +138,9 @@ export async function getMentorActivity(): Promise<ActivityItem[]> {
 
   const { data, error } = await supabase
     .from("vouchers")
-    .select("id, match_user_id, created_at")
+    .select("id, match_user_id, created_at, request_note")
     .eq("mentor_id", userId)
+
     .eq("status", "pending")
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
@@ -172,6 +174,7 @@ export async function getMentorActivity(): Promise<ActivityItem[]> {
         voucherId: row.id,
         matchName: nameById.get(row.match_user_id)?.trim() || "Member",
         matchPhotoUrl: url,
+        requestNote: row.request_note,
       });
     }
   }

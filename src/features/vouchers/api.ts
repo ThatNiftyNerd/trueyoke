@@ -72,17 +72,18 @@ export async function getOwnMentorRequest(): Promise<VoucherRow | null> {
 }
 
 /**
- * Requests an endorsement from a mentor. `status` defaults to 'pending' in
- * the database; the unique (match_user_id, mentor_id) constraint is surfaced
- * as a friendly message rather than a raw Postgres error.
+ * Requests an endorsement from a mentor, with a short intro note. `status`
+ * defaults to 'pending' in the database; the unique (match_user_id, mentor_id)
+ * constraint is surfaced as a friendly message rather than a raw Postgres
+ * error. The 250-char cap on `request_note` is enforced by a DB CHECK.
  */
-export async function requestMentorVoucher(mentorId: string): Promise<void> {
+export async function requestMentorVoucher(mentorId: string, note: string): Promise<void> {
   const userId = await getCurrentUserId();
   if (!userId) throw new Error("Not authenticated");
 
   const { error } = await supabase
     .from("vouchers")
-    .insert({ match_user_id: userId, mentor_id: mentorId });
+    .insert({ match_user_id: userId, mentor_id: mentorId, request_note: note });
   if (!error) return;
 
   const msg = `${error.message} ${error.hint ?? ""} ${error.details ?? ""}`;
@@ -90,4 +91,18 @@ export async function requestMentorVoucher(mentorId: string): Promise<void> {
     throw new Error("You already have a pending request with this mentor.");
   }
   throw new Error(error.message);
+}
+
+/**
+ * Mentor approval: records the mandatory confirmation and the endorsement text
+ * together with the status change. The DB CHECK constraint
+ * `vouchers_approved_requires_confirmation` rejects any approval missing
+ * either one.
+ */
+export async function confirmAndEndorse(voucherId: string, endorsement: string): Promise<void> {
+  const { error } = await supabase
+    .from("vouchers")
+    .update({ status: "approved", mentor_confirmed: true, endorsement })
+    .eq("id", voucherId);
+  if (error) throw new Error(error.message);
 }

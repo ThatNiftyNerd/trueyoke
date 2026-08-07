@@ -787,7 +787,9 @@ export type Database = {
           id: string
           invitee_email: string | null
           match_user_id: string
+          mentor_confirmed: boolean
           mentor_id: string | null
+          request_note: string | null
           status: string
         }
         Insert: {
@@ -796,7 +798,9 @@ export type Database = {
           id?: string
           invitee_email?: string | null
           match_user_id: string
+          mentor_confirmed?: boolean
           mentor_id?: string | null
+          request_note?: string | null
           status?: string
         }
         Update: {
@@ -805,7 +809,9 @@ export type Database = {
           id?: string
           invitee_email?: string | null
           match_user_id?: string
+          mentor_confirmed?: boolean
           mentor_id?: string | null
+          request_note?: string | null
           status?: string
         }
         Relationships: [

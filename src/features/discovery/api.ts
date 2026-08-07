@@ -13,6 +13,8 @@ export type Candidate = Pick<
   "id" | "display_name" | "age" | "location_label" | "bio"
 > & {
   photoSignedUrl: string | null;
+  /** Approved mentor endorsement text, if any. Mentor identity is never fetched. */
+  endorsement: string | null;
 };
 
 const DECK_BATCH_SIZE = 20;
@@ -63,11 +65,29 @@ export async function fetchDeck(): Promise<Candidate[]> {
     }
   }
 
+  // Approved mentor endorsements — same in-memory join by id as photos above.
+  // Mentor identity is deliberately not selected.
+  const endorsementByProfile = new Map<string, string>();
+  if (ids.length > 0) {
+    const { data: vouchers } = await supabase
+      .from("vouchers")
+      .select("id, match_user_id, endorsement")
+      .eq("status", "approved")
+      .in("match_user_id", ids);
+    for (const v of vouchers ?? []) {
+      if (v.endorsement) endorsementByProfile.set(v.match_user_id, v.endorsement);
+    }
+  }
+
   const candidates = await Promise.all(
     rows.map(async (r) => {
       const path = photoByProfile.get(r.id);
       const url = path ? await getPhotoSignedUrl(path, 3600) : null;
-      return { ...r, photoSignedUrl: url } satisfies Candidate;
+      return {
+        ...r,
+        photoSignedUrl: url,
+        endorsement: endorsementByProfile.get(r.id) ?? null,
+      } satisfies Candidate;
     }),
   );
   return candidates;

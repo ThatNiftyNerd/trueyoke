@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -13,6 +15,7 @@ import {
   type MentorOption,
   type VoucherRow,
 } from "@/features/vouchers/api";
+import { VOUCHER_TEXT_MAX, canSubmitRequest, counterLabel } from "@/features/vouchers/logic";
 
 function MentorAvatar({ mentor }: { mentor: MentorOption }) {
   const initial = (mentor.display_name ?? "?").trim().charAt(0).toUpperCase() || "?";
@@ -42,6 +45,8 @@ export function MentorSelect() {
   const [mentors, setMentors] = useState<MentorOption[]>([]);
   const [request, setRequest] = useState<VoucherRow | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [mentorId, setMentorId] = useState<string>("");
+  const [note, setNote] = useState("");
 
   useEffect(() => {
     let alive = true;
@@ -68,11 +73,11 @@ export function MentorSelect() {
     };
   }, []);
 
-  async function handleSelect(mentorId: string) {
+  async function handleSend() {
     setError(null);
     setSubmitting(true);
     try {
-      await requestMentorVoucher(mentorId);
+      await requestMentorVoucher(mentorId, note.trim());
       setRequest(await getOwnMentorRequest());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not send your request.");
@@ -82,6 +87,7 @@ export function MentorSelect() {
   }
 
   const requestedMentor = request ? mentors.find((m) => m.id === request.mentor_id) : undefined;
+  const canSend = mentorId !== "" && canSubmitRequest(note) && !submitting;
 
   return (
     <div className="rounded-md border border-app-ink/20 px-4 py-3 text-left">
@@ -97,10 +103,10 @@ export function MentorSelect() {
       ) : mentors.length === 0 && !error ? (
         <p className="mt-2 text-sm text-app-ink/60">No mentors are available yet.</p>
       ) : mentors.length > 0 ? (
-        <div className="mt-2">
-          <Select disabled={submitting} onValueChange={handleSelect}>
+        <div className="mt-2 space-y-3">
+          <Select disabled={submitting} value={mentorId} onValueChange={setMentorId}>
             <SelectTrigger aria-label="Choose a mentor">
-              <SelectValue placeholder={submitting ? "Sending…" : "Choose a mentor"} />
+              <SelectValue placeholder="Choose a mentor" />
             </SelectTrigger>
             <SelectContent>
               {mentors.map((m) => (
@@ -116,6 +122,30 @@ export function MentorSelect() {
               ))}
             </SelectContent>
           </Select>
+
+          <div>
+            <Textarea
+              aria-label="Intro note to your mentor"
+              placeholder="Introduce yourself and why you're asking…"
+              maxLength={VOUCHER_TEXT_MAX}
+              rows={4}
+              value={note}
+              disabled={submitting}
+              onChange={(e) => setNote(e.target.value)}
+            />
+            <p className="mt-1 text-right text-xs font-mono tabular-nums text-app-ink/50">
+              {counterLabel(note)}
+            </p>
+          </div>
+
+          <Button
+            type="button"
+            disabled={!canSend}
+            onClick={handleSend}
+            className="w-full bg-app-primary text-app-on-primary hover:bg-app-primary/90"
+          >
+            {submitting ? "Sending…" : "Send request"}
+          </Button>
         </div>
       ) : null}
 
