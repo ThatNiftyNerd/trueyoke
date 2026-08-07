@@ -3,6 +3,9 @@ import { useNavigate } from "@tanstack/react-router";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getOwnProfile } from "@/features/profile/api";
 import { initialsOf } from "@/features/matches/logic";
+import { VoucherRequestItem } from "@/features/vouchers/VoucherRequestItem";
+import { confirmAndEndorse } from "@/features/vouchers/api";
+
 import {
   getMatchActivity,
   getMentorActivity,
