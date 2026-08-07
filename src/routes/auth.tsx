@@ -22,7 +22,20 @@ import {
 import { isRecoveryRedirect } from "@/features/auth/recovery-detect";
 import { PasswordInput } from "@/components/ui/password-input";
 
+type AuthSearch = {
+  type?: AccountType;
+  mode?: "signin" | "signup";
+};
+
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>): AuthSearch => {
+    const type = search.type;
+    const mode = search.mode;
+    return {
+      type: type === "match" || type === "mentor" ? type : undefined,
+      mode: mode === "signin" || mode === "signup" ? mode : undefined,
+    };
+  },
   head: () => ({
     meta: [
       { title: "Sign in — TrueYoke" },
@@ -41,8 +54,10 @@ type Mode = "signin" | "signup" | "forgot";
 
 function AuthScreen() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<Mode>("signup");
-  const [accountType, setAccountType] = useState<AccountType>("match");
+  const search = Route.useSearch();
+  const [mode, setMode] = useState<Mode>(search.mode ?? "signup");
+  const [accountType] = useState<AccountType>(search.type ?? "match");
+
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
