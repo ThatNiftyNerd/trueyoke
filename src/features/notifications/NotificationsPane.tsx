@@ -93,6 +93,24 @@ export function NotificationsPane({ open, onOpenChange, onItemsChange }: Notific
     }
   }
 
+  function dropVoucher(voucherId: string) {
+    setItems((prev) => {
+      const next = prev.filter((i) => !(i.kind === "voucher_request" && i.voucherId === voucherId));
+      onItemsChange?.(next);
+      return next;
+    });
+  }
+
+  async function handleApprove(voucherId: string, endorsement: string) {
+    try {
+      await confirmAndEndorse(voucherId, endorsement);
+      dropVoucher(voucherId);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not update that request.");
+    }
+  }
+
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[80dvh] overflow-y-auto">
