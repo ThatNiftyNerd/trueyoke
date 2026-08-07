@@ -17,7 +17,6 @@ export type Candidate = Pick<
   endorsement: string | null;
 };
 
-
 const DECK_BATCH_SIZE = 20;
 
 export async function fetchDeck(): Promise<Candidate[]> {
@@ -92,7 +91,6 @@ export async function fetchDeck(): Promise<Candidate[]> {
     }),
   );
   return candidates;
-
 }
 
 export type SwipeDirection = "like" | "pass";

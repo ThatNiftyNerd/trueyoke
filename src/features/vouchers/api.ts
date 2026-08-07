@@ -106,4 +106,3 @@ export async function confirmAndEndorse(voucherId: string, endorsement: string):
     .eq("id", voucherId);
   if (error) throw new Error(error.message);
 }
-

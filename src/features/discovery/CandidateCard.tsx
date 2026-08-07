@@ -79,7 +79,6 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
         ) : null}
       </div>
 
-
       <div className="grid grid-cols-2 gap-2 border-t border-app-ink/10 p-3">
         <Button
           type="button"

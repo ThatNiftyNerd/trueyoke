@@ -110,7 +110,6 @@ export function NotificationsPane({ open, onOpenChange, onItemsChange }: Notific
     }
   }
 
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[80dvh] overflow-y-auto">
@@ -181,7 +180,6 @@ export function NotificationsPane({ open, onOpenChange, onItemsChange }: Notific
                   />
                 );
               }
-
 
               if (item.kind === "photo_update_needed") {
                 return (
