@@ -149,33 +149,18 @@ export function NotificationsPane({ open, onOpenChange, onItemsChange }: Notific
 
               if (item.kind === "voucher_request") {
                 return (
-                  <li
+                  <VoucherRequestItem
                     key={`v-${item.voucherId}`}
-                    className="flex items-center gap-3 rounded-md border border-app-ink/15 px-3 py-2"
-                  >
-                    <Avatar url={item.matchPhotoUrl} name={item.matchName} />
-                    <span className="min-w-0 flex-1 truncate text-sm text-app-ink">
-                      {item.matchName} requested your endorsement
-                    </span>
-                    <span className="flex shrink-0 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleVoucher(item.voucherId, "approved")}
-                        className="rounded-full bg-app-primary px-3 py-1 text-xs text-app-on-primary"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleVoucher(item.voucherId, "declined")}
-                        className="rounded-full border border-app-ink/25 px-3 py-1 text-xs text-app-ink"
-                      >
-                        Decline
-                      </button>
-                    </span>
-                  </li>
+                    voucherId={item.voucherId}
+                    matchName={item.matchName}
+                    matchPhotoUrl={item.matchPhotoUrl}
+                    requestNote={item.requestNote}
+                    onApprove={handleApprove}
+                    onDecline={(id) => handleVoucher(id, "declined")}
+                  />
                 );
               }
+
 
               if (item.kind === "photo_update_needed") {
                 return (
