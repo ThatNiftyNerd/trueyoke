@@ -370,9 +370,6 @@ function AuthScreen() {
         </h1>
       </header>
 
-
-
-
       <form className="mx-auto flex w-full max-w-sm flex-col gap-4" onSubmit={handleSubmit}>
         {mode === "signup" && (
           <div className="space-y-1.5">
@@ -485,7 +482,6 @@ function AuthScreen() {
               navigate({ to: "/choose-type" });
             }
           }}
-
         >
           {mode === "signup" ? "Sign in" : "Create one"}
         </button>

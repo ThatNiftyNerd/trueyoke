@@ -48,7 +48,6 @@ function Landing() {
         </Link>
       </div>
 
-
       <CopyrightNotice className="mt-4" />
     </main>
   );
