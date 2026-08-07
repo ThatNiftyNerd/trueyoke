@@ -67,6 +67,12 @@ export async function signUpWithEmail(input: SignUpInput): Promise<void> {
     password: input.password,
     options: {
       emailRedirectTo: native ? NATIVE_OAUTH_REDIRECT_URL : `${window.location.origin}/onboarding`,
+      // Stored on the auth.users row, so these survive the email-confirmation
+      // round trip and are available to the profile bootstrap afterwards.
+      data: {
+        account_type: input.accountType,
+        display_name: input.displayName,
+      },
     },
   });
   if (error) throw error;
@@ -213,14 +219,28 @@ export async function completeOAuthRedirect(url: string): Promise<boolean> {
   return Boolean(data.session);
 }
 
-/** Best-effort display name from the provider identity, never empty. */
+/**
+ * Best-effort display name, never empty. Prefers the display name we stamp on
+ * `user_metadata` at email signup; otherwise falls back to the Google-shaped
+ * provider identity fields.
+ */
 function displayNameFromSession(session: Session): string {
   const meta = session.user.user_metadata as Record<string, unknown> | null;
   const candidate =
+    (typeof meta?.display_name === "string" && meta.display_name) ||
     (typeof meta?.full_name === "string" && meta.full_name) ||
     (typeof meta?.name === "string" && meta.name) ||
     session.user.email?.split("@")[0];
   return (candidate || "Friend").trim().slice(0, 80);
+}
+
+/** Account type stamped at email signup, when present and valid. */
+function accountTypeFromSession(session: Session): AccountType | null {
+  const meta = session.user.user_metadata as Record<string, unknown> | null;
+  const value = meta?.account_type;
+  return typeof value === "string" && (ACCOUNT_TYPES as readonly string[]).includes(value)
+    ? (value as AccountType)
+    : null;
 }
 
 /** True when a `profiles` row already exists for the current session. */
