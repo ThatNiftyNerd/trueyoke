@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { Capacitor } from "@capacitor/core";
 import { Browser } from "@capacitor/browser";
-import type { AccountType } from "@/lib/constants";
+import { ACCOUNT_TYPES, type AccountType } from "@/lib/constants";
 import { peekSession, restoreSession, setCachedSession } from "./session";
 
 /**
