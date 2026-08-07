@@ -370,27 +370,8 @@ function AuthScreen() {
         </h1>
       </header>
 
-      {mode === "signup" && (
-        <section className="mx-auto mb-6 w-full max-w-sm">
-          <p className="mb-2 text-sm font-medium text-app-ink">I am joining as</p>
-          <div className="grid grid-cols-2 gap-2">
-            {ACCOUNT_TYPES.map((type) => (
-              <button
-                key={type}
-                type="button"
-                onClick={() => setAccountType(type)}
-                className={
-                  accountType === type
-                    ? "rounded-md border border-app-ink bg-app-primary px-3 py-2 text-sm text-app-on-primary"
-                    : "rounded-md border border-app-ink/30 bg-transparent px-3 py-2 text-sm text-app-ink"
-                }
-              >
-                {type === "match" ? "Match" : "Mentor"}
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
+
+
 
       <form className="mx-auto flex w-full max-w-sm flex-col gap-4" onSubmit={handleSubmit}>
         {mode === "signup" && (
@@ -497,8 +478,14 @@ function AuthScreen() {
           onClick={() => {
             setError(null);
             setNotice(null);
-            setMode(mode === "signup" ? "signin" : "signup");
+            if (mode === "signup") {
+              setMode("signin");
+            } else {
+              // Signup always needs an account type, so route through the picker.
+              navigate({ to: "/choose-type" });
+            }
           }}
+
         >
           {mode === "signup" ? "Sign in" : "Create one"}
         </button>
