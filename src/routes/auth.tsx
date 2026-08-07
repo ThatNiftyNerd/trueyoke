@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ACCOUNT_TYPES, type AccountType } from "@/lib/constants";
+import { type AccountType } from "@/lib/constants";
 import { PrivacyConsentCheckbox } from "@/components/app/PrivacyConsentCheckbox";
 import {
   PRIVACY_POLICY_VERSION,
