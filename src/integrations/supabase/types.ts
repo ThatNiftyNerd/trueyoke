@@ -265,6 +265,42 @@ export type Database = {
           },
         ]
       }
+      bundle_releases: {
+        Row: {
+          id: string
+          platform: string
+          published_at: string
+          release_notes: string | null
+          sha256_hash: string
+          signature: string
+          signing_pubkey_id: string
+          version_code: number
+          version_name: string
+        }
+        Insert: {
+          id?: string
+          platform: string
+          published_at?: string
+          release_notes?: string | null
+          sha256_hash: string
+          signature: string
+          signing_pubkey_id: string
+          version_code: number
+          version_name: string
+        }
+        Update: {
+          id?: string
+          platform?: string
+          published_at?: string
+          release_notes?: string | null
+          sha256_hash?: string
+          signature?: string
+          signing_pubkey_id?: string
+          version_code?: number
+          version_name?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
