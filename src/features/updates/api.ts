@@ -6,9 +6,7 @@ import { supabase } from "@/lib/supabase";
 import type { BundleRelease } from "./logic";
 
 /** Newest published release row for a platform, or null when none exists. */
-export async function getLatestRelease(
-  platform: "android" | "web",
-): Promise<BundleRelease | null> {
+export async function getLatestRelease(platform: "android" | "web"): Promise<BundleRelease | null> {
   const { data, error } = await supabase
     .from("bundle_releases")
     .select(
