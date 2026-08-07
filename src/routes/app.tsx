@@ -54,6 +54,7 @@ function AppShell() {
       />
 
       <div className="mx-auto max-w-md pb-24">
+        <UpdateBanner />
         <Outlet />
       </div>
       <BottomTabs />
