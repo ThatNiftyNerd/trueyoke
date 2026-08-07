@@ -67,7 +67,18 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
         {candidate.bio ? (
           <p className="text-sm text-app-ink/80">{bioExcerpt(candidate.bio)}</p>
         ) : null}
+        {candidate.endorsement ? (
+          <figure className="rounded-md border border-app-ink/15 bg-app-primary/5 px-3 py-2">
+            <figcaption className="text-xs font-medium uppercase tracking-wide text-app-ink/60">
+              Mentor-endorsed
+            </figcaption>
+            <blockquote className="mt-1 text-sm italic text-app-ink/80">
+              {candidate.endorsement}
+            </blockquote>
+          </figure>
+        ) : null}
       </div>
+
 
       <div className="grid grid-cols-2 gap-2 border-t border-app-ink/10 p-3">
         <Button
