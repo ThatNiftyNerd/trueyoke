@@ -6,7 +6,7 @@ import { supabase } from "@/lib/supabase";
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { Capacitor } from "@capacitor/core";
 import { Browser } from "@capacitor/browser";
-import type { AccountType } from "@/lib/constants";
+import { ACCOUNT_TYPES, type AccountType } from "@/lib/constants";
 import { peekSession, restoreSession, setCachedSession } from "./session";
 
 /**
@@ -67,6 +67,12 @@ export async function signUpWithEmail(input: SignUpInput): Promise<void> {
     password: input.password,
     options: {
       emailRedirectTo: native ? NATIVE_OAUTH_REDIRECT_URL : `${window.location.origin}/onboarding`,
+      // Stored on the auth.users row, so these survive the email-confirmation
+      // round trip and are available to the profile bootstrap afterwards.
+      data: {
+        account_type: input.accountType,
+        display_name: input.displayName,
+      },
     },
   });
   if (error) throw error;
@@ -213,14 +219,28 @@ export async function completeOAuthRedirect(url: string): Promise<boolean> {
   return Boolean(data.session);
 }
 
-/** Best-effort display name from the provider identity, never empty. */
+/**
+ * Best-effort display name, never empty. Prefers the display name we stamp on
+ * `user_metadata` at email signup; otherwise falls back to the Google-shaped
+ * provider identity fields.
+ */
 function displayNameFromSession(session: Session): string {
   const meta = session.user.user_metadata as Record<string, unknown> | null;
   const candidate =
+    (typeof meta?.display_name === "string" && meta.display_name) ||
     (typeof meta?.full_name === "string" && meta.full_name) ||
     (typeof meta?.name === "string" && meta.name) ||
     session.user.email?.split("@")[0];
   return (candidate || "Friend").trim().slice(0, 80);
+}
+
+/** Account type stamped at email signup, when present and valid. */
+function accountTypeFromSession(session: Session): AccountType | null {
+  const meta = session.user.user_metadata as Record<string, unknown> | null;
+  const value = meta?.account_type;
+  return typeof value === "string" && (ACCOUNT_TYPES as readonly string[]).includes(value)
+    ? (value as AccountType)
+    : null;
 }
 
 /** True when a `profiles` row already exists for the current session. */
@@ -237,10 +257,13 @@ export async function hasProfileRow(): Promise<boolean> {
 }
 
 /**
- * First-time OAuth user bootstrap. Idempotent: inserts a minimal `profiles`
- * row only when none exists, so sign-in is never blocked on the account-type
- * choice — onboarding still collects that (and everything else). The NDPA
- * consent stamp is supplied by the one-time interstitial on `/auth`.
+ * First-time user bootstrap behind the "One last thing" interstitial. Shared
+ * by two flows: Google OAuth sign-in, and email/password signup returning from
+ * email confirmation. Idempotent: inserts a minimal `profiles` row only when
+ * none exists. `account_type` and `display_name` are read from
+ * `user_metadata` when we stamped them at signup; otherwise account type stays
+ * deferred to onboarding and the name falls back to the provider identity.
+ * The NDPA consent stamp is supplied by the interstitial.
  */
 export async function ensureOAuthProfile(consent: OAuthConsentInput): Promise<void> {
   const session = await getCurrentSession();
@@ -254,9 +277,11 @@ export async function ensureOAuthProfile(consent: OAuthConsentInput): Promise<vo
   if (selErr) throw new Error(selErr.message);
   if (existing) return;
 
+  const accountType = accountTypeFromSession(session);
   const { error: insErr } = await supabase.from("profiles").insert({
     id: session.user.id,
     display_name: displayNameFromSession(session),
+    ...(accountType ? { account_type: accountType } : {}),
     privacy_accepted_at: consent.privacyAcceptedAt,
     privacy_policy_version: consent.privacyPolicyVersion,
   });
