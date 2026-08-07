@@ -4,6 +4,7 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { Bell } from "lucide-react";
 import { BottomTabs } from "@/components/app/BottomTabs";
 import { NotificationsPane } from "@/features/notifications/NotificationsPane";
+import { UpdateBanner } from "@/features/updates/UpdateBanner";
 import type { ActivityItem } from "@/features/notifications/api";
 
 /**
