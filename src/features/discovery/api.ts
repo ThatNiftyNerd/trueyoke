@@ -13,7 +13,10 @@ export type Candidate = Pick<
   "id" | "display_name" | "age" | "location_label" | "bio"
 > & {
   photoSignedUrl: string | null;
+  /** Approved mentor endorsement text, if any. Mentor identity is never fetched. */
+  endorsement: string | null;
 };
+
 
 const DECK_BATCH_SIZE = 20;
 
