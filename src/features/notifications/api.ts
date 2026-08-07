@@ -28,7 +28,9 @@ export type ActivityItem =
       voucherId: string;
       matchName: string;
       matchPhotoUrl: string | null;
+      requestNote: string | null;
     }
+
   | { kind: "announcement"; id: string; title: string; body: string; createdAt: string };
 
 /** Used when a match has no `match_reads` row yet — everything is unread. */
