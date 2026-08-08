@@ -75,15 +75,18 @@ Deno.serve(async (req) => {
   if (!description || description.length > 2000) return json({ error: "Invalid description" }, 400);
   if (!(severity in PRIORITY)) return json({ error: "Invalid severity" }, 400);
 
-  const apiKey = Deno.env.get("LINEAR_API_KEY");
-  if (!apiKey) {
-    console.error("LINEAR_API_KEY is not configured");
+  const gatewayKey = Deno.env.get("LOVABLE_API_KEY");
+  const connectionKey = Deno.env.get("LINEAR_API_KEY");
+  if (!gatewayKey || !connectionKey) {
+    console.error("Linear connector credentials are not configured");
     return json({ error: "Bug reporting is not available right now" }, 503);
   }
 
   try {
     const labelData = (await linear(
-      apiKey,
+      gatewayKey,
+      connectionKey,
+
       `query Labels($teamId: String!) {
         team(id: $teamId) { labels(first: 100) { nodes { id name } } }
       }`,
