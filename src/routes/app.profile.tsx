@@ -2,6 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DisplaySettingsPanel } from "@/components/app/DisplaySettingsPanel";
+import { BugReportDrawer } from "@/features/bug-report/BugReportDrawer";
+
 import { CopyrightNotice } from "@/components/app/CopyrightNotice";
 
 import {
@@ -156,6 +158,8 @@ function ProfileScreen() {
           Connection diagnostics
         </Link>
         <DisplaySettingsPanel />
+        <BugReportDrawer />
+
         {error ? (
           <p
             role="alert"

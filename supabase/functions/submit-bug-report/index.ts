@@ -1,12 +1,13 @@
 // Supabase Edge Function — in-app tester bug reports.
 //
 // The caller's identity always comes from the verified JWT, never the body.
-// The Linear API key lives only in this function's environment; the client
-// never sees it and never talks to Linear directly.
+// Linear is reached through the Lovable connector gateway: the gateway holds
+// the workspace's Linear OAuth credentials, and this function only ever sends
+// its own server-side gateway keys. The client never sees either.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
-const LINEAR_API = "https://api.linear.app/graphql";
+const LINEAR_API = "https://connector-gateway.lovable.dev/linear/graphql";
 const TEAM_ID = "309e992d-fba1-4ba3-95e5-4b6cf005ea9d";
 const LABEL_NAMES = ["Tester Feedback", "Bug"];
 const PRIORITY: Record<string, number> = { critical: 1, medium: 3, low: 4 };
@@ -18,10 +19,19 @@ function json(body: unknown, status = 200) {
   });
 }
 
-async function linear(apiKey: string, query: string, variables: Record<string, unknown>) {
+async function linear(
+  gatewayKey: string,
+  connectionKey: string,
+  query: string,
+  variables: Record<string, unknown>,
+) {
   const res = await fetch(LINEAR_API, {
     method: "POST",
-    headers: { Authorization: apiKey, "Content-Type": "application/json" },
+    headers: {
+      Authorization: `Bearer ${gatewayKey}`,
+      "X-Connection-Api-Key": connectionKey,
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({ query, variables }),
   });
   const body = await res.text();
@@ -30,6 +40,7 @@ async function linear(apiKey: string, query: string, variables: Record<string, u
   if (parsed.errors) throw new Error(`Linear returned errors: ${JSON.stringify(parsed.errors)}`);
   return parsed.data;
 }
+
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -64,15 +75,18 @@ Deno.serve(async (req) => {
   if (!description || description.length > 2000) return json({ error: "Invalid description" }, 400);
   if (!(severity in PRIORITY)) return json({ error: "Invalid severity" }, 400);
 
-  const apiKey = Deno.env.get("LINEAR_API_KEY");
-  if (!apiKey) {
-    console.error("LINEAR_API_KEY is not configured");
+  const gatewayKey = Deno.env.get("LOVABLE_API_KEY");
+  const connectionKey = Deno.env.get("LINEAR_API_KEY");
+  if (!gatewayKey || !connectionKey) {
+    console.error("Linear connector credentials are not configured");
     return json({ error: "Bug reporting is not available right now" }, 503);
   }
 
   try {
     const labelData = (await linear(
-      apiKey,
+      gatewayKey,
+      connectionKey,
+
       `query Labels($teamId: String!) {
         team(id: $teamId) { labels(first: 100) { nodes { id name } } }
       }`,
@@ -91,7 +105,8 @@ Deno.serve(async (req) => {
       `Severity: ${severity}`;
 
     const created = (await linear(
-      apiKey,
+      gatewayKey,
+      connectionKey,
       `mutation Create($input: IssueCreateInput!) {
         issueCreate(input: $input) { success issue { identifier } }
       }`,
