@@ -105,7 +105,8 @@ Deno.serve(async (req) => {
       `Severity: ${severity}`;
 
     const created = (await linear(
-      apiKey,
+      gatewayKey,
+      connectionKey,
       `mutation Create($input: IssueCreateInput!) {
         issueCreate(input: $input) { success issue { identifier } }
       }`,
