@@ -156,6 +156,8 @@ function ProfileScreen() {
           Connection diagnostics
         </Link>
         <DisplaySettingsPanel />
+        <BugReportDrawer />
+
         {error ? (
           <p
             role="alert"
