@@ -9,6 +9,7 @@ import { getRouter } from "./router";
 import { SessionGate } from "./features/auth/SessionGate";
 import { startOAuthDeepLinkListener } from "./features/auth/deep-link";
 import { ThemeProvider } from "./theme/ThemeProvider";
+import { ErrorBoundary } from "./components/app/ErrorBoundary";
 
 // :has() can't be polyfilled at build time (it's a runtime selector-matching
 // feature) -- this is a no-op on browsers/WebView with native support
@@ -27,9 +28,11 @@ if (!rootEl) throw new Error("Root element #root not found");
 createRoot(rootEl).render(
   <StrictMode>
     <ThemeProvider>
-      <SessionGate>
-        <RouterProvider router={router} />
-      </SessionGate>
+      <ErrorBoundary name="app_root">
+        <SessionGate>
+          <RouterProvider router={router} />
+        </SessionGate>
+      </ErrorBoundary>
     </ThemeProvider>
   </StrictMode>,
 );
