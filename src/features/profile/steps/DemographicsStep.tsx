@@ -6,7 +6,12 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { StepShell } from "./StepShell";
 import { updateOwnProfile, type OnboardingProfile } from "../api";
-import { demographicsSchema, emptyToNull, type DemographicsValues } from "../schemas";
+import {
+  demographicsSchemaFor,
+  emptyToNull,
+  FULL_NAME_MAX,
+  type DemographicsValues,
+} from "../schemas";
 
 interface Props {
   profile: OnboardingProfile;
