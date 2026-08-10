@@ -306,7 +306,7 @@ export async function ensureOAuthProfile(consent: OAuthConsentInput): Promise<vo
   if (selErr) throw new Error(selErr.message);
   if (existing) return;
 
-  const accountType = accountTypeFromSession(session);
+  const accountType = accountTypeFromSession(session) ?? consent.accountType ?? null;
   const { error: insErr } = await supabase.from("profiles").insert({
     id: session.user.id,
     display_name: displayNameFromSession(session),
