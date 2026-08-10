@@ -113,9 +113,13 @@ function ProfileScreen() {
       </header>
 
       <div className="space-y-3">
-        <Button className="w-full bg-app-primary text-app-on-primary hover:bg-app-primary/90">
+        <Link
+          to="/app/edit-profile"
+          className="flex w-full items-center justify-center rounded-md bg-app-primary px-4 py-3 text-center text-sm font-medium text-app-on-primary hover:bg-app-primary/90"
+        >
           Edit profile
-        </Button>
+        </Link>
+
         <Link
           to="/verify-id"
           className="block rounded-md border border-app-accent bg-app-accent/10 px-4 py-3 text-center text-sm font-medium text-app-ink"
