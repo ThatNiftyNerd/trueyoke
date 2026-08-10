@@ -10,7 +10,9 @@ import { z } from "zod";
 
 const optString = z.string().trim().max(200);
 
-export const demographicsSchema = z.object({
+export const FULL_NAME_MAX = 100;
+
+const baseDemographics = {
   age: z
     .number({ invalid_type_error: "Enter your age" })
     .int("Enter a whole number")
@@ -23,7 +25,27 @@ export const demographicsSchema = z.object({
   nationality: optString,
   qualification: optString,
   occupation: optString,
+};
+
+/** Match accounts: full name is offered but optional. */
+export const demographicsSchema = z.object({
+  ...baseDemographics,
+  full_name: z.string().trim().max(FULL_NAME_MAX, `Keep it under ${FULL_NAME_MAX} characters`),
 });
+
+/** Mentor accounts: full name is required (drives profile completeness). */
+export const mentorDemographicsSchema = z.object({
+  ...baseDemographics,
+  full_name: z
+    .string()
+    .trim()
+    .min(1, "Enter your full name")
+    .max(FULL_NAME_MAX, `Keep it under ${FULL_NAME_MAX} characters`),
+});
+
+export function demographicsSchemaFor(accountType: string | null | undefined) {
+  return accountType === "mentor" ? mentorDemographicsSchema : demographicsSchema;
+}
 export type DemographicsValues = z.infer<typeof demographicsSchema>;
 
 export const BIO_MAX = 500;
@@ -35,11 +57,20 @@ export const bioSchema = z.object({
 });
 export type BioValues = z.infer<typeof bioSchema>;
 
-export const faithSchema = z.object({
-  church_affiliation: optString,
-  congregation: optString,
-  spirituality_markers: z.array(z.string()),
-});
+export const faithSchema = z
+  .object({
+    church_affiliation: optString,
+    congregation: optString,
+    spirituality_markers: z.array(z.string()),
+    /** One of CHURCH_DESIGNATIONS, or the literal "Other". */
+    church_designation_choice: z.string().min(1, "Select your church designation"),
+    /** Free text, only used (and required) when the choice is "Other". */
+    church_designation_other: z.string().trim().max(120),
+  })
+  .refine((v) => v.church_designation_choice !== "Other" || v.church_designation_other.length > 0, {
+    message: "Tell us your church designation",
+    path: ["church_designation_other"],
+  });
 export type FaithValues = z.infer<typeof faithSchema>;
 
 export const LIFE_VERSE_MAX = 500;
