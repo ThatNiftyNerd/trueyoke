@@ -75,12 +75,23 @@ function AuthScreen() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // A Google session can land here either from the web redirect back to
-  // /auth or from the native deep-link exchange. Either way, bootstrap the
-  // profile row once and then hand off to the shared landing rule.
+  // A confirmed-email or Google session can land here either from the web
+  // redirect back to /auth or from the native deep-link exchange. Either way,
+  // bootstrap the profile row once and then hand off to the shared landing
+  // rule.
+  //
+  // The session frequently lands *before* this effect subscribes (supabase-js
+  // parses the URL fragment during module init, so SIGNED_IN can fire while
+  // the router is still redirecting /onboarding → /auth). Subscribing alone
+  // would therefore miss it and leave the signup form on screen until a
+  // manual reload, so we also resolve whatever session already exists at
+  // mount. `handled` keeps the two paths from racing each other.
   useEffect(() => {
-    return onAuthChange((session) => {
-      if (!session) return;
+    let handled = false;
+
+    const resolve = (session: Session | null) => {
+      if (!session || handled) return;
+      handled = true;
       if (isRecoveryRedirect) {
         setRecoveryPending(true);
         return;
@@ -94,13 +105,19 @@ function AuthScreen() {
           }
           setOauthConsentPending(true);
         } catch (err) {
+          handled = false;
           setError(err instanceof Error ? err.message : "Sign-in failed. Please try again.");
         } finally {
           setSubmitting(false);
         }
       })();
-    });
+    };
+
+    const unsubscribe = onAuthChange(resolve);
+    void getCurrentSession().then(resolve);
+    return unsubscribe;
   }, [navigate]);
+
 
   async function handleUpdatePassword() {
     setError(null);
