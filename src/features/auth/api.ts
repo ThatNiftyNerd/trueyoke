@@ -207,12 +207,16 @@ export function onAuthChange(
  *    open the system browser ourselves, and complete the PKCE exchange from
  *    the `appUrlOpen` deep link (see `features/auth/deep-link.ts`).
  */
-export async function signInWithGoogle(): Promise<void> {
+export async function signInWithGoogle(accountType?: AccountType | null): Promise<void> {
   const native = Capacitor.isNativePlatform();
+  const base = native ? NATIVE_OAUTH_REDIRECT_URL : `${window.location.origin}/auth`;
+  // Google's identity claims can't carry our account type, so it rides back on
+  // the redirect URL and is read from `search.type` on /auth.
+  const redirectTo = accountType ? `${base}?type=${encodeURIComponent(accountType)}` : base;
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: native ? NATIVE_OAUTH_REDIRECT_URL : `${window.location.origin}/auth`,
+      redirectTo,
       skipBrowserRedirect: native,
     },
   });
