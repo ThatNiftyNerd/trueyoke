@@ -30,8 +30,9 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
     watch,
     formState: { errors, isSubmitting },
   } = useForm<DemographicsValues>({
-    resolver: zodResolver(demographicsSchema),
+    resolver: zodResolver(demographicsSchemaFor(profile.account_type)),
     defaultValues: {
+      full_name: profile.full_name ?? "",
       age: profile.age ?? (undefined as unknown as number),
       gender: profile.gender ?? (undefined as unknown as "male" | "female"),
       location_label: profile.location_label ?? "",
@@ -59,6 +60,17 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-1 flex-col">
       <StepShell onBack={onBack} canGoBack={canGoBack} submitting={isSubmitting} error={error}>
+        <Field
+          label={profile.account_type === "mentor" ? "Full name" : "Full name (optional)"}
+          error={errors.full_name?.message}
+        >
+          <Input
+            placeholder="Your full legal name"
+            maxLength={FULL_NAME_MAX}
+            autoComplete="name"
+            {...register("full_name")}
+          />
+        </Field>
         <Field label="Age" error={errors.age?.message}>
           <Input
             type="number"
