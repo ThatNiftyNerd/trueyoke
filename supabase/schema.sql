@@ -60,7 +60,7 @@ create table public.profiles (
   updated_at           timestamptz not null default now()
 );
 
--- A profile is "complete" only when the mandatory MVP fields + voice intro exist.
+-- A profile is "complete" when the mandatory MVP fields exist (voice intro optional).
 alter table public.profiles
   add column profile_complete boolean
   generated always as (
@@ -68,7 +68,6 @@ alter table public.profiles
     and age is not null
     and gender is not null
     and life_verse is not null
-    and voice_intro_url is not null
     and bio is not null
   ) stored;
 
