@@ -44,6 +44,9 @@ export interface EnsureProfileInput {
 export interface OAuthConsentInput {
   privacyAcceptedAt: string;
   privacyPolicyVersion: string;
+  /** Chosen on /choose-type and threaded through the OAuth redirect URL,
+   *  because Google's own claims can never carry it. */
+  accountType?: AccountType | null;
 }
 
 export async function getCurrentUserId(): Promise<string | null> {
