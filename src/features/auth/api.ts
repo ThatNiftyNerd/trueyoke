@@ -76,7 +76,6 @@ export async function getCurrentUserId(): Promise<string | null> {
   return null;
 }
 
-
 export async function getCurrentSession(): Promise<Session | null> {
   await restoreSession();
   // After the initial restore the cache is kept current by onAuthStateChange.

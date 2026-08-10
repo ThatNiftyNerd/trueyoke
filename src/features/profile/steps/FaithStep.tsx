@@ -14,11 +14,7 @@ import {
 import { StepShell } from "./StepShell";
 import { updateOwnProfile, type OnboardingProfile } from "../api";
 import { faithSchema, emptyToNull, type FaithValues } from "../schemas";
-import {
-  SPIRITUALITY_MARKERS,
-  CHURCH_DESIGNATIONS,
-  CHURCH_DESIGNATION_OTHER,
-} from "../logic";
+import { SPIRITUALITY_MARKERS, CHURCH_DESIGNATIONS, CHURCH_DESIGNATION_OTHER } from "../logic";
 
 interface Props {
   profile: OnboardingProfile;

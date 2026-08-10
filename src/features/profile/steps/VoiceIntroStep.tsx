@@ -163,7 +163,6 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
         </p>
       </div>
 
-
       <div className="flex flex-col items-center gap-3 rounded-md border border-app-ink/10 bg-card/60 p-4">
         <div className="font-mono text-3xl text-app-ink">
           {String(seconds).padStart(2, "0")}s / {VOICE_INTRO_MAX_SECONDS}s
@@ -198,7 +197,6 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
       >
         Skip for now
       </button>
-
 
       {localUrl ? (
         <div className="space-y-1">
