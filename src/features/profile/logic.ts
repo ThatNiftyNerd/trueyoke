@@ -91,11 +91,18 @@ export const STEPS: readonly StepMeta[] = [
 /**
  * Steps for a given account type. "match" accounts no longer upload a gallery
  * during onboarding — they take a live selfie later, after their first match.
+ * Mentors must supply their full name (it also gates `profile_complete`).
  */
 export function stepsFor(
   accountType: OnboardingProfile["account_type"] | null | undefined,
 ): readonly StepMeta[] {
-  return accountType === "match" ? STEPS.filter((s) => s.key !== "photos") : STEPS;
+  const steps = accountType === "match" ? STEPS.filter((s) => s.key !== "photos") : STEPS;
+  if (accountType !== "mentor") return steps;
+  return steps.map((s) =>
+    s.key === "demographics"
+      ? { ...s, requiredFields: [...s.requiredFields, "full_name" as const] }
+      : s,
+  );
 }
 
 /**
