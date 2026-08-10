@@ -50,9 +50,32 @@ export async function getCurrentUserId(): Promise<string | null> {
   // Wait for the persisted session to be rehydrated before hitting the auth
   // server, otherwise a cold start sends an unauthenticated request.
   await restoreSession();
-  const { data } = await supabase.auth.getUser();
-  return data.user?.id ?? null;
+
+  // Right after a fresh sign-in the client can still be mid-way through
+  // attaching the new session (the restore promise may have resolved `null`
+  // before the sign-in happened). A single `getUser()` therefore sometimes
+  // comes back empty and the caller surfaces a false "Not authenticated".
+  // Re-read via getSession() and, if still empty, retry once after a tick.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const { data } = await supabase.auth.getUser();
+    if (data.user?.id) return data.user.id;
+
+    const { data: sessionData } = await supabase.auth.getSession();
+    const sessionUserId = sessionData.session?.user.id;
+    if (sessionUserId) {
+      setCachedSession(sessionData.session ?? null);
+      return sessionUserId;
+    }
+
+    const cached = peekSession()?.user.id;
+    if (cached) return cached;
+
+    if (attempt === 0) await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+
+  return null;
 }
+
 
 export async function getCurrentSession(): Promise<Session | null> {
   await restoreSession();
