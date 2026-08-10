@@ -59,8 +59,6 @@ export const getRouter = () => {
     invalidateLater();
   };
 
-
-
   onAuthChange((session) => {
     const userId = session?.user.id ?? null;
     if (userId === lastUserId) return;
