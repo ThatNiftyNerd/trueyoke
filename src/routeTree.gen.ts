@@ -20,6 +20,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ChatMatchIdRouteImport } from './routes/chat.$matchId'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
+import { Route as AppEditProfileRouteImport } from './routes/app.edit-profile'
 import { Route as AppDiscoverRouteImport } from './routes/app.discover'
 import { Route as AppBlockedRouteImport } from './routes/app.blocked'
 import { Route as AppAdminReviewRouteImport } from './routes/app.admin-review'
@@ -79,6 +80,11 @@ const AppMatchesRoute = AppMatchesRouteImport.update({
   path: '/matches',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEditProfileRoute = AppEditProfileRouteImport.update({
+  id: '/edit-profile',
+  path: '/edit-profile',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDiscoverRoute = AppDiscoverRouteImport.update({
   id: '/discover',
   path: '/discover',
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/app/admin-review': typeof AppAdminReviewRoute
   '/app/blocked': typeof AppBlockedRoute
   '/app/discover': typeof AppDiscoverRoute
+  '/app/edit-profile': typeof AppEditProfileRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
   '/chat/$matchId': typeof ChatMatchIdRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/app/admin-review': typeof AppAdminReviewRoute
   '/app/blocked': typeof AppBlockedRoute
   '/app/discover': typeof AppDiscoverRoute
+  '/app/edit-profile': typeof AppEditProfileRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
   '/chat/$matchId': typeof ChatMatchIdRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/app/admin-review': typeof AppAdminReviewRoute
   '/app/blocked': typeof AppBlockedRoute
   '/app/discover': typeof AppDiscoverRoute
+  '/app/edit-profile': typeof AppEditProfileRoute
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
   '/chat/$matchId': typeof ChatMatchIdRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/app/admin-review'
     | '/app/blocked'
     | '/app/discover'
+    | '/app/edit-profile'
     | '/app/matches'
     | '/app/profile'
     | '/chat/$matchId'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/app/admin-review'
     | '/app/blocked'
     | '/app/discover'
+    | '/app/edit-profile'
     | '/app/matches'
     | '/app/profile'
     | '/chat/$matchId'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/app/admin-review'
     | '/app/blocked'
     | '/app/discover'
+    | '/app/edit-profile'
     | '/app/matches'
     | '/app/profile'
     | '/chat/$matchId'
@@ -286,6 +298,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMatchesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/edit-profile': {
+      id: '/app/edit-profile'
+      path: '/edit-profile'
+      fullPath: '/app/edit-profile'
+      preLoaderRoute: typeof AppEditProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/discover': {
       id: '/app/discover'
       path: '/discover'
@@ -314,6 +333,7 @@ interface AppRouteChildren {
   AppAdminReviewRoute: typeof AppAdminReviewRoute
   AppBlockedRoute: typeof AppBlockedRoute
   AppDiscoverRoute: typeof AppDiscoverRoute
+  AppEditProfileRoute: typeof AppEditProfileRoute
   AppMatchesRoute: typeof AppMatchesRoute
   AppProfileRoute: typeof AppProfileRoute
 }
@@ -322,6 +342,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminReviewRoute: AppAdminReviewRoute,
   AppBlockedRoute: AppBlockedRoute,
   AppDiscoverRoute: AppDiscoverRoute,
+  AppEditProfileRoute: AppEditProfileRoute,
   AppMatchesRoute: AppMatchesRoute,
   AppProfileRoute: AppProfileRoute,
 }
