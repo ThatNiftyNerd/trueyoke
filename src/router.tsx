@@ -20,12 +20,44 @@ export const getRouter = () => {
     defaultPendingMinMs: 300,
   });
 
-  // Single, app-wide auth listener. Every session change (sign-in, sign-out,
-  // token refresh) invalidates the router so route `beforeLoad` guards re-run
-  // against the fresh session — no scattered getSession() calls needed.
-  onAuthChange(() => {
-    router.invalidate();
+  // Single, app-wide auth listener. A session change invalidates the router so
+  // route `beforeLoad` guards re-run against the fresh session.
+  //
+  // Two rules matter here, both learned from the email-confirmation crash:
+  //
+  // 1. Only invalidate when the *identity* changed. Supabase also emits
+  //    INITIAL_SESSION and TOKEN_REFRESHED for the same user; invalidating on
+  //    those churns navigations for no reason.
+  // 2. Never invalidate while a navigation is in flight. Invalidating mid-load
+  //    recomputes matches whose `loadPromise` has already been cleared, and
+  //    the router's match renderer then throws `undefined` during the commit
+  //    phase. That escapes every route-level error boundary and unmounts the
+  //    entire React tree — the blank `/auth` screen after confirming an email.
+  let lastUserId: string | null | undefined;
+
+  const invalidateWhenIdle = () => {
+    const pending = router.latestLoadPromise;
+    if (!pending) {
+      void router.invalidate();
+      return;
+    }
+    void pending.then(() => {
+      // A guard redirect starts a follow-up load; wait for that one too.
+      if (router.latestLoadPromise && router.latestLoadPromise !== pending) {
+        invalidateWhenIdle();
+        return;
+      }
+      void router.invalidate();
+    });
+  };
+
+  onAuthChange((session) => {
+    const userId = session?.user.id ?? null;
+    if (userId === lastUserId) return;
+    lastUserId = userId;
+    invalidateWhenIdle();
   });
+
 
   // Kick off session rehydration immediately so the first `beforeLoad` guard
   // resolves against the restored session instead of a null one.
