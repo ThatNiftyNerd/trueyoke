@@ -38,18 +38,24 @@ export const getRouter = () => {
   const invalidateWhenIdle = () => {
     const pending = router.latestLoadPromise;
     if (!pending) {
-      void router.invalidate();
+      // Yield a macrotask so React has committed the current render before we
+      // recompute matches; invalidating inside the commit phase is what threw
+      // `undefined` out of the router's match renderer.
+      window.setTimeout(() => {
+        if (router.latestLoadPromise) {
+          invalidateWhenIdle();
+          return;
+        }
+        void router.invalidate();
+      }, 0);
       return;
     }
     void pending.then(() => {
       // A guard redirect starts a follow-up load; wait for that one too.
-      if (router.latestLoadPromise && router.latestLoadPromise !== pending) {
-        invalidateWhenIdle();
-        return;
-      }
-      void router.invalidate();
+      invalidateWhenIdle();
     });
   };
+
 
   onAuthChange((session) => {
     const userId = session?.user.id ?? null;
