@@ -12,6 +12,7 @@ export type OnboardingProfile = Pick<
   | "id"
   | "account_type"
   | "display_name"
+  | "full_name"
   | "age"
   | "gender"
   | "location_label"
@@ -23,6 +24,7 @@ export type OnboardingProfile = Pick<
   | "bio"
   | "marriage_intentions"
   | "church_affiliation"
+  | "church_designation"
   | "congregation"
   | "spirituality_markers"
   | "life_verse"
@@ -31,7 +33,7 @@ export type OnboardingProfile = Pick<
 >;
 
 const ONBOARDING_COLUMNS =
-  "id, account_type, display_name, age, gender, location_label, blood_group, genotype, nationality, qualification, occupation, bio, marriage_intentions, church_affiliation, congregation, spirituality_markers, life_verse, voice_intro_url, profile_complete";
+  "id, account_type, display_name, full_name, age, gender, location_label, blood_group, genotype, nationality, qualification, occupation, bio, marriage_intentions, church_affiliation, church_designation, congregation, spirituality_markers, life_verse, voice_intro_url, profile_complete";
 
 /**
  * Legacy narrow shape kept for route guards elsewhere in the app that only

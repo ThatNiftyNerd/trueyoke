@@ -590,10 +590,12 @@ export type Database = {
           bio: string | null
           blood_group: string | null
           church_affiliation: string | null
+          church_designation: string | null
           church_verified: boolean
           congregation: string | null
           created_at: string
           display_name: string
+          full_name: string | null
           gender: Database["public"]["Enums"]["gender_type"] | null
           genotype: string | null
           id: string
@@ -623,10 +625,12 @@ export type Database = {
           bio?: string | null
           blood_group?: string | null
           church_affiliation?: string | null
+          church_designation?: string | null
           church_verified?: boolean
           congregation?: string | null
           created_at?: string
           display_name: string
+          full_name?: string | null
           gender?: Database["public"]["Enums"]["gender_type"] | null
           genotype?: string | null
           id: string
@@ -656,10 +660,12 @@ export type Database = {
           bio?: string | null
           blood_group?: string | null
           church_affiliation?: string | null
+          church_designation?: string | null
           church_verified?: boolean
           congregation?: string | null
           created_at?: string
           display_name?: string
+          full_name?: string | null
           gender?: Database["public"]["Enums"]["gender_type"] | null
           genotype?: string | null
           id?: string
