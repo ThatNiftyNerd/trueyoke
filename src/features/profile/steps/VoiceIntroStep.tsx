@@ -118,13 +118,10 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
   };
 
   const save = async () => {
+    // Voice intro is optional: with no new recording we simply advance,
+    // whether or not an intro already exists on the profile.
     if (!localBlob) {
-      // Existing intro already on file → just advance.
-      if (profile.voice_intro_url) {
-        onNext();
-      } else {
-        setError("Record a short intro to continue.");
-      }
+      onNext();
       return;
     }
     setSaving(true);
@@ -142,12 +139,8 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
     }
   };
 
-  const submitLabel = localBlob
-    ? "Save & continue"
-    : profile.voice_intro_url
-      ? "Continue"
-      : "Continue";
-  const disableSubmit = state === "recording" || (!localBlob && !profile.voice_intro_url);
+  const submitLabel = localBlob ? "Save & finish" : "Finish";
+  const disableSubmit = state === "recording";
 
   return (
     <StepShell
@@ -161,11 +154,15 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
       error={error}
     >
       <div className="space-y-2">
-        <Label className="text-app-ink">Voice intro (up to {VOICE_INTRO_MAX_SECONDS}s)</Label>
+        <Label className="text-app-ink">
+          Voice intro (optional, up to {VOICE_INTRO_MAX_SECONDS}s)
+        </Label>
         <p className="text-xs text-app-ink/60">
-          Say hi, share your name, and a sentence about your walk.
+          Say hi, share your name, and a sentence about your walk. You can skip this and add it
+          later from your profile.
         </p>
       </div>
+
 
       <div className="flex flex-col items-center gap-3 rounded-md border border-app-ink/10 bg-card/60 p-4">
         <div className="font-mono text-3xl text-app-ink">
@@ -189,6 +186,19 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
           </Button>
         )}
       </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          stop();
+          onNext();
+        }}
+        disabled={saving}
+        className="mx-auto text-sm text-app-ink/70 underline underline-offset-4 disabled:opacity-50"
+      >
+        Skip for now
+      </button>
+
 
       {localUrl ? (
         <div className="space-y-1">

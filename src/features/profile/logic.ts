@@ -83,8 +83,8 @@ export const STEPS: readonly StepMeta[] = [
   {
     key: "voice",
     title: "Voice intro",
-    description: "Record a short spoken introduction.",
-    requiredFields: ["voice_intro_url"],
+    description: "Record a short spoken introduction. Optional — you can skip it.",
+    requiredFields: [],
   },
 ];
 

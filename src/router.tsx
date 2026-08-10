@@ -35,21 +35,31 @@ export const getRouter = () => {
   //    entire React tree — the blank `/auth` screen after confirming an email.
   let lastUserId: string | null | undefined;
 
-  const invalidateWhenIdle = () => {
-    const pending = router.latestLoadPromise;
-    if (!pending) {
-      void router.invalidate();
-      return;
-    }
-    void pending.then(() => {
-      // A guard redirect starts a follow-up load; wait for that one too.
-      if (router.latestLoadPromise && router.latestLoadPromise !== pending) {
-        invalidateWhenIdle();
+  const invalidateLater = () => {
+    // Yield a macrotask so React has committed the current render before we
+    // recompute matches; invalidating inside the commit phase is what threw
+    // `undefined` out of the router's match renderer.
+    window.setTimeout(() => {
+      const pending = router.latestLoadPromise;
+      if (pending) {
+        void pending.then(invalidateLater);
         return;
       }
       void router.invalidate();
-    });
+    }, 0);
   };
+
+  const invalidateWhenIdle = () => {
+    const pending = router.latestLoadPromise;
+    if (pending) {
+      // A guard redirect starts a follow-up load; re-check after it settles.
+      void pending.then(invalidateLater);
+      return;
+    }
+    invalidateLater();
+  };
+
+
 
   onAuthChange((session) => {
     const userId = session?.user.id ?? null;
