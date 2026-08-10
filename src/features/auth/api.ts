@@ -44,6 +44,9 @@ export interface EnsureProfileInput {
 export interface OAuthConsentInput {
   privacyAcceptedAt: string;
   privacyPolicyVersion: string;
+  /** Chosen on /choose-type and threaded through the OAuth redirect URL,
+   *  because Google's own claims can never carry it. */
+  accountType?: AccountType | null;
 }
 
 export async function getCurrentUserId(): Promise<string | null> {
@@ -204,12 +207,16 @@ export function onAuthChange(
  *    open the system browser ourselves, and complete the PKCE exchange from
  *    the `appUrlOpen` deep link (see `features/auth/deep-link.ts`).
  */
-export async function signInWithGoogle(): Promise<void> {
+export async function signInWithGoogle(accountType?: AccountType | null): Promise<void> {
   const native = Capacitor.isNativePlatform();
+  const base = native ? NATIVE_OAUTH_REDIRECT_URL : `${window.location.origin}/auth`;
+  // Google's identity claims can't carry our account type, so it rides back on
+  // the redirect URL and is read from `search.type` on /auth.
+  const redirectTo = accountType ? `${base}?type=${encodeURIComponent(accountType)}` : base;
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: native ? NATIVE_OAUTH_REDIRECT_URL : `${window.location.origin}/auth`,
+      redirectTo,
       skipBrowserRedirect: native,
     },
   });
@@ -299,7 +306,7 @@ export async function ensureOAuthProfile(consent: OAuthConsentInput): Promise<vo
   if (selErr) throw new Error(selErr.message);
   if (existing) return;
 
-  const accountType = accountTypeFromSession(session);
+  const accountType = accountTypeFromSession(session) ?? consent.accountType ?? null;
   const { error: insErr } = await supabase.from("profiles").insert({
     id: session.user.id,
     display_name: displayNameFromSession(session),

@@ -177,6 +177,7 @@ function AuthScreen() {
       await ensureOAuthProfile({
         privacyAcceptedAt: new Date().toISOString(),
         privacyPolicyVersion: PRIVACY_POLICY_VERSION,
+        accountType: search.type ?? null,
       });
       setOauthConsentPending(false);
       navigate({ to: await signedInLandingPath() });
@@ -192,7 +193,7 @@ function AuthScreen() {
     setNotice(null);
     setSubmitting(true);
     try {
-      await signInWithGoogle();
+      await signInWithGoogle(accountType);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Google sign-in failed. Please try again.");
       setSubmitting(false);
