@@ -26,14 +26,7 @@ export const Route = createFileRoute("/app/edit-profile")({
   component: EditProfileScreen,
 });
 
-type SectionKey =
-  | "name"
-  | "demographics"
-  | "photos"
-  | "bio"
-  | "faith"
-  | "life-verse"
-  | "voice";
+type SectionKey = "name" | "demographics" | "photos" | "bio" | "faith" | "life-verse" | "voice";
 
 interface SectionDef {
   key: SectionKey;
