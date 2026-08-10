@@ -69,7 +69,6 @@ export const STEPS: readonly StepMeta[] = [
     requiredFields: ["bio"],
   },
   {
-  {
     key: "faith",
     title: "Church affiliation & spirituality",
     description: "Your congregation and the markers of your walk.",
