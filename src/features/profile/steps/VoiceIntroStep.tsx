@@ -118,13 +118,10 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
   };
 
   const save = async () => {
+    // Voice intro is optional: with no new recording we simply advance,
+    // whether or not an intro already exists on the profile.
     if (!localBlob) {
-      // Existing intro already on file → just advance.
-      if (profile.voice_intro_url) {
-        onNext();
-      } else {
-        setError("Record a short intro to continue.");
-      }
+      onNext();
       return;
     }
     setSaving(true);
@@ -142,12 +139,8 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
     }
   };
 
-  const submitLabel = localBlob
-    ? "Save & continue"
-    : profile.voice_intro_url
-      ? "Continue"
-      : "Continue";
-  const disableSubmit = state === "recording" || (!localBlob && !profile.voice_intro_url);
+  const submitLabel = localBlob ? "Save & finish" : "Finish";
+  const disableSubmit = state === "recording";
 
   return (
     <StepShell
