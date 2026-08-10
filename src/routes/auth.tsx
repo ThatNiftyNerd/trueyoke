@@ -19,8 +19,10 @@ import {
   requestPasswordReset,
   updatePassword,
 } from "@/features/auth/api";
+import type { Session } from "@supabase/supabase-js";
 import { isRecoveryRedirect } from "@/features/auth/recovery-detect";
 import { PasswordInput } from "@/components/ui/password-input";
+import { ErrorBoundary } from "@/components/app/ErrorBoundary";
 
 type AuthSearch = {
   type?: AccountType;
@@ -47,10 +49,22 @@ export const Route = createFileRoute("/auth")({
   // A signed-in user with no profile must be allowed to render this route:
   // AuthScreen owns the required consent interstitial and profile bootstrap.
   beforeLoad: () => redirectIfSignedIn({ allowAuth: true }),
-  component: AuthScreen,
+  component: AuthScreenBoundary,
 });
 
 type Mode = "signin" | "signup" | "forgot";
+
+/**
+ * Defence in depth: any future throw inside AuthScreen renders a readable
+ * "something went wrong" screen instead of a blank page.
+ */
+function AuthScreenBoundary() {
+  return (
+    <ErrorBoundary name="auth_route">
+      <AuthScreen />
+    </ErrorBoundary>
+  );
+}
 
 function AuthScreen() {
   const navigate = useNavigate();
