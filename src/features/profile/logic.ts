@@ -19,6 +19,23 @@ export const SPIRITUALITY_MARKERS: readonly string[] = [
   "Family devotion",
 ] as const;
 
+/**
+ * Formal denominational / fellowship classifications offered in the faith step.
+ * Draft taxonomy — product still to confirm. "Other" reveals a free-text field
+ * and the typed value is stored verbatim in `profiles.church_designation`.
+ */
+export const CHURCH_DESIGNATIONS: readonly string[] = [
+  "Church of Christ (a cappella / non-instrumental)",
+  "Church of Christ (instrumental)",
+  "International Churches of Christ",
+  "Christian Church (Disciples of Christ)",
+  "Christian Churches and Churches of Christ (independent, instrumental)",
+  "United Church of Christ",
+  "Non-denominational",
+] as const;
+
+export const CHURCH_DESIGNATION_OTHER = "Other";
+
 /** Wizard step keys, in display order. */
 export const STEP_KEYS = ["demographics", "photos", "bio", "faith", "life-verse", "voice"] as const;
 export type StepKey = (typeof STEP_KEYS)[number];
@@ -52,10 +69,11 @@ export const STEPS: readonly StepMeta[] = [
     requiredFields: ["bio"],
   },
   {
+  {
     key: "faith",
     title: "Church affiliation & spirituality",
-    description: "Your congregation and the markers of your walk. Optional.",
-    requiredFields: [],
+    description: "Your congregation and the markers of your walk.",
+    requiredFields: ["church_designation"],
   },
   {
     key: "life-verse",
