@@ -187,6 +187,19 @@ export function VoiceIntroStep({ profile, onSaved, onNext, onBack, canGoBack }: 
         )}
       </div>
 
+      <button
+        type="button"
+        onClick={() => {
+          stop();
+          onNext();
+        }}
+        disabled={saving}
+        className="mx-auto text-sm text-app-ink/70 underline underline-offset-4 disabled:opacity-50"
+      >
+        Skip for now
+      </button>
+
+
       {localUrl ? (
         <div className="space-y-1">
           <Label className="text-app-ink">Preview</Label>
