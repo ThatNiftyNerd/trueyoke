@@ -54,7 +54,7 @@ function AppShell() {
         }
       />
 
-      <div className="mx-auto max-w-md pb-24">
+      <div className="mx-auto max-w-md pb-[calc(6.5rem+env(safe-area-inset-bottom))]">
         <UpdateBanner />
         <Outlet />
       </div>
