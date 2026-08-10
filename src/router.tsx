@@ -58,7 +58,6 @@ export const getRouter = () => {
     invalidateWhenIdle();
   });
 
-
   // Kick off session rehydration immediately so the first `beforeLoad` guard
   // resolves against the restored session instead of a null one.
   void restoreSession();

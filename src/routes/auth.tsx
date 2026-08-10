@@ -132,7 +132,6 @@ function AuthScreen() {
     return unsubscribe;
   }, [navigate]);
 
-
   async function handleUpdatePassword() {
     setError(null);
     if (newPassword.length < 6) {
