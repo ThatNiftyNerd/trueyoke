@@ -28,6 +28,21 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        // Real release signing key. Never committed — the .keystore file and all
+        // four values below are supplied at build time via environment variables,
+        // sourced from GitHub Actions Secrets in CI (see android-build.yml) or a
+        // local, gitignored android/app/release-signing.env for local builds.
+        // If these env vars aren't set, `release` builds fall back to unsigned
+        // (Gradle default) rather than failing — debug builds are unaffected either way.
+        release {
+            def ksPath = System.getenv("ANDROID_RELEASE_KEYSTORE_PATH")
+            if (ksPath) {
+                storeFile file(ksPath)
+                storePassword System.getenv("ANDROID_RELEASE_STORE_PASSWORD")
+                keyAlias System.getenv("ANDROID_RELEASE_KEY_ALIAS")
+                keyPassword System.getenv("ANDROID_RELEASE_KEY_PASSWORD")
+            }
+        }
     }
     buildTypes {
         debug {
@@ -36,6 +51,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig System.getenv("ANDROID_RELEASE_KEYSTORE_PATH") ? signingConfigs.release : null
         }
     }
 }

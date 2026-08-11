@@ -1,2 +1,4 @@
 /build/*
 !/build/.npmkeep
+yoked-release.keystore
+release-signing.env
