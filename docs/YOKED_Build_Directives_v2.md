@@ -120,13 +120,24 @@ Flag and fix on sight: duplicate fetch logic for the same table in two+ files; c
 - Checkout → `npm ci` (or `bun install`, matching whatever Lovable's TanStack Start scaffold uses) → `npm run build` (SPA-mode static build)
 - `npx cap sync android`
 - Set up JDK + Android SDK (via `android-actions/setup-android`)
-- `./gradlew assembleDebug` (or `assembleRelease` with a signing config stored in GitHub Secrets — never committed) for the **preview/prototype APK**
+- `./gradlew assembleDebug` always runs, producing `yoked-debug-apk`. `./gradlew assembleRelease` also runs whenever the `ANDROID_RELEASE_KEYSTORE_BASE64` secret is present, producing a properly signed `yoked-release-apk` — this is the artifact that should be distributed for testing/sideloading. If release secrets aren't configured on a fork, the release steps are skipped automatically and the debug build still succeeds.
 - Upload the `.apk` as a workflow artifact (and optionally to a GitHub Release) so it's downloadable without a local build
 
 This is the whole CI/CD system: **GitHub Actions is both your quality gate and your build server.** No separate build service needed. If you want a faster local smoke test before pushing, running the same `cap sync` → `./gradlew assembleDebug` steps in **Android Studio** is equivalent and fine — but the GitHub Actions run is the canonical, reproducible build of record.
 
 ### 3.3 Secrets
-Supabase URL + anon key: fine as build-time env vars (anon key is public by design under RLS). Any Android signing keystore password and Supabase **service-role** key: GitHub Actions Secrets only, never in `.env` committed to the repo, never referenced from client-side code.
+
+Supabase URL + anon key: fine as build-time env vars (anon key is public by design under RLS). Supabase **service-role** key: GitHub Actions Secrets only, never in `.env` committed to the repo, never referenced from client-side code.
+
+**Android release signing (added August 11, 2026 — see §9):**
+| Secret name | Value |
+|---|---|
+| `ANDROID_RELEASE_KEYSTORE_BASE64` | base64 of the `.keystore` file |
+| `ANDROID_RELEASE_STORE_PASSWORD` | keystore password |
+| `ANDROID_RELEASE_KEY_ALIAS` | `yoked-release` |
+| `ANDROID_RELEASE_KEY_PASSWORD` | same as store password (PKCS12 requires they match) |
+
+Set under GitHub repo → Settings → Secrets and variables → Actions. Never pasted into Lovable chat, committed to the repo, or logged in CI output. The keystore file itself is not in version control — see §9 for where the durable copy lives.
 
 ---
 
@@ -176,7 +187,7 @@ Lives in `src/theme/colors.ts` and, since this is now a Tailwind project, also m
 ### Sprint 3 — Hours 50–68, Safety, Polish, Ship
 - Report/block flows, `expire-stale-chats` Edge Function deployed and scheduled.
 - Empty/loading/error states, palette QA against §5, app icon + splash from `TrueYoke official Logo.jpeg`.
-- Seed demo profiles. Final signed release `.apk` built via `android-build.yml`, installed and smoke-tested on a real Android 11 device.
+- Seed demo profiles. Final signed release `.apk` (real release key, not debug-signed) built via `android-build.yml`, downloaded from the `yoked-release-apk` artifact, installed and smoke-tested on a real Android 11 device.
 - **Gate:** signed APK installs clean, full loop runs end-to-end, CI is green on `main`.
 
 ### Hours 68–72: Buffer (unallocated by design)
@@ -207,3 +218,15 @@ A signed `.apk`, built via GitHub Actions from a Lovable+GitHub-synced repo, tha
 3. Every merge to `main` passed `ci.yml` (typecheck, lint, test, build) and a human review against §2.3.
 4. No hardcoded secrets, no `any` types, no component over ~200 lines, no raw hex outside `theme/colors.ts`.
 5. Renders in the Grounded Growth palette throughout.
+
+---
+
+## 9. Release Signing (added August 11, 2026)
+
+The debug-signed APK (Android's well-known default debug keystore, `trueyoke-debug.keystore`) was flagged as malware by Windows Defender when downloaded — a common AV heuristic false positive for hybrid/Capacitor apps signed with the standard debug key, not an actual security issue with the app itself. It remained committed and in use for CI debug builds (App Links verification needs a stable fingerprint — see the comment in `android/app/build.gradle`), but is no longer what gets distributed.
+
+**What changed:** a real, dedicated release signing key (`yoked-release`, RSA 2048, self-signed, 30-year validity) was generated and wired into `android/app/build.gradle` and `.github/workflows/android-build.yml` via environment variables sourced from GitHub Actions Secrets (§3.3) — never hardcoded, never committed. `public/.well-known/assetlinks.json` now lists both the debug and release SHA-256 fingerprints so Android App Links verification keeps working for both build types.
+
+**Where the keystore lives:** the `.keystore` file and its password are not in version control (by design — a leaked signing key can never be rotated for an already-installed app without users reinstalling fresh). The durable copy is held by the project owner outside the repo. **Losing this keystore permanently blocks signing any future update to an already-distributed release build** — back it up somewhere durable (password manager attachment, encrypted archive, etc.), not just the one location it was generated into.
+
+**CI behavior:** `android-build.yml` builds `assembleDebug` unconditionally and `assembleRelease` only when the release secrets are present, so the pipeline degrades gracefully (e.g. on forks) rather than failing outright.
