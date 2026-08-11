@@ -5,7 +5,8 @@
       "namespace": "android_app",
       "package_name": "app.trueyoke.mobile",
       "sha256_cert_fingerprints": [
-        "10:C8:CD:2C:43:44:07:DB:FF:D9:1F:26:C0:58:EB:28:68:CF:D8:26:0D:6C:4E:C4:15:52:1A:68:87:F0:BF:52"
+        "10:C8:CD:2C:43:44:07:DB:FF:D9:1F:26:C0:58:EB:28:68:CF:D8:26:0D:6C:4E:C4:15:52:1A:68:87:F0:BF:52",
+        "F0:E3:33:54:43:D7:D1:5F:E1:DA:55:6A:6F:28:8E:CB:3A:4E:0B:B3:F4:AB:D5:F7:05:7F:5B:92:0D:E3:23:42"
       ]
     }
   }
