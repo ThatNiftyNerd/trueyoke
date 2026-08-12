@@ -80,3 +80,26 @@ jobs:
           path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
 
+      - name: Compute release metadata
+        if: ${{ env.HAS_RELEASE_SECRETS == 'true' && env.HAS_MANIFEST_SECRETS == 'true' }}
+        id: release_meta
+        run: |
+          SHA256=$(sha256sum android/app/build/outputs/apk/release/app-release.apk | cut -d' ' -f1)
+          VERSION_CODE=$(grep -oP 'versionCode\s+\K\d+' android/app/build.gradle)
+          VERSION_NAME=$(grep -oP 'versionName\s+"\K[^"]+' android/app/build.gradle)
+          echo "sha256_hash=$SHA256" >> $GITHUB_OUTPUT
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+
+      - name: Publish signed release manifest
+        if: ${{ env.HAS_RELEASE_SECRETS == 'true' && env.HAS_MANIFEST_SECRETS == 'true' }}
+        env:
+          FUNCTION_URL: ${{ secrets.VITE_SUPABASE_URL }}/functions/v1/publish-release-manifest
+        run: |
+          curl --fail-with-body -sS \
+            -X POST \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"version_code": ${{ steps.release_meta.outputs.version_code }}, "version_name": "${{ steps.release_meta.outputs.version_name }}", "platform": "android", "sha256_hash": "${{ steps.release_meta.outputs.sha256_hash }}", "release_notes": "CI build ${{ github.sha }}"}' \
+            "$FUNCTION_URL"
+
