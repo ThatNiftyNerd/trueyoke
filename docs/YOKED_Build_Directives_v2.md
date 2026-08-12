@@ -137,6 +137,11 @@ Supabase URL + anon key: fine as build-time env vars (anon key is public by desi
 | `ANDROID_RELEASE_KEY_ALIAS` | `yoked-release` |
 | `ANDROID_RELEASE_KEY_PASSWORD` | same as store password (PKCS12 requires they match) |
 
+**Release-manifest publishing (added August 12, 2026 — see §10):**
+| Secret name | Value |
+|---|---|
+| `RELEASE_PUBLISH_TOKEN` | Dedicated random token (not the Supabase service-role key) that authenticates CI to the `publish-release-manifest` edge function. Generated and stored server-side; rotate by re-generating and updating both the Supabase secret and this GitHub secret. |
+
 Set under GitHub repo → Settings → Secrets and variables → Actions. Never pasted into Lovable chat, committed to the repo, or logged in CI output. The keystore file itself is not in version control — see §9 for where the durable copy lives.
 
 ---
