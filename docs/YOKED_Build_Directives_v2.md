@@ -137,6 +137,11 @@ Supabase URL + anon key: fine as build-time env vars (anon key is public by desi
 | `ANDROID_RELEASE_KEY_ALIAS` | `yoked-release` |
 | `ANDROID_RELEASE_KEY_PASSWORD` | same as store password (PKCS12 requires they match) |
 
+**Release-manifest publishing (added August 12, 2026 — see §10):**
+| Secret name | Value |
+|---|---|
+| `RELEASE_PUBLISH_TOKEN` | Dedicated random token (not the Supabase service-role key) that authenticates CI to the `publish-release-manifest` edge function. Generated and stored server-side; rotate by re-generating and updating both the Supabase secret and this GitHub secret. |
+
 Set under GitHub repo → Settings → Secrets and variables → Actions. Never pasted into Lovable chat, committed to the repo, or logged in CI output. The keystore file itself is not in version control — see §9 for where the durable copy lives.
 
 ---
@@ -230,3 +235,15 @@ The debug-signed APK (Android's well-known default debug keystore, `trueyoke-deb
 **Where the keystore lives:** the `.keystore` file and its password are not in version control (by design — a leaked signing key can never be rotated for an already-installed app without users reinstalling fresh). The durable copy is held by the project owner outside the repo. **Losing this keystore permanently blocks signing any future update to an already-distributed release build** — back it up somewhere durable (password manager attachment, encrypted archive, etc.), not just the one location it was generated into.
 
 **CI behavior:** `android-build.yml` builds `assembleDebug` unconditionally and `assembleRelease` only when the release secrets are present, so the pipeline degrades gracefully (e.g. on forks) rather than failing outright.
+
+---
+
+## 10. Release-Manifest Publishing (added August 12, 2026)
+
+After `assembleRelease` succeeds, CI now computes the release APK's SHA-256 hash and reads `versionCode`/`versionName` from `android/app/build.gradle`, then POSTs to the `publish-release-manifest` edge function. The function inserts a signed row into `bundle_releases`, which is what the in-app update-awareness pipeline (`src/features/updates/`, `UpdateBanner.tsx`) queries to determine whether a newer APK is available. This closes the gap noted when the update-awareness pipeline originally shipped: the `bundle_releases` table existed but nothing was populating it from the actual CI build.
+
+**Auth:** the CI caller originally used the Supabase service-role key as its bearer token. Before that could ever be shipped, it was replaced with a dedicated, least-privilege `RELEASE_PUBLISH_TOKEN` (§3.3). That token can only authenticate the `publish-release-manifest` edge function; a leaked CI secret can no longer bypass RLS platform-wide. The edge function still uses the service-role key internally to write to the database, but the *caller-auth* check is now scoped to the dedicated token.
+
+**Gating:** both new CI steps — "Compute release metadata" and "Publish signed release manifest" — are gated the same way as the release build itself: they are skipped cleanly if `RELEASE_PUBLISH_TOKEN` is not set. So the pipeline still degrades gracefully on forks or in-progress setups while producing the signed APK whenever release signing secrets are available.
+
+**Verified end-to-end on 2026-08-12:** a manual CI dispatch produced a release build, the `publish-release-manifest` edge function returned `{"ok":true,...}`, and the resulting `bundle_releases` row's signature was independently verified against the public key in `src/features/updates/keys.ts` using RSA-PSS/SHA-256. That confirms the full chain from CI build through to the data the client's `verifySignature()` would accept.
