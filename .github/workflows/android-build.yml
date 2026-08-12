@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HAS_RELEASE_SECRETS: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 != '' && 'true' || 'false' }}
-      HAS_MANIFEST_SECRETS: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY != '' && 'true' || 'false' }}
+      HAS_MANIFEST_SECRETS: ${{ secrets.RELEASE_PUBLISH_TOKEN != '' && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -98,7 +98,7 @@ jobs:
         run: |
           curl --fail-with-body -sS \
             -X POST \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.RELEASE_PUBLISH_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{"version_code": ${{ steps.release_meta.outputs.version_code }}, "version_name": "${{ steps.release_meta.outputs.version_name }}", "platform": "android", "sha256_hash": "${{ steps.release_meta.outputs.sha256_hash }}", "release_notes": "CI build ${{ github.sha }}"}' \
             "$FUNCTION_URL"

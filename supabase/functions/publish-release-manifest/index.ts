@@ -1,7 +1,8 @@
 // Supabase Edge Function — publish a signed release manifest row.
 //
-// Called by CI (GitHub Actions) AFTER a build, authenticated with the
-// service-role key held in a GitHub secret. It is never called from the app.
+// Called by CI (GitHub Actions) AFTER a build, authenticated with a
+// dedicated `RELEASE_PUBLISH_TOKEN` held in a GitHub secret. It is never
+// called from the app.
 //
 // It signs the canonical tuple {version_code, version_name, platform,
 // sha256_hash} with an asymmetric RSA-PSS (SHA-256) private key held only in
@@ -52,8 +53,9 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const releaseToken = Deno.env.get("RELEASE_PUBLISH_TOKEN")!;
   const authHeader = req.headers.get("Authorization");
-  if (authHeader !== `Bearer ${serviceKey}`) return json({ error: "Unauthorized" }, 401);
+  if (authHeader !== `Bearer ${releaseToken}`) return json({ error: "Unauthorized" }, 401);
 
   let body: Record<string, unknown>;
   try {
