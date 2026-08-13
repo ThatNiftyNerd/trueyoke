@@ -70,7 +70,7 @@ function AuthScreen() {
   const navigate = useNavigate();
   const search = Route.useSearch();
   const [mode, setMode] = useState<Mode>(search.mode ?? "signup");
-  const [accountType] = useState<AccountType>(search.type ?? "match");
+  const [accountType] = useState<AccountType | null>(search.type ?? null);
 
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
@@ -182,6 +182,10 @@ function AuthScreen() {
       setOauthConsentPending(false);
       navigate({ to: await signedInLandingPath() });
     } catch (err) {
+      if (err instanceof Error && (err as Error & { code?: string }).code === "ACCOUNT_TYPE_UNKNOWN") {
+        navigate({ to: "/choose-type" });
+        return;
+      }
       setError(err instanceof Error ? err.message : "Sign-in failed. Please try again.");
     } finally {
       setSubmitting(false);
@@ -191,6 +195,10 @@ function AuthScreen() {
   async function handleGoogle() {
     setError(null);
     setNotice(null);
+    if (!accountType) {
+      setError("Please choose whether you're joining as a Match or a Mentor first.");
+      return;
+    }
     setSubmitting(true);
     try {
       await signInWithGoogle(accountType);
@@ -213,6 +221,9 @@ function AuthScreen() {
         }
         if (!privacyAccepted) {
           throw new Error("Please accept the Privacy Policy to continue.");
+        }
+        if (!accountType) {
+          throw new Error("Please choose whether you're joining as a Match or a Mentor first.");
         }
         await signUpWithEmail({
           email,
@@ -237,6 +248,9 @@ function AuthScreen() {
         // existing account with a profile; ensureProfileExists no-ops in
         // that case.
         if (displayName.trim()) {
+          if (!accountType) {
+            throw new Error("Please choose whether you're joining as a Match or a Mentor first.");
+          }
           await ensureProfileExists({
             accountType,
             displayName: displayName.trim(),

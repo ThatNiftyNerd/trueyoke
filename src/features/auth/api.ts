@@ -307,10 +307,16 @@ export async function ensureOAuthProfile(consent: OAuthConsentInput): Promise<vo
   if (existing) return;
 
   const accountType = accountTypeFromSession(session) ?? consent.accountType ?? null;
+  if (!accountType) {
+    const err = new Error("Account type could not be determined.");
+    (err as Error & { code?: string }).code = "ACCOUNT_TYPE_UNKNOWN";
+    throw err;
+  }
+
   const { error: insErr } = await supabase.from("profiles").insert({
     id: session.user.id,
     display_name: displayNameFromSession(session),
-    ...(accountType ? { account_type: accountType } : {}),
+    account_type: accountType,
     privacy_accepted_at: consent.privacyAcceptedAt,
     privacy_policy_version: consent.privacyPolicyVersion,
   });
