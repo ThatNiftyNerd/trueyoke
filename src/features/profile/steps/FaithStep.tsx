@@ -86,13 +86,24 @@ export function FaithStep({ profile, onSaved, onNext, onBack, canGoBack }: Props
   const onSubmit = handleSubmit(async (values) => {
     setError(null);
     try {
-      const { church_designation_choice, church_designation_other, ...rest } = values;
+      const {
+        church_designation_choice,
+        church_designation_other,
+        church_affiliation_choice,
+        church_affiliation_other,
+        ...rest
+      } = values;
+      const affiliation =
+        church_affiliation_choice === CHURCH_AFFILIATION_OTHER
+          ? church_affiliation_other.trim()
+          : church_affiliation_choice.trim();
       const patch = {
         ...(emptyToNull(rest) as Partial<OnboardingProfile>),
         church_designation:
           church_designation_choice === CHURCH_DESIGNATION_OTHER
             ? church_designation_other.trim()
             : church_designation_choice,
+        church_affiliation: affiliation || null,
       };
       await updateOwnProfile(patch);
       onSaved(patch);
