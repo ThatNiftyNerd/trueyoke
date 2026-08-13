@@ -15,6 +15,10 @@ import { StepShell } from "./StepShell";
 import { updateOwnProfile, type OnboardingProfile } from "../api";
 import { faithSchema, emptyToNull, type FaithValues } from "../schemas";
 import { SPIRITUALITY_MARKERS, CHURCH_DESIGNATIONS, CHURCH_DESIGNATION_OTHER } from "../logic";
+import { CHURCH_AFFILIATIONS, CHURCH_AFFILIATION_DEFAULT } from "../constants";
+
+/** Free-text escape hatch appended to the affiliation dropdown. */
+const CHURCH_AFFILIATION_OTHER = "Other";
 
 interface Props {
   profile: OnboardingProfile;
