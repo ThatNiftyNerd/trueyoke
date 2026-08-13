@@ -60,15 +60,24 @@ create table public.profiles (
   updated_at           timestamptz not null default now()
 );
 
--- A profile is "complete" when the mandatory MVP fields exist (voice intro optional).
+-- Completeness is account-type specific (PRD Rev 8 §3.2): mentors only need
+-- identity + leadership credentials; matches need the full dating profile.
 alter table public.profiles
   add column profile_complete boolean
   generated always as (
-    display_name is not null
-    and age is not null
-    and gender is not null
-    and life_verse is not null
-    and bio is not null
+    case
+      when account_type = 'mentor' then
+        display_name is not null
+        and full_name is not null
+        and mentor_role is not null
+        and congregation is not null
+      else
+        display_name is not null
+        and age is not null
+        and gender is not null
+        and life_verse is not null
+        and bio is not null
+    end
   ) stored;
 
 -- ---------- photos ---------------------------------------------------------
