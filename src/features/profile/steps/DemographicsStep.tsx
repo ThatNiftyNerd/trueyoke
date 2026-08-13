@@ -31,11 +31,6 @@ interface Props {
   canGoBack: boolean;
 }
 
-/**
- * `country` / `city` are newer columns not yet part of the OnboardingProfile
- * pick; read them defensively so this step can prefill when they're present.
- */
-type WithLocation = { country?: string | null; city?: string | null };
 
 function codeForCountryName(name: string): string {
   return COUNTRIES.find((c) => c.name === name)?.code ?? "";
