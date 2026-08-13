@@ -974,6 +974,7 @@ export type Database = {
       admin_analytics_signups_over_time: {
         Args: { p_days?: number }
         Returns: {
+          account_type: string
           day: string
           signups: number
         }[]
