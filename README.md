@@ -6,8 +6,8 @@ and "marriage-mindedness" over casual dating mechanics: verified profiles, a man
 voice introduction, and an "Intentionality Circuit Breaker" (3-active-chat cap + 72h expiry) that keeps
 the match pool high-intent.
 
-Full product requirements: [`docs/YOKED prd.pdf`](docs/YOKED%20prd.pdf) and
-[`docs/Yoked_FRD_MVP_Growth_Strategy.pdf`](docs/Yoked_FRD_MVP_Growth_Strategy.pdf).
+Full product requirements: [`docs/TrueYoke_PRD.pdf`](docs/TrueYoke_PRD.pdf) and
+[`docs/TrueYoke_FRD_MVP_Growth_Strategy.pdf`](docs/TrueYoke_FRD_MVP_Growth_Strategy.pdf).
 
 ## This is the live repo
 
@@ -17,11 +17,13 @@ lands here as a real commit. (Note: this repo was created by Lovable under the i
 
 Naming history, continued: the product was renamed again from **Yoked** to **TrueYoke** (final, locked in).
 All user-facing copy, the Capacitor `appId` (`app.trueyoke.mobile`), and the Android app name now read
-TrueYoke; older `YOKED_*` doc filenames and the archived `legacy/` prototype keep their historical names.
+TrueYoke, and the GitHub repo itself has since been renamed from `yoked` to `trueyoke`. The
+`docs/YOKED_*` files have been renamed to `docs/TrueYoke_*` as well; only the archived `legacy/`
+prototype keeps its historical names.
 
 ## Current build plan
 
-The active plan is **[`docs/YOKED_Build_Directives_v2.md`](docs/YOKED_Build_Directives_v2.md)** — read this first.
+The active plan is **[`docs/TrueYoke_Build_Directives_v2.md`](docs/TrueYoke_Build_Directives_v2.md)** — read this first.
 
 - **Frontend:** authored in [Lovable](https://lovable.dev) — Vite + React 19 + TypeScript +
   TanStack Router (SPA, no SSR) + Tailwind v4 + shadcn/ui — wrapped in
@@ -35,7 +37,7 @@ The active plan is **[`docs/YOKED_Build_Directives_v2.md`](docs/YOKED_Build_Dire
   real `gradlew assembleDebug`, uploads the APK as a workflow artifact).
 - **Target device floor:** Android 11 (API 30) and newer — `android/variables.gradle` sets
   `minSdkVersion = 30`.
-- **Initial Lovable prompt:** [`docs/YOKED_Lovable_Init_Prompt.md`](docs/YOKED_Lovable_Init_Prompt.md).
+- **Initial Lovable prompt:** [`docs/TrueYoke_Lovable_Init_Prompt.md`](docs/TrueYoke_Lovable_Init_Prompt.md).
 
 ## Repository layout
 
@@ -64,4 +66,4 @@ prototype — see the build directives' scope section.
 
 This project has explicit, CI-enforced rules against AI-generated spaghetti code (feature-folder
 architecture, no god components, single Supabase client, no hardcoded secrets/colors, mandatory human
-review on every merge). See §2 of `docs/YOKED_Build_Directives_v2.md` before opening a PR.
+review on every merge). See §2 of `docs/TrueYoke_Build_Directives_v2.md` before opening a PR.

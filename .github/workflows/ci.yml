@@ -37,5 +37,5 @@ jobs:
       # No test suite yet — the app is still in Sprint 0/1 scaffolding, no
       # feature logic (circuit breaker, expiry, match-eligibility) exists to
       # test. Add a `bun test` step here once features/*/logic.ts modules
-      # exist, per docs/YOKED_Build_Directives_v2.md §2.2/§3.2. Do not skip
+      # exist, per docs/TrueYoke_Build_Directives_v2.md §2.2/§3.2. Do not skip
       # this once that logic lands.

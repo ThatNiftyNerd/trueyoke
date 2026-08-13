@@ -1,6 +1,6 @@
 # Lovable Initialization Prompt — paste as the first message when creating the project
 
-This is Sprint 0 only: scaffolding, architecture, theme, and empty routed screens. It deliberately does **not** ask Lovable to build feature logic in one shot (per the anti-slop rules in `YOKED_Build_Directives_v2.md` §2.1) — that comes in small, scoped follow-up prompts per feature.
+This is Sprint 0 only: scaffolding, architecture, theme, and empty routed screens. It deliberately does **not** ask Lovable to build feature logic in one shot (per the anti-slop rules in `TrueYoke_Build_Directives_v2.md` §2.1) — that comes in small, scoped follow-up prompts per feature.
 
 ---
 
