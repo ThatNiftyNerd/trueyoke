@@ -217,11 +217,9 @@ export const COUNTRIES: readonly Country[] = [
  * Returns an empty string for anything that isn't two ASCII letters.
  */
 export function flagEmoji(countryCode: string): string {
-  const code = (countryCode ?? '').trim().toUpperCase();
-  if (!/^[A-Z]{2}$/.test(code)) return '';
-  return String.fromCodePoint(
-    ...[...code].map((ch) => 0x1f1e6 + (ch.charCodeAt(0) - 65)),
-  );
+  const code = (countryCode ?? "").trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(code)) return "";
+  return String.fromCodePoint(...[...code].map((ch) => 0x1f1e6 + (ch.charCodeAt(0) - 65)));
 }
 
 /** Hard cap so a huge country's city list can't blow up the dropdown. */
@@ -236,11 +234,11 @@ export const CITY_LIMIT = 300;
  * "Other (type your city)" fallback since this list isn't exhaustive.
  */
 export async function citiesForCountry(countryCode: string): Promise<string[]> {
-  const code = (countryCode ?? '').trim().toUpperCase();
+  const code = (countryCode ?? "").trim().toUpperCase();
   if (!/^[A-Z]{2}$/.test(code)) return [];
-  const { City } = await import('country-state-city');
-  const names = Array.from(
-    new Set((City.getCitiesOfCountry(code) ?? []).map((c) => c.name)),
-  ).sort((a, b) => a.localeCompare(b));
+  const { City } = await import("country-state-city");
+  const names = Array.from(new Set((City.getCitiesOfCountry(code) ?? []).map((c) => c.name))).sort(
+    (a, b) => a.localeCompare(b),
+  );
   return names.slice(0, CITY_LIMIT);
 }

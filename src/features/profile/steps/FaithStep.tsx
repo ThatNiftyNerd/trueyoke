@@ -15,6 +15,10 @@ import { StepShell } from "./StepShell";
 import { updateOwnProfile, type OnboardingProfile } from "../api";
 import { faithSchema, emptyToNull, type FaithValues } from "../schemas";
 import { SPIRITUALITY_MARKERS, CHURCH_DESIGNATIONS, CHURCH_DESIGNATION_OTHER } from "../logic";
+import { CHURCH_AFFILIATIONS, CHURCH_AFFILIATION_DEFAULT } from "../constants";
+
+/** Free-text escape hatch appended to the affiliation dropdown. */
+const CHURCH_AFFILIATION_OTHER = "Other";
 
 interface Props {
   profile: OnboardingProfile;
@@ -31,9 +35,23 @@ function splitDesignation(stored: string | null): { choice: string; other: strin
   return { choice: CHURCH_DESIGNATION_OTHER, other: stored };
 }
 
+/**
+ * Stored affiliation -> (dropdown choice, free-text). Empty means a new
+ * profile, which defaults to CHURCH_AFFILIATION_DEFAULT; legacy free text
+ * falls back to "Other" with the value prefilled.
+ */
+function splitAffiliation(stored: string | null): { choice: string; other: string } {
+  if (!stored || !stored.trim()) return { choice: CHURCH_AFFILIATION_DEFAULT, other: "" };
+  if ((CHURCH_AFFILIATIONS as readonly string[]).includes(stored)) {
+    return { choice: stored, other: "" };
+  }
+  return { choice: CHURCH_AFFILIATION_OTHER, other: stored };
+}
+
 export function FaithStep({ profile, onSaved, onNext, onBack, canGoBack }: Props) {
   const [error, setError] = useState<string | null>(null);
   const initial = splitDesignation(profile.church_designation);
+  const initialAffiliation = splitAffiliation(profile.church_affiliation);
   const {
     register,
     handleSubmit,
@@ -43,16 +61,19 @@ export function FaithStep({ profile, onSaved, onNext, onBack, canGoBack }: Props
   } = useForm<FaithValues>({
     resolver: zodResolver(faithSchema),
     defaultValues: {
-      church_affiliation: profile.church_affiliation ?? "",
       congregation: profile.congregation ?? "",
       spirituality_markers: profile.spirituality_markers ?? [],
       church_designation_choice: initial.choice,
       church_designation_other: initial.other,
+      church_affiliation_choice: initialAffiliation.choice,
+      church_affiliation_other: initialAffiliation.other,
     },
   });
   const markers = watch("spirituality_markers") ?? [];
   const choice = watch("church_designation_choice");
   const isOther = choice === CHURCH_DESIGNATION_OTHER;
+  const affiliationChoice = watch("church_affiliation_choice");
+  const isAffiliationOther = affiliationChoice === CHURCH_AFFILIATION_OTHER;
 
   const toggle = (marker: string, checked: boolean) => {
     const next = checked
@@ -64,13 +85,24 @@ export function FaithStep({ profile, onSaved, onNext, onBack, canGoBack }: Props
   const onSubmit = handleSubmit(async (values) => {
     setError(null);
     try {
-      const { church_designation_choice, church_designation_other, ...rest } = values;
+      const {
+        church_designation_choice,
+        church_designation_other,
+        church_affiliation_choice,
+        church_affiliation_other,
+        ...rest
+      } = values;
+      const affiliation =
+        church_affiliation_choice === CHURCH_AFFILIATION_OTHER
+          ? church_affiliation_other.trim()
+          : church_affiliation_choice.trim();
       const patch = {
         ...(emptyToNull(rest) as Partial<OnboardingProfile>),
         church_designation:
           church_designation_choice === CHURCH_DESIGNATION_OTHER
             ? church_designation_other.trim()
             : church_designation_choice,
+        church_affiliation: affiliation || null,
       };
       await updateOwnProfile(patch);
       onSaved(patch);
@@ -121,8 +153,40 @@ export function FaithStep({ profile, onSaved, onNext, onBack, canGoBack }: Props
         ) : null}
         <div className="space-y-1">
           <Label className="text-app-ink">Church affiliation</Label>
-          <Input placeholder="Church of Christ" {...register("church_affiliation")} />
+          <Select
+            value={affiliationChoice || undefined}
+            onValueChange={(v) =>
+              setValue("church_affiliation_choice", v, { shouldValidate: true, shouldDirty: true })
+            }
+          >
+            <SelectTrigger aria-label="Church affiliation">
+              <SelectValue placeholder="Select an affiliation" />
+            </SelectTrigger>
+            <SelectContent>
+              {[...CHURCH_AFFILIATIONS, CHURCH_AFFILIATION_OTHER].map((a) => (
+                <SelectItem key={a} value={a}>
+                  {a}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errors.church_affiliation_choice ? (
+            <p className="text-xs text-app-warn">{errors.church_affiliation_choice.message}</p>
+          ) : null}
         </div>
+        {isAffiliationOther ? (
+          <div className="space-y-1">
+            <Label className="text-app-ink">Please specify</Label>
+            <Input
+              placeholder="Your church affiliation"
+              maxLength={120}
+              {...register("church_affiliation_other")}
+            />
+            {errors.church_affiliation_other ? (
+              <p className="text-xs text-app-warn">{errors.church_affiliation_other.message}</p>
+            ) : null}
+          </div>
+        ) : null}
         <div className="space-y-1">
           <Label className="text-app-ink">Congregation</Label>
           <Input placeholder="Congregation name" {...register("congregation")} />
