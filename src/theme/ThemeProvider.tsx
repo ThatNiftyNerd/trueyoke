@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 type Theme = "light" | "dark";
-const STORAGE_KEY = "yoked-theme";
+const STORAGE_KEY = "trueyoke-theme";
 
 interface ThemeContextValue {
   theme: Theme;

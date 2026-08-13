@@ -21,7 +21,7 @@ TrueYoke; older `YOKED_*` doc filenames and the archived `legacy/` prototype kee
 
 ## Current build plan
 
-The active plan is **[`docs/YOKED_Build_Directives_v2.md`](docs/YOKED_Build_Directives_v2.md)** — read this first.
+The active plan is **[`docs/TrueYoke_Build_Directives_v2.md`](docs/TrueYoke_Build_Directives_v2.md)** — read this first.
 
 - **Frontend:** authored in [Lovable](https://lovable.dev) — Vite + React 19 + TypeScript +
   TanStack Router (SPA, no SSR) + Tailwind v4 + shadcn/ui — wrapped in
@@ -64,4 +64,4 @@ prototype — see the build directives' scope section.
 
 This project has explicit, CI-enforced rules against AI-generated spaghetti code (feature-folder
 architecture, no god components, single Supabase client, no hardcoded secrets/colors, mandatory human
-review on every merge). See §2 of `docs/YOKED_Build_Directives_v2.md` before opening a PR.
+review on every merge). See §2 of `docs/TrueYoke_Build_Directives_v2.md` before opening a PR.
