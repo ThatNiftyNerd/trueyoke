@@ -103,20 +103,41 @@ export const STEPS: readonly StepMeta[] = [
 ];
 
 /**
+ * Mentor wizard (PRD Rev 8 §3.2): mentors are not dating — they only need an
+ * identity (full name), a photo for the mentor directory, and their leadership
+ * credentials. No bio, faith picker, life verse, or voice intro.
+ */
+export const MENTOR_STEPS: readonly StepMeta[] = [
+  {
+    key: "demographics",
+    title: "About you",
+    description: "Your full name and a few optional details.",
+    requiredFields: ["full_name"],
+  },
+  {
+    key: "photos",
+    title: "Photo",
+    description: "Matches see your name, photo, and congregation when requesting a voucher.",
+    requiredFields: [],
+  },
+  {
+    key: "credentials",
+    title: "Leadership Credentials",
+    description: "Your official role and the congregation you serve.",
+    requiredFields: ["mentor_role", "congregation"],
+  },
+];
+
+/**
  * Steps for a given account type. "match" accounts no longer upload a gallery
  * during onboarding — they take a live selfie later, after their first match.
- * Mentors must supply their full name (it also gates `profile_complete`).
+ * Mentors get the short credentials-only wizard above.
  */
 export function stepsFor(
   accountType: OnboardingProfile["account_type"] | null | undefined,
 ): readonly StepMeta[] {
-  const steps = accountType === "match" ? STEPS.filter((s) => s.key !== "photos") : STEPS;
-  if (accountType !== "mentor") return steps;
-  return steps.map((s) =>
-    s.key === "demographics"
-      ? { ...s, requiredFields: [...s.requiredFields, "full_name" as const] }
-      : s,
-  );
+  if (accountType === "mentor") return MENTOR_STEPS;
+  return accountType === "match" ? STEPS.filter((s) => s.key !== "photos") : STEPS;
 }
 
 /**
