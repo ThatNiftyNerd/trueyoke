@@ -102,3 +102,10 @@ export function emptyToNull<T extends Record<string, unknown>>(
   }
   return out as { [K in keyof T]: T[K] extends string ? string | null : T[K] };
 }
+
+/** Mentor leadership credentials (PRD Rev 8 §3.2). */
+export const credentialsSchema = z.object({
+  mentor_role: z.string().min(1, "Select your official role"),
+  congregation: z.string().trim().min(1, "Enter the congregation you serve").max(120),
+});
+export type CredentialsValues = z.infer<typeof credentialsSchema>;
