@@ -35,7 +35,6 @@ const baseDemographics = {
   occupation: optString,
 };
 
-
 /** Match accounts: full name is offered but optional. */
 export const demographicsSchema = z.object({
   ...baseDemographics,
@@ -96,7 +95,6 @@ export const faithSchema = z
     path: ["church_affiliation_other"],
   });
 export type FaithValues = z.infer<typeof faithSchema>;
-
 
 export const LIFE_VERSE_MAX = 500;
 

@@ -75,7 +75,6 @@ export function FaithStep({ profile, onSaved, onNext, onBack, canGoBack }: Props
   const affiliationChoice = watch("church_affiliation_choice");
   const isAffiliationOther = affiliationChoice === CHURCH_AFFILIATION_OTHER;
 
-
   const toggle = (marker: string, checked: boolean) => {
     const next = checked
       ? Array.from(new Set([...markers, marker]))

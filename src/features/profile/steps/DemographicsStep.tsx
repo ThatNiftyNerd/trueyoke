@@ -106,9 +106,10 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
     setValue("city_other", "", { shouldDirty: true });
   };
 
-  const cityOptions = cityChoice && cityChoice !== CITY_OTHER && !cities.includes(cityChoice)
-    ? [cityChoice, ...cities]
-    : cities;
+  const cityOptions =
+    cityChoice && cityChoice !== CITY_OTHER && !cities.includes(cityChoice)
+      ? [cityChoice, ...cities]
+      : cities;
 
   const onSubmit = handleSubmit(async (values) => {
     setError(null);

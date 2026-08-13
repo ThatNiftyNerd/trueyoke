@@ -4,16 +4,7 @@
  */
 
 /** ABO/Rh blood groups. Uses the Unicode minus sign (−) as specified. */
-export const BLOOD_GROUPS = [
-  "A+",
-  "A−",
-  "B+",
-  "B−",
-  "AB+",
-  "AB−",
-  "O+",
-  "O−",
-] as const;
+export const BLOOD_GROUPS = ["A+", "A−", "B+", "B−", "AB+", "AB−", "O+", "O−"] as const;
 
 /** Haemoglobin genotypes. */
 export const GENOTYPES = ["AA", "AS", "SS", "AC", "SC", "CC"] as const;
