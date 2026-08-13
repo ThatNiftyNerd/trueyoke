@@ -12,6 +12,9 @@ const optString = z.string().trim().max(200);
 
 export const FULL_NAME_MAX = 100;
 
+/** Literal appended to the city dropdown for the free-text escape hatch. */
+export const CITY_OTHER = "Other (type your city)";
+
 const baseDemographics = {
   age: z
     .number({ invalid_type_error: "Enter your age" })
@@ -19,13 +22,19 @@ const baseDemographics = {
     .min(18, "You must be at least 18")
     .max(99, "Enter a valid age"),
   gender: z.enum(["male", "female"], { required_error: "Select an option" }),
-  location_label: optString,
+  /** Country of residence, stored as the country NAME. */
+  country: optString,
+  /** One of the resolved city options, or the literal CITY_OTHER. */
+  city_choice: optString,
+  /** Free text, only used when city_choice is CITY_OTHER. */
+  city_other: optString,
   blood_group: optString,
   genotype: optString,
   nationality: optString,
   qualification: optString,
   occupation: optString,
 };
+
 
 /** Match accounts: full name is offered but optional. */
 export const demographicsSchema = z.object({
