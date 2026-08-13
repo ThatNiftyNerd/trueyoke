@@ -76,19 +76,27 @@ export type BioValues = z.infer<typeof bioSchema>;
 
 export const faithSchema = z
   .object({
-    church_affiliation: optString,
     congregation: optString,
     spirituality_markers: z.array(z.string()),
     /** One of CHURCH_DESIGNATIONS, or the literal "Other". */
     church_designation_choice: z.string().min(1, "Select your church designation"),
     /** Free text, only used (and required) when the choice is "Other". */
     church_designation_other: z.string().trim().max(120),
+    /** One of CHURCH_AFFILIATIONS, or the literal "Other". */
+    church_affiliation_choice: optString,
+    /** Free text, only used (and required) when the choice is "Other". */
+    church_affiliation_other: z.string().trim().max(120),
   })
   .refine((v) => v.church_designation_choice !== "Other" || v.church_designation_other.length > 0, {
     message: "Tell us your church designation",
     path: ["church_designation_other"],
+  })
+  .refine((v) => v.church_affiliation_choice !== "Other" || v.church_affiliation_other.length > 0, {
+    message: "Tell us your church affiliation",
+    path: ["church_affiliation_other"],
   });
 export type FaithValues = z.infer<typeof faithSchema>;
+
 
 export const LIFE_VERSE_MAX = 500;
 
