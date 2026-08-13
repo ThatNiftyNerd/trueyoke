@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { type AccountType } from "@/lib/constants";
 import { PrivacyConsentCheckbox } from "@/components/app/PrivacyConsentCheckbox";
+import { MarketingConsentCheckbox } from "@/components/app/MarketingConsentCheckbox";
 import {
   PRIVACY_POLICY_VERSION,
   hasProfileRow,
@@ -79,6 +80,8 @@ function AuthScreen() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  // Optional, additional consent — never pre-checked.
+  const [marketingConsent, setMarketingConsent] = useState(false);
   // Google has no form step, so a brand-new OAuth user (session but no
   // profiles row) gets a one-time consent interstitial before bootstrap.
   const [oauthConsentPending, setOauthConsentPending] = useState(false);
@@ -381,11 +384,17 @@ function AuthScreen() {
             Before we create your TrueYoke profile, please review and accept how we handle your
             data.
           </p>
-          <div className="mt-6">
+          <div className="mt-6 space-y-3">
             <PrivacyConsentCheckbox
               id="privacy-consent-oauth"
               checked={oauthConsent}
               onCheckedChange={setOauthConsent}
+              disabled={submitting}
+            />
+            <MarketingConsentCheckbox
+              id="marketing-consent-oauth"
+              checked={marketingConsent}
+              onCheckedChange={setMarketingConsent}
               disabled={submitting}
             />
           </div>
@@ -469,11 +478,18 @@ function AuthScreen() {
         )}
 
         {mode === "signup" && (
-          <PrivacyConsentCheckbox
-            checked={privacyAccepted}
-            onCheckedChange={setPrivacyAccepted}
-            disabled={submitting}
-          />
+          <div className="space-y-3">
+            <PrivacyConsentCheckbox
+              checked={privacyAccepted}
+              onCheckedChange={setPrivacyAccepted}
+              disabled={submitting}
+            />
+            <MarketingConsentCheckbox
+              checked={marketingConsent}
+              onCheckedChange={setMarketingConsent}
+              disabled={submitting}
+            />
+          </div>
         )}
 
         {error && (
