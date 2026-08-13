@@ -8,6 +8,7 @@ import { Capacitor } from "@capacitor/core";
 import { Browser } from "@capacitor/browser";
 import { ACCOUNT_TYPES, type AccountType } from "@/lib/constants";
 import { peekSession, restoreSession, setCachedSession } from "./session";
+import { upsertMarketingConsent } from "@/features/marketing/api";
 
 /**
  * Deep link the OAuth provider redirects back to on Android. This is an
@@ -29,6 +30,8 @@ export interface SignUpInput {
   displayName: string;
   privacyAcceptedAt: string;
   privacyPolicyVersion: string;
+  /** Optional, opt-in marketing email consent. Separate from privacy consent. */
+  marketingConsent?: boolean;
 }
 
 export interface SignInInput {
@@ -47,6 +50,8 @@ export interface OAuthConsentInput {
   /** Chosen on /choose-type and threaded through the OAuth redirect URL,
    *  because Google's own claims can never carry it. */
   accountType?: AccountType | null;
+  /** Optional, opt-in marketing email consent. Separate from privacy consent. */
+  marketingConsent?: boolean;
 }
 
 export async function getCurrentUserId(): Promise<string | null> {
