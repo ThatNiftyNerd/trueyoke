@@ -143,8 +143,40 @@ export function FaithStep({ profile, onSaved, onNext, onBack, canGoBack }: Props
         ) : null}
         <div className="space-y-1">
           <Label className="text-app-ink">Church affiliation</Label>
-          <Input placeholder="Church of Christ" {...register("church_affiliation")} />
+          <Select
+            value={affiliationChoice || undefined}
+            onValueChange={(v) =>
+              setValue("church_affiliation_choice", v, { shouldValidate: true, shouldDirty: true })
+            }
+          >
+            <SelectTrigger aria-label="Church affiliation">
+              <SelectValue placeholder="Select an affiliation" />
+            </SelectTrigger>
+            <SelectContent>
+              {[...CHURCH_AFFILIATIONS, CHURCH_AFFILIATION_OTHER].map((a) => (
+                <SelectItem key={a} value={a}>
+                  {a}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errors.church_affiliation_choice ? (
+            <p className="text-xs text-app-warn">{errors.church_affiliation_choice.message}</p>
+          ) : null}
         </div>
+        {isAffiliationOther ? (
+          <div className="space-y-1">
+            <Label className="text-app-ink">Please specify</Label>
+            <Input
+              placeholder="Your church affiliation"
+              maxLength={120}
+              {...register("church_affiliation_other")}
+            />
+            {errors.church_affiliation_other ? (
+              <p className="text-xs text-app-warn">{errors.church_affiliation_other.message}</p>
+            ) : null}
+          </div>
+        ) : null}
         <div className="space-y-1">
           <Label className="text-app-ink">Congregation</Label>
           <Input placeholder="Congregation name" {...register("congregation")} />
