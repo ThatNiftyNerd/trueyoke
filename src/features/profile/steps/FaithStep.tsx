@@ -35,9 +35,23 @@ function splitDesignation(stored: string | null): { choice: string; other: strin
   return { choice: CHURCH_DESIGNATION_OTHER, other: stored };
 }
 
+/**
+ * Stored affiliation -> (dropdown choice, free-text). Empty means a new
+ * profile, which defaults to CHURCH_AFFILIATION_DEFAULT; legacy free text
+ * falls back to "Other" with the value prefilled.
+ */
+function splitAffiliation(stored: string | null): { choice: string; other: string } {
+  if (!stored || !stored.trim()) return { choice: CHURCH_AFFILIATION_DEFAULT, other: "" };
+  if ((CHURCH_AFFILIATIONS as readonly string[]).includes(stored)) {
+    return { choice: stored, other: "" };
+  }
+  return { choice: CHURCH_AFFILIATION_OTHER, other: stored };
+}
+
 export function FaithStep({ profile, onSaved, onNext, onBack, canGoBack }: Props) {
   const [error, setError] = useState<string | null>(null);
   const initial = splitDesignation(profile.church_designation);
+  const initialAffiliation = splitAffiliation(profile.church_affiliation);
   const {
     register,
     handleSubmit,
@@ -47,16 +61,20 @@ export function FaithStep({ profile, onSaved, onNext, onBack, canGoBack }: Props
   } = useForm<FaithValues>({
     resolver: zodResolver(faithSchema),
     defaultValues: {
-      church_affiliation: profile.church_affiliation ?? "",
       congregation: profile.congregation ?? "",
       spirituality_markers: profile.spirituality_markers ?? [],
       church_designation_choice: initial.choice,
       church_designation_other: initial.other,
+      church_affiliation_choice: initialAffiliation.choice,
+      church_affiliation_other: initialAffiliation.other,
     },
   });
   const markers = watch("spirituality_markers") ?? [];
   const choice = watch("church_designation_choice");
   const isOther = choice === CHURCH_DESIGNATION_OTHER;
+  const affiliationChoice = watch("church_affiliation_choice");
+  const isAffiliationOther = affiliationChoice === CHURCH_AFFILIATION_OTHER;
+
 
   const toggle = (marker: string, checked: boolean) => {
     const next = checked
