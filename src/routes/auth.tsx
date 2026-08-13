@@ -181,6 +181,7 @@ function AuthScreen() {
         privacyAcceptedAt: new Date().toISOString(),
         privacyPolicyVersion: PRIVACY_POLICY_VERSION,
         accountType: search.type ?? null,
+        marketingConsent,
       });
       setOauthConsentPending(false);
       navigate({ to: await signedInLandingPath() });
@@ -238,6 +239,7 @@ function AuthScreen() {
           displayName: displayName.trim(),
           privacyAcceptedAt: new Date().toISOString(),
           privacyPolicyVersion: PRIVACY_POLICY_VERSION,
+          marketingConsent,
         });
         const session = await getCurrentSession();
         if (session) {
