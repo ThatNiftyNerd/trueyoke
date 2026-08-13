@@ -65,6 +65,9 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
   const gender = watch("gender");
   const country = watch("country");
   const cityChoice = watch("city_choice");
+  const nationalityValue = watch("nationality");
+  const hasLegacyNationality =
+    !!nationalityValue && !COUNTRIES.some((c) => c.name === nationalityValue);
 
   const [cities, setCities] = useState<string[]>([]);
   const [citiesLoading, setCitiesLoading] = useState(false);
@@ -231,13 +234,16 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
           </Field>
           <Field label="Nationality">
             <Select
-              value={watch("nationality") || undefined}
+              value={nationalityValue || undefined}
               onValueChange={(v) => setValue("nationality", v, { shouldDirty: true })}
             >
               <SelectTrigger aria-label="Nationality">
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
+                {hasLegacyNationality ? (
+                  <SelectItem value={nationalityValue}>{nationalityValue}</SelectItem>
+                ) : null}
                 {COUNTRIES.map((c) => (
                   <SelectItem key={c.code} value={c.name}>
                     {`${flagEmoji(c.code)} ${c.name}`}
@@ -277,13 +283,14 @@ function SimpleSelect({
   options: readonly string[];
   onChange: (value: string) => void;
 }) {
+  const displayOptions = value && !options.includes(value) ? [value, ...options] : options;
   return (
     <Select value={value || undefined} onValueChange={onChange}>
       <SelectTrigger aria-label={label}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {options.map((o) => (
+        {displayOptions.map((o) => (
           <SelectItem key={o} value={o}>
             {o}
           </SelectItem>
