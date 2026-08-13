@@ -37,8 +37,22 @@ export const CHURCH_DESIGNATIONS: readonly string[] = [
 export const CHURCH_DESIGNATION_OTHER = "Other";
 
 /** Wizard step keys, in display order. */
-export const STEP_KEYS = ["demographics", "photos", "bio", "faith", "life-verse", "voice"] as const;
+export const STEP_KEYS = [
+  "demographics",
+  "photos",
+  "bio",
+  "faith",
+  "life-verse",
+  "voice",
+  "credentials",
+] as const;
 export type StepKey = (typeof STEP_KEYS)[number];
+
+/**
+ * Official leadership roles a mentor can hold (PRD Rev 8 §3.2).
+ * Stored verbatim in `profiles.mentor_role` (free-text column).
+ */
+export const MENTOR_ROLES: readonly string[] = ["Elder", "Preacher", "Deacon"] as const;
 
 export interface StepMeta {
   key: StepKey;
