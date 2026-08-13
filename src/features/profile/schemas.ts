@@ -33,9 +33,17 @@ export const demographicsSchema = z.object({
   full_name: z.string().trim().max(FULL_NAME_MAX, `Keep it under ${FULL_NAME_MAX} characters`),
 });
 
-/** Mentor accounts: full name is required (drives profile completeness). */
+/**
+ * Mentor accounts: full name is required (drives profile completeness);
+ * age and gender are optional — mentors are not in the dating pool.
+ */
 export const mentorDemographicsSchema = z.object({
   ...baseDemographics,
+  age: z.preprocess(
+    (v) => (v === "" || v === null || (typeof v === "number" && Number.isNaN(v)) ? undefined : v),
+    z.number().int("Enter a whole number").min(18).max(99).optional(),
+  ),
+  gender: z.enum(["male", "female"]).optional(),
   full_name: z
     .string()
     .trim()
@@ -94,3 +102,10 @@ export function emptyToNull<T extends Record<string, unknown>>(
   }
   return out as { [K in keyof T]: T[K] extends string ? string | null : T[K] };
 }
+
+/** Mentor leadership credentials (PRD Rev 8 §3.2). */
+export const credentialsSchema = z.object({
+  mentor_role: z.string().min(1, "Select your official role"),
+  congregation: z.string().trim().min(1, "Enter the congregation you serve").max(120),
+});
+export type CredentialsValues = z.infer<typeof credentialsSchema>;

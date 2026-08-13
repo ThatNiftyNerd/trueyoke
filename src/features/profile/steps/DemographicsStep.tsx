@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,7 +30,9 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
     watch,
     formState: { errors, isSubmitting },
   } = useForm<DemographicsValues>({
-    resolver: zodResolver(demographicsSchemaFor(profile.account_type)),
+    resolver: zodResolver(
+      demographicsSchemaFor(profile.account_type),
+    ) as unknown as Resolver<DemographicsValues>,
     defaultValues: {
       full_name: profile.full_name ?? "",
       age: profile.age ?? (undefined as unknown as number),
