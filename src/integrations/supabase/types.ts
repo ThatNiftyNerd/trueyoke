@@ -436,6 +436,44 @@ export type Database = {
           },
         ]
       }
+      marketing_consents: {
+        Row: {
+          consent_source: string
+          consented: boolean
+          consented_at: string | null
+          email: string
+          id: string
+          profile_id: string
+          updated_at: string
+        }
+        Insert: {
+          consent_source?: string
+          consented?: boolean
+          consented_at?: string | null
+          email: string
+          id?: string
+          profile_id: string
+          updated_at?: string
+        }
+        Update: {
+          consent_source?: string
+          consented?: boolean
+          consented_at?: string | null
+          email?: string
+          id?: string
+          profile_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_consents_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       match_reads: {
         Row: {
           last_read_at: string
