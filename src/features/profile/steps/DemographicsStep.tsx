@@ -65,6 +65,9 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
   const gender = watch("gender");
   const country = watch("country");
   const cityChoice = watch("city_choice");
+  const nationalityValue = watch("nationality");
+  const hasLegacyNationality =
+    !!nationalityValue && !COUNTRIES.some((c) => c.name === nationalityValue);
 
   const [cities, setCities] = useState<string[]>([]);
   const [citiesLoading, setCitiesLoading] = useState(false);
