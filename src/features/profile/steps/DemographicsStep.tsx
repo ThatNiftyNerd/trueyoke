@@ -31,11 +31,6 @@ interface Props {
   canGoBack: boolean;
 }
 
-/**
- * `country` / `city` are newer columns not yet part of the OnboardingProfile
- * pick; read them defensively so this step can prefill when they're present.
- */
-type WithLocation = { country?: string | null; city?: string | null };
 
 function codeForCountryName(name: string): string {
   return COUNTRIES.find((c) => c.name === name)?.code ?? "";
@@ -43,7 +38,6 @@ function codeForCountryName(name: string): string {
 
 export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }: Props) {
   const [error, setError] = useState<string | null>(null);
-  const loc = profile as OnboardingProfile & WithLocation;
   const {
     register,
     handleSubmit,
@@ -58,8 +52,8 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
       full_name: profile.full_name ?? "",
       age: profile.age ?? (undefined as unknown as number),
       gender: profile.gender ?? (undefined as unknown as "male" | "female"),
-      country: loc.country ?? "",
-      city_choice: loc.city ?? "",
+      country: profile.country ?? "",
+      city_choice: profile.city ?? "",
       city_other: "",
       blood_group: profile.blood_group ?? "",
       genotype: profile.genotype ?? "",
