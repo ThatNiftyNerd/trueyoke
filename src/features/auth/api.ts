@@ -124,6 +124,14 @@ export async function signUpWithEmail(input: SignUpInput): Promise<void> {
       privacy_policy_version: input.privacyPolicyVersion,
     });
     if (upsertErr) throw new Error(upsertErr.message);
+
+    // Optional, additional consent — recorded alongside the privacy stamp.
+    await upsertMarketingConsent({
+      profileId: data.user.id,
+      email: input.email,
+      consented: input.marketingConsent === true,
+      source: "signup",
+    });
   }
 }
 
