@@ -182,7 +182,10 @@ function AuthScreen() {
       setOauthConsentPending(false);
       navigate({ to: await signedInLandingPath() });
     } catch (err) {
-      if (err instanceof Error && (err as Error & { code?: string }).code === "ACCOUNT_TYPE_UNKNOWN") {
+      if (
+        err instanceof Error &&
+        (err as Error & { code?: string }).code === "ACCOUNT_TYPE_UNKNOWN"
+      ) {
         navigate({ to: "/choose-type" });
         return;
       }
