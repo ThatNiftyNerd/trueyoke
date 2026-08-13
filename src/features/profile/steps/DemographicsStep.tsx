@@ -283,13 +283,14 @@ function SimpleSelect({
   options: readonly string[];
   onChange: (value: string) => void;
 }) {
+  const displayOptions = value && !options.includes(value) ? [value, ...options] : options;
   return (
     <Select value={value || undefined} onValueChange={onChange}>
       <SelectTrigger aria-label={label}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {options.map((o) => (
+        {displayOptions.map((o) => (
           <SelectItem key={o} value={o}>
             {o}
           </SelectItem>
