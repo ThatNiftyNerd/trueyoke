@@ -38,7 +38,6 @@ function codeForCountryName(name: string): string {
 
 export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }: Props) {
   const [error, setError] = useState<string | null>(null);
-  const loc = profile as OnboardingProfile & WithLocation;
   const {
     register,
     handleSubmit,
