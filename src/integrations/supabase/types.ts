@@ -654,7 +654,9 @@ export type Database = {
           church_affiliation: string | null
           church_designation: string | null
           church_verified: boolean
+          city: string | null
           congregation: string | null
+          country: string | null
           created_at: string
           display_name: string
           full_name: string | null
@@ -689,7 +691,9 @@ export type Database = {
           church_affiliation?: string | null
           church_designation?: string | null
           church_verified?: boolean
+          city?: string | null
           congregation?: string | null
+          country?: string | null
           created_at?: string
           display_name: string
           full_name?: string | null
@@ -724,7 +728,9 @@ export type Database = {
           church_affiliation?: string | null
           church_designation?: string | null
           church_verified?: boolean
+          city?: string | null
           congregation?: string | null
+          country?: string | null
           created_at?: string
           display_name?: string
           full_name?: string | null
