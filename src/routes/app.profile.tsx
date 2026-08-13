@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DisplaySettingsPanel } from "@/components/app/DisplaySettingsPanel";
+import { MarketingPreferenceToggle } from "@/features/marketing/MarketingPreferenceToggle";
 import { BugReportDrawer } from "@/features/bug-report/BugReportDrawer";
 
 import { CopyrightNotice } from "@/components/app/CopyrightNotice";
@@ -161,6 +162,7 @@ function ProfileScreen() {
         >
           Connection diagnostics
         </Link>
+        <MarketingPreferenceToggle />
         <DisplaySettingsPanel />
         <BugReportDrawer />
 
