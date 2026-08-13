@@ -52,6 +52,30 @@ export type Database = {
           },
         ]
       }
+      admin_pending_invites: {
+        Row: {
+          email: string
+          invited_at: string
+          invited_by: string | null
+          make_super_admin: boolean
+          role_keys: string[]
+        }
+        Insert: {
+          email: string
+          invited_at?: string
+          invited_by?: string | null
+          make_super_admin?: boolean
+          role_keys?: string[]
+        }
+        Update: {
+          email?: string
+          invited_at?: string
+          invited_by?: string | null
+          make_super_admin?: boolean
+          role_keys?: string[]
+        }
+        Relationships: []
+      }
       admin_permissions: {
         Row: {
           description: string | null
@@ -965,6 +989,10 @@ export type Database = {
         Args: { p_admin_user_id: string; p_role_id: string }
         Returns: undefined
       }
+      admin_delete_message: {
+        Args: { p_message_id: string }
+        Returns: undefined
+      }
       admin_get_audit_log: {
         Args: {
           p_action_filter?: string
@@ -990,6 +1018,14 @@ export type Database = {
           genotype: string
         }[]
       }
+      admin_grant_access: {
+        Args: {
+          p_email: string
+          p_make_super_admin?: boolean
+          p_role_keys?: string[]
+        }
+        Returns: Json
+      }
       admin_list_admins: {
         Args: never
         Returns: {
@@ -1003,6 +1039,23 @@ export type Database = {
           roles: string[]
         }[]
       }
+      admin_list_mailing_list: {
+        Args: never
+        Returns: {
+          consented_at: string
+          email: string
+        }[]
+      }
+      admin_list_match_messages: {
+        Args: { p_match_id: string }
+        Returns: {
+          created_at: string
+          id: string
+          match_id: string
+          sender_id: string
+          sender_name: string
+        }[]
+      }
       admin_list_roles: {
         Args: never
         Returns: {
@@ -1012,6 +1065,10 @@ export type Database = {
           name: string
           permissions: string[]
         }[]
+      }
+      admin_override_profile: {
+        Args: { p_patch: Json; p_profile_id: string }
+        Returns: undefined
       }
       admin_resolve_report: {
         Args: {
@@ -1059,6 +1116,16 @@ export type Database = {
         Returns: undefined
       }
       admin_touch_last_login: { Args: never; Returns: undefined }
+      admin_view_message: {
+        Args: { p_message_id: string }
+        Returns: {
+          body: string
+          created_at: string
+          id: string
+          match_id: string
+          sender_id: string
+        }[]
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
