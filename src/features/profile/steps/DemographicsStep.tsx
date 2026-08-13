@@ -231,13 +231,16 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
           </Field>
           <Field label="Nationality">
             <Select
-              value={watch("nationality") || undefined}
+              value={nationalityValue || undefined}
               onValueChange={(v) => setValue("nationality", v, { shouldDirty: true })}
             >
               <SelectTrigger aria-label="Nationality">
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
+                {hasLegacyNationality ? (
+                  <SelectItem value={nationalityValue}>{nationalityValue}</SelectItem>
+                ) : null}
                 {COUNTRIES.map((c) => (
                   <SelectItem key={c.code} value={c.name}>
                     {`${flagEmoji(c.code)} ${c.name}`}
