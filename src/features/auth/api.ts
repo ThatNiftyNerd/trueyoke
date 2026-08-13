@@ -335,6 +335,17 @@ export async function ensureOAuthProfile(consent: OAuthConsentInput): Promise<vo
     privacy_policy_version: consent.privacyPolicyVersion,
   });
   if (insErr) throw new Error(insErr.message);
+
+  // Optional marketing opt-in, captured on the same interstitial (Google) or
+  // carried through email confirmation on `user_metadata`.
+  const meta = session.user.user_metadata as Record<string, unknown> | null;
+  const consented = consent.marketingConsent === true || meta?.marketing_consent === true;
+  await upsertMarketingConsent({
+    profileId: session.user.id,
+    email: session.user.email ?? "",
+    consented,
+    source: "signup",
+  });
 }
 
 /**
