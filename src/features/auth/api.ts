@@ -102,6 +102,7 @@ export async function signUpWithEmail(input: SignUpInput): Promise<void> {
       data: {
         account_type: input.accountType,
         display_name: input.displayName,
+        marketing_consent: input.marketingConsent === true,
       },
     },
   });
