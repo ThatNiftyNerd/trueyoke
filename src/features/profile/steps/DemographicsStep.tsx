@@ -1,17 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { StepShell } from "./StepShell";
 import { updateOwnProfile, type OnboardingProfile } from "../api";
 import {
   demographicsSchemaFor,
   emptyToNull,
+  CITY_OTHER,
   FULL_NAME_MAX,
   type DemographicsValues,
 } from "../schemas";
+import { BLOOD_GROUPS, GENOTYPES, EDUCATION_LEVELS } from "../constants";
+import { COUNTRIES, citiesForCountry, flagEmoji } from "../geo";
 
 interface Props {
   profile: OnboardingProfile;
@@ -21,8 +31,19 @@ interface Props {
   canGoBack: boolean;
 }
 
+/**
+ * `country` / `city` are newer columns not yet part of the OnboardingProfile
+ * pick; read them defensively so this step can prefill when they're present.
+ */
+type WithLocation = { country?: string | null; city?: string | null };
+
+function codeForCountryName(name: string): string {
+  return COUNTRIES.find((c) => c.name === name)?.code ?? "";
+}
+
 export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }: Props) {
   const [error, setError] = useState<string | null>(null);
+  const loc = profile as OnboardingProfile & WithLocation;
   const {
     register,
     handleSubmit,
@@ -37,7 +58,9 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
       full_name: profile.full_name ?? "",
       age: profile.age ?? (undefined as unknown as number),
       gender: profile.gender ?? (undefined as unknown as "male" | "female"),
-      location_label: profile.location_label ?? "",
+      country: loc.country ?? "",
+      city_choice: loc.city ?? "",
+      city_other: "",
       blood_group: profile.blood_group ?? "",
       genotype: profile.genotype ?? "",
       nationality: profile.nationality ?? "",
@@ -46,11 +69,59 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
     },
   });
   const gender = watch("gender");
+  const country = watch("country");
+  const cityChoice = watch("city_choice");
+
+  const [cities, setCities] = useState<string[]>([]);
+  const [citiesLoading, setCitiesLoading] = useState(false);
+
+  // Load the city list whenever the selected country changes.
+  useEffect(() => {
+    const code = codeForCountryName(country ?? "");
+    if (!code) {
+      setCities([]);
+      return;
+    }
+    let cancelled = false;
+    setCitiesLoading(true);
+    citiesForCountry(code)
+      .then((list) => {
+        if (!cancelled) setCities(list);
+      })
+      .catch(() => {
+        if (!cancelled) setCities([]);
+      })
+      .finally(() => {
+        if (!cancelled) setCitiesLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [country]);
+
+  const onCountryChange = (name: string) => {
+    setValue("country", name, { shouldDirty: true });
+    // Never carry a city from the previous country forward.
+    setValue("city_choice", "", { shouldDirty: true });
+    setValue("city_other", "", { shouldDirty: true });
+  };
+
+  const cityOptions = cityChoice && cityChoice !== CITY_OTHER && !cities.includes(cityChoice)
+    ? [cityChoice, ...cities]
+    : cities;
 
   const onSubmit = handleSubmit(async (values) => {
     setError(null);
     try {
-      const patch = emptyToNull(values) as Partial<OnboardingProfile>;
+      const { city_choice, city_other, ...rest } = values;
+      const city = (city_choice === CITY_OTHER ? city_other : city_choice).trim();
+      const countryName = (values.country ?? "").trim();
+      const locationLabel = [city, countryName].filter(Boolean).join(", ");
+      const patch = {
+        ...(emptyToNull(rest) as Partial<OnboardingProfile>),
+        city: city || null,
+        location_label: locationLabel || null,
+      } as Partial<OnboardingProfile>;
       await updateOwnProfile(patch);
       onSaved(patch);
       onNext();
@@ -98,21 +169,96 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
             </label>
           </RadioGroup>
         </Field>
-        <Field label="Location (city, country)">
-          <Input placeholder="Lagos, Nigeria" {...register("location_label")} />
+        <Field label="Country">
+          <Select value={country || undefined} onValueChange={onCountryChange}>
+            <SelectTrigger aria-label="Country">
+              <SelectValue placeholder="Select your country" />
+            </SelectTrigger>
+            <SelectContent>
+              {COUNTRIES.map((c) => (
+                <SelectItem key={c.code} value={c.name}>
+                  {`${flagEmoji(c.code)} ${c.name}`}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </Field>
+        <Field label="City">
+          <Select
+            value={cityChoice || undefined}
+            disabled={!country || citiesLoading}
+            onValueChange={(v) => setValue("city_choice", v, { shouldDirty: true })}
+          >
+            <SelectTrigger aria-label="City">
+              <SelectValue
+                placeholder={
+                  !country
+                    ? "Choose a country first"
+                    : citiesLoading
+                      ? "Loading cities…"
+                      : "Select your city"
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {cityOptions.map((city) => (
+                <SelectItem key={city} value={city}>
+                  {city}
+                </SelectItem>
+              ))}
+              <SelectItem value={CITY_OTHER}>{CITY_OTHER}</SelectItem>
+            </SelectContent>
+          </Select>
+        </Field>
+        {cityChoice === CITY_OTHER ? (
+          <Field label="Your city" error={errors.city_other?.message}>
+            <Input placeholder="Type your city" maxLength={120} {...register("city_other")} />
+          </Field>
+        ) : null}
         <div className="grid grid-cols-2 gap-3">
           <Field label="Blood group">
-            <Input {...register("blood_group")} />
+            <SimpleSelect
+              label="Blood group"
+              placeholder="Select"
+              value={watch("blood_group")}
+              options={BLOOD_GROUPS}
+              onChange={(v) => setValue("blood_group", v, { shouldDirty: true })}
+            />
           </Field>
           <Field label="Genotype">
-            <Input {...register("genotype")} />
+            <SimpleSelect
+              label="Genotype"
+              placeholder="Select"
+              value={watch("genotype")}
+              options={GENOTYPES}
+              onChange={(v) => setValue("genotype", v, { shouldDirty: true })}
+            />
           </Field>
           <Field label="Nationality">
-            <Input {...register("nationality")} />
+            <Select
+              value={watch("nationality") || undefined}
+              onValueChange={(v) => setValue("nationality", v, { shouldDirty: true })}
+            >
+              <SelectTrigger aria-label="Nationality">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                {COUNTRIES.map((c) => (
+                  <SelectItem key={c.code} value={c.name}>
+                    {`${flagEmoji(c.code)} ${c.name}`}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </Field>
-          <Field label="Qualification">
-            <Input {...register("qualification")} />
+          <Field label="Education">
+            <SimpleSelect
+              label="Education"
+              placeholder="Select"
+              value={watch("qualification")}
+              options={EDUCATION_LEVELS}
+              onChange={(v) => setValue("qualification", v, { shouldDirty: true })}
+            />
           </Field>
         </div>
         <Field label="Occupation">
@@ -120,6 +266,35 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
         </Field>
       </StepShell>
     </form>
+  );
+}
+
+function SimpleSelect({
+  label,
+  placeholder,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  placeholder: string;
+  value?: string;
+  options: readonly string[];
+  onChange: (value: string) => void;
+}) {
+  return (
+    <Select value={value || undefined} onValueChange={onChange}>
+      <SelectTrigger aria-label={label}>
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((o) => (
+          <SelectItem key={o} value={o}>
+            {o}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 
