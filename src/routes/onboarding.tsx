@@ -110,7 +110,10 @@ function OnboardingWizard() {
   };
 
   return (
-    <main className="flex min-h-[100dvh] flex-col bg-app-canvas px-6 py-8">
+    <main
+      className="flex min-h-[100dvh] flex-col bg-app-canvas px-6 py-8"
+      style={{ paddingTop: "max(2rem, calc(env(safe-area-inset-top) + 1.5rem))" }}
+    >
       <header className="mb-6">
         <p className="text-xs uppercase tracking-widest text-app-on-accent">
           Step {index + 1} of {steps.length}

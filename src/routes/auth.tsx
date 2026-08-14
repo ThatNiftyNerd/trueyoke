@@ -275,7 +275,8 @@ function AuthScreen() {
 
   if (recoveryPending) {
     return (
-      <main className="flex min-h-[100dvh] flex-col justify-center bg-app-canvas px-6 py-10">
+      <main className="flex min-h-[100dvh] flex-col justify-center bg-app-canvas px-6 py-10"
+        style={{ paddingTop: "max(2.5rem, calc(env(safe-area-inset-top) + 1.5rem))" }}>
         <div className="mx-auto w-full max-w-sm">
           <h1 className="font-serif text-2xl text-app-ink">Set new password</h1>
           <p className="mt-2 text-sm text-app-ink/70">
@@ -323,7 +324,8 @@ function AuthScreen() {
 
   if (mode === "forgot") {
     return (
-      <main className="flex min-h-[100dvh] flex-col justify-center bg-app-canvas px-6 py-10">
+      <main className="flex min-h-[100dvh] flex-col justify-center bg-app-canvas px-6 py-10"
+        style={{ paddingTop: "max(2.5rem, calc(env(safe-area-inset-top) + 1.5rem))" }}>
         <div className="mx-auto w-full max-w-sm">
           <h1 className="font-serif text-2xl text-app-ink">Reset your password</h1>
           <p className="mt-2 text-sm text-app-ink/70">
@@ -379,7 +381,8 @@ function AuthScreen() {
 
   if (oauthConsentPending) {
     return (
-      <main className="flex min-h-[100dvh] flex-col justify-center bg-app-canvas px-6 py-10">
+      <main className="flex min-h-[100dvh] flex-col justify-center bg-app-canvas px-6 py-10"
+        style={{ paddingTop: "max(2.5rem, calc(env(safe-area-inset-top) + 1.5rem))" }}>
         <div className="mx-auto w-full max-w-sm">
           <h1 className="font-serif text-2xl text-app-ink">One last thing</h1>
           <p className="mt-2 text-sm text-app-ink/70">

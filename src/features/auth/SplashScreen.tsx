@@ -8,6 +8,7 @@ export function SplashScreen() {
       role="status"
       aria-live="polite"
       className="flex min-h-[100dvh] w-full flex-col items-center justify-center gap-5 bg-app-canvas px-6"
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
       <span className="flex items-center gap-1.5" aria-hidden="true">
         {[0, 1, 2].map((i) => (
