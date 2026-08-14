@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/sheet";
 import { CHURCH_AFFILIATIONS } from "@/features/profile/constants";
 import type { DeckFilters, LocationScope } from "./api";
+import { EMPTY_FILTERS } from "./logic";
 
 interface Props {
   open: boolean;
