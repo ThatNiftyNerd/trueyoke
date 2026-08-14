@@ -44,15 +44,9 @@ export const STEP_KEYS = [
   "faith",
   "life-verse",
   "voice",
-  "credentials",
+  "mentor-details",
 ] as const;
 export type StepKey = (typeof STEP_KEYS)[number];
-
-/**
- * Official leadership roles a mentor can hold (PRD Rev 8 §3.2).
- * Stored verbatim in `profiles.mentor_role` (free-text column).
- */
-export const MENTOR_ROLES: readonly string[] = ["Elder", "Preacher", "Deacon"] as const;
 
 export interface StepMeta {
   key: StepKey;
