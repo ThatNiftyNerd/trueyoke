@@ -41,27 +41,6 @@ export const demographicsSchema = z.object({
   full_name: z.string().trim().max(FULL_NAME_MAX, `Keep it under ${FULL_NAME_MAX} characters`),
 });
 
-/**
- * Mentor accounts: full name is required (drives profile completeness);
- * age and gender are optional — mentors are not in the dating pool.
- */
-export const mentorDemographicsSchema = z.object({
-  ...baseDemographics,
-  age: z.preprocess(
-    (v) => (v === "" || v === null || (typeof v === "number" && Number.isNaN(v)) ? undefined : v),
-    z.number().int("Enter a whole number").min(18).max(99).optional(),
-  ),
-  gender: z.enum(["male", "female"]).optional(),
-  full_name: z
-    .string()
-    .trim()
-    .min(1, "Enter your full name")
-    .max(FULL_NAME_MAX, `Keep it under ${FULL_NAME_MAX} characters`),
-});
-
-export function demographicsSchemaFor(accountType: string | null | undefined) {
-  return accountType === "mentor" ? mentorDemographicsSchema : demographicsSchema;
-}
 export type DemographicsValues = z.infer<typeof demographicsSchema>;
 
 export const BIO_MAX = 500;
@@ -118,9 +97,12 @@ export function emptyToNull<T extends Record<string, unknown>>(
   return out as { [K in keyof T]: T[K] extends string ? string | null : T[K] };
 }
 
-/** Mentor leadership credentials (PRD Rev 8 §3.2). */
-export const credentialsSchema = z.object({
-  mentor_role: z.string().min(1, "Select your official role"),
-  congregation: z.string().trim().min(1, "Enter the congregation you serve").max(120),
+/** Mentor details — the five fields a match sees when requesting an endorsement. */
+export const mentorDetailsSchema = z.object({
+  full_name: z.string().trim().min(1, "Enter your full name"),
+  nationality: z.string().trim().min(1, "Enter your nationality"),
+  church_affiliation: z.string().trim().min(1, "Enter your church affiliation"),
+  mentor_role: z.string().trim().min(1, "Enter your title"),
+  email: z.string().trim().email("Enter a valid email"),
 });
-export type CredentialsValues = z.infer<typeof credentialsSchema>;
+export type MentorDetailsValues = z.infer<typeof mentorDetailsSchema>;

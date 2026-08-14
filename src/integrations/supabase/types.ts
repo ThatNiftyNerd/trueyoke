@@ -659,6 +659,7 @@ export type Database = {
           country: string | null
           created_at: string
           display_name: string
+          email: string | null
           full_name: string | null
           gender: Database["public"]["Enums"]["gender_type"] | null
           genotype: string | null
@@ -696,6 +697,7 @@ export type Database = {
           country?: string | null
           created_at?: string
           display_name: string
+          email?: string | null
           full_name?: string | null
           gender?: Database["public"]["Enums"]["gender_type"] | null
           genotype?: string | null
@@ -733,6 +735,7 @@ export type Database = {
           country?: string | null
           created_at?: string
           display_name?: string
+          email?: string | null
           full_name?: string | null
           gender?: Database["public"]["Enums"]["gender_type"] | null
           genotype?: string | null

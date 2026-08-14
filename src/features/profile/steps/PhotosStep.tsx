@@ -8,9 +8,11 @@ interface Props {
   onNext: () => void;
   onBack: () => void;
   canGoBack: boolean;
+  /** Mentors must upload at least one photo — the step can't be skipped. */
+  required?: boolean;
 }
 
-export function PhotosStep({ onNext, onBack, canGoBack }: Props) {
+export function PhotosStep({ onNext, onBack, canGoBack, required = false }: Props) {
   const [photos, setPhotos] = useState<PhotoRow[]>([]);
   const [previews, setPreviews] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
@@ -82,6 +84,7 @@ export function PhotosStep({ onNext, onBack, canGoBack }: Props) {
   };
 
   const atCap = photos.length >= PHOTO_MAX_COUNT;
+  const blocked = required && photos.length === 0;
 
   return (
     <StepShell
@@ -89,8 +92,9 @@ export function PhotosStep({ onNext, onBack, canGoBack }: Props) {
       canGoBack={canGoBack}
       submitting={busy}
       submitType="button"
-      onSubmitClick={onNext}
-      submitLabel={photos.length ? "Continue" : "Skip for now"}
+      onSubmitClick={blocked ? undefined : onNext}
+      disableSubmit={blocked}
+      submitLabel={photos.length || required ? "Continue" : "Skip for now"}
       error={error}
     >
       <div className="space-y-2">
@@ -128,7 +132,11 @@ export function PhotosStep({ onNext, onBack, canGoBack }: Props) {
           ))}
         </div>
       ) : (
-        <p className="text-sm text-app-ink/60">No photos yet. This step is optional.</p>
+        <p className="text-sm text-app-ink/60">
+          {required
+            ? "Required — add at least one photo."
+            : "No photos yet. This step is optional."}
+        </p>
       )}
     </StepShell>
   );

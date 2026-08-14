@@ -14,7 +14,7 @@ import {
 import { StepShell } from "./StepShell";
 import { updateOwnProfile, type OnboardingProfile } from "../api";
 import {
-  demographicsSchemaFor,
+  demographicsSchema,
   emptyToNull,
   CITY_OTHER,
   FULL_NAME_MAX,
@@ -44,9 +44,7 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
     watch,
     formState: { errors, isSubmitting },
   } = useForm<DemographicsValues>({
-    resolver: zodResolver(
-      demographicsSchemaFor(profile.account_type),
-    ) as unknown as Resolver<DemographicsValues>,
+    resolver: zodResolver(demographicsSchema) as unknown as Resolver<DemographicsValues>,
     defaultValues: {
       full_name: profile.full_name ?? "",
       age: profile.age ?? (undefined as unknown as number),
