@@ -125,7 +125,15 @@ function ProfileScreen() {
   return (
     <section className="flex flex-col px-4 pt-6">
       <header className="mb-6 text-center">
-        <div className="mx-auto h-24 w-24 rounded-full bg-app-accent/20" aria-hidden="true" />
+        {avatarUrl ? (
+          <img
+            src={avatarUrl}
+            alt="Your profile photo"
+            className="mx-auto h-24 w-24 rounded-full object-cover"
+          />
+        ) : (
+          <div className="mx-auto h-24 w-24 rounded-full bg-app-accent/20" aria-hidden="true" />
+        )}
         <h1 className="mt-3 font-serif text-2xl text-app-ink">Your profile</h1>
         {/* TODO: display church-verified sage badge when profile.church_verified */}
         {email ? <p className="mt-1 text-sm text-app-ink/70">{email}</p> : null}
