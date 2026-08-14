@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CheckRow } from "@/features/diagnostics/CheckRow";
+import { isCurrentUserAdmin } from "@/features/profile/api";
 import { getBuildInfo, runDiagnostics } from "@/features/diagnostics/api";
 import { copyText } from "@/features/diagnostics/clipboard";
 import { buildReport, overallStatus, type DiagnosticCheck } from "@/features/diagnostics/logic";
@@ -18,8 +19,14 @@ export const Route = createFileRoute("/diagnostics")({
       },
     ],
   }),
+  // UI-level guard. RLS on the underlying tables remains the real data boundary.
+  beforeLoad: async () => {
+    const admin = await isCurrentUserAdmin();
+    if (!admin) throw redirect({ to: "/app/profile" });
+  },
   component: DiagnosticsScreen,
 });
+
 
 const PENDING: DiagnosticCheck[] = [
   { id: "env-url", label: "Backend URL configured", status: "pending", detail: "Checking…" },
