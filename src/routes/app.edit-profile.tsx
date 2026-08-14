@@ -9,6 +9,7 @@ import { BioStep } from "@/features/profile/steps/BioStep";
 import { FaithStep } from "@/features/profile/steps/FaithStep";
 import { LifeVerseStep } from "@/features/profile/steps/LifeVerseStep";
 import { VoiceIntroStep } from "@/features/profile/steps/VoiceIntroStep";
+import { MentorDetailsStep } from "@/features/profile/steps/MentorDetailsStep";
 import { SelfieCapture } from "@/features/profile/SelfieCapture";
 
 export const Route = createFileRoute("/app/edit-profile")({
@@ -26,7 +27,15 @@ export const Route = createFileRoute("/app/edit-profile")({
   component: EditProfileScreen,
 });
 
-type SectionKey = "name" | "demographics" | "photos" | "bio" | "faith" | "life-verse" | "voice";
+type SectionKey =
+  | "name"
+  | "demographics"
+  | "photos"
+  | "bio"
+  | "faith"
+  | "life-verse"
+  | "voice"
+  | "mentor-details";
 
 interface SectionDef {
   key: SectionKey;
@@ -50,6 +59,15 @@ const SECTIONS: readonly SectionDef[] = [
   },
   { key: "life-verse", title: "Life verse", description: "A verse that anchors you." },
   { key: "voice", title: "Voice intro", description: "Record or replace your spoken intro." },
+];
+
+const MENTOR_SECTIONS: readonly SectionDef[] = [
+  {
+    key: "mentor-details",
+    title: "About you",
+    description: "Full name, nationality, church affiliation, title, and email.",
+  },
+  { key: "photos", title: "Photos", description: "Add or remove your profile photos." },
 ];
 
 function EditProfileScreen() {
@@ -101,7 +119,10 @@ function EditProfileScreen() {
   }
 
   const isMatch = profile.account_type === "match";
-  const visible = SECTIONS.filter((s) => s.key !== "photos" || !isMatch);
+  const isMentor = profile.account_type === "mentor";
+  const visible = isMentor
+    ? MENTOR_SECTIONS
+    : SECTIONS.filter((s) => s.key !== "photos" || !isMatch);
   const active = visible.find((s) => s.key === section) ?? null;
 
   const stepProps = {
@@ -126,6 +147,7 @@ function EditProfileScreen() {
       {active ? (
         <>
           {active.key === "name" && <DisplayNameStep {...stepProps} />}
+          {active.key === "mentor-details" && <MentorDetailsStep {...stepProps} />}
           {active.key === "demographics" && <DemographicsStep {...stepProps} />}
           {active.key === "photos" && (
             <PhotosStep

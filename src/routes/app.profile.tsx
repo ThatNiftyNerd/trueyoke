@@ -20,7 +20,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { copyText } from "@/features/diagnostics/clipboard";
-import { exportOwnData, getOwnProfile, isCurrentUserAdmin } from "@/features/profile/api";
+import {
+  exportOwnData,
+  getOwnProfile,
+  getPhotoSignedUrl,
+  isCurrentUserAdmin,
+  listOwnPhotos,
+} from "@/features/profile/api";
 import type { OwnProfile } from "@/features/profile/api";
 import { MentorSelect } from "@/features/vouchers/MentorSelect";
 import { SelfieCapture } from "@/features/profile/SelfieCapture";
@@ -49,6 +55,7 @@ function ProfileScreen() {
   const [exporting, setExporting] = useState(false);
   const [copied, setCopied] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -61,6 +68,17 @@ function ProfileScreen() {
     getCurrentSession()
       .then((s) => alive && setEmail(s?.user.email ?? null))
       .catch(() => undefined);
+    (async () => {
+      try {
+        const photos = await listOwnPhotos();
+        const first = photos[0];
+        if (!first) return;
+        const url = await getPhotoSignedUrl(first.storage_path);
+        if (alive && url) setAvatarUrl(url);
+      } catch {
+        // Avatar is decorative-optional; fall back to the placeholder circle.
+      }
+    })();
     return () => {
       alive = false;
     };
@@ -106,7 +124,15 @@ function ProfileScreen() {
   return (
     <section className="flex flex-col px-4 pt-6">
       <header className="mb-6 text-center">
-        <div className="mx-auto h-24 w-24 rounded-full bg-app-accent/20" aria-hidden="true" />
+        {avatarUrl ? (
+          <img
+            src={avatarUrl}
+            alt="Your profile photo"
+            className="mx-auto h-24 w-24 rounded-full object-cover"
+          />
+        ) : (
+          <div className="mx-auto h-24 w-24 rounded-full bg-app-accent/20" aria-hidden="true" />
+        )}
         <h1 className="mt-3 font-serif text-2xl text-app-ink">Your profile</h1>
         {/* TODO: display church-verified sage badge when profile.church_verified */}
         {email ? <p className="mt-1 text-sm text-app-ink/70">{email}</p> : null}
@@ -156,12 +182,14 @@ function ProfileScreen() {
         >
           {exporting ? "Preparing…" : "Download my data"}
         </button>
-        <Link
-          to="/diagnostics"
-          className="block rounded-md border border-app-ink/20 px-4 py-3 text-center text-sm font-medium text-app-ink"
-        >
-          Connection diagnostics
-        </Link>
+        {isAdmin ? (
+          <Link
+            to="/diagnostics"
+            className="block rounded-md border border-app-ink/20 px-4 py-3 text-center text-sm font-medium text-app-ink"
+          >
+            Connection diagnostics
+          </Link>
+        ) : null}
         <MarketingPreferenceToggle />
         <DisplaySettingsPanel />
         <BugReportDrawer />
