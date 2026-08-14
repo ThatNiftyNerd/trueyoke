@@ -22,7 +22,6 @@ import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
 import { Route as AppEditProfileRouteImport } from './routes/app.edit-profile'
 import { Route as AppDiscoverRouteImport } from './routes/app.discover'
-import { Route as AppBlockedRouteImport } from './routes/app.blocked'
 import { Route as AppAdminReviewRouteImport } from './routes/app.admin-review'
 
 const VerifyIdRoute = VerifyIdRouteImport.update({
@@ -90,11 +89,6 @@ const AppDiscoverRoute = AppDiscoverRouteImport.update({
   path: '/discover',
   getParentRoute: () => AppRoute,
 } as any)
-const AppBlockedRoute = AppBlockedRouteImport.update({
-  id: '/blocked',
-  path: '/blocked',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppAdminReviewRoute = AppAdminReviewRouteImport.update({
   id: '/admin-review',
   path: '/admin-review',
@@ -111,7 +105,6 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
-  '/app/blocked': typeof AppBlockedRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/edit-profile': typeof AppEditProfileRoute
   '/app/matches': typeof AppMatchesRoute
@@ -128,7 +121,6 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
-  '/app/blocked': typeof AppBlockedRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/edit-profile': typeof AppEditProfileRoute
   '/app/matches': typeof AppMatchesRoute
@@ -146,7 +138,6 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
-  '/app/blocked': typeof AppBlockedRoute
   '/app/discover': typeof AppDiscoverRoute
   '/app/edit-profile': typeof AppEditProfileRoute
   '/app/matches': typeof AppMatchesRoute
@@ -165,7 +156,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/verify-id'
     | '/app/admin-review'
-    | '/app/blocked'
     | '/app/discover'
     | '/app/edit-profile'
     | '/app/matches'
@@ -182,7 +172,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/verify-id'
     | '/app/admin-review'
-    | '/app/blocked'
     | '/app/discover'
     | '/app/edit-profile'
     | '/app/matches'
@@ -199,7 +188,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/verify-id'
     | '/app/admin-review'
-    | '/app/blocked'
     | '/app/discover'
     | '/app/edit-profile'
     | '/app/matches'
@@ -312,13 +300,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDiscoverRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/blocked': {
-      id: '/app/blocked'
-      path: '/blocked'
-      fullPath: '/app/blocked'
-      preLoaderRoute: typeof AppBlockedRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/admin-review': {
       id: '/app/admin-review'
       path: '/admin-review'
@@ -331,7 +312,6 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppAdminReviewRoute: typeof AppAdminReviewRoute
-  AppBlockedRoute: typeof AppBlockedRoute
   AppDiscoverRoute: typeof AppDiscoverRoute
   AppEditProfileRoute: typeof AppEditProfileRoute
   AppMatchesRoute: typeof AppMatchesRoute
@@ -340,7 +320,6 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminReviewRoute: AppAdminReviewRoute,
-  AppBlockedRoute: AppBlockedRoute,
   AppDiscoverRoute: AppDiscoverRoute,
   AppEditProfileRoute: AppEditProfileRoute,
   AppMatchesRoute: AppMatchesRoute,
