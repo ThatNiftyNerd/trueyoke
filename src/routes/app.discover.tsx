@@ -13,7 +13,11 @@ import { MatchDialog } from "@/features/discovery/MatchDialog";
 import { BlockModal, ReportModal } from "@/features/safety/ReportBlockModals";
 import { blockProfile, reportProfile } from "@/features/safety/api";
 import { formatReason, type ReportReason } from "@/features/safety/logic";
-import { DiscoverFilters, EMPTY_FILTERS, activeFilterCount } from "@/features/discovery/DiscoverFilters";
+import {
+  DiscoverFilters,
+  EMPTY_FILTERS,
+  activeFilterCount,
+} from "@/features/discovery/DiscoverFilters";
 import type { DeckFilters } from "@/features/discovery/api";
 import { getOwnProfile } from "@/features/profile/api";
 import { MentorLedger } from "@/features/vouchers/MentorLedger";
