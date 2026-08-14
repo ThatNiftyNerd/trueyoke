@@ -145,6 +145,7 @@ function EditProfileScreen() {
       {active ? (
         <>
           {active.key === "name" && <DisplayNameStep {...stepProps} />}
+          {active.key === "mentor-details" && <MentorDetailsStep {...stepProps} />}
           {active.key === "demographics" && <DemographicsStep {...stepProps} />}
           {active.key === "photos" && (
             <PhotosStep
