@@ -9,6 +9,7 @@ import { BioStep } from "@/features/profile/steps/BioStep";
 import { FaithStep } from "@/features/profile/steps/FaithStep";
 import { LifeVerseStep } from "@/features/profile/steps/LifeVerseStep";
 import { VoiceIntroStep } from "@/features/profile/steps/VoiceIntroStep";
+import { MentorDetailsStep } from "@/features/profile/steps/MentorDetailsStep";
 import { SelfieCapture } from "@/features/profile/SelfieCapture";
 
 export const Route = createFileRoute("/app/edit-profile")({
