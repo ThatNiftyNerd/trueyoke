@@ -139,7 +139,7 @@ export function MentorLedger() {
                   <p className="mt-1 text-sm text-app-ink/80">{e.endorsement}</p>
                 ) : null}
                 <p className="mt-1 text-xs text-app-ink/50">
-                  {new Date(e.updatedAt).toLocaleDateString()}
+                  {new Date(e.createdAt).toLocaleDateString()}
                 </p>
               </div>
             </li>

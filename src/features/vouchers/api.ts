@@ -113,7 +113,7 @@ export interface EndorsedVoucher {
   displayName: string;
   photoSignedUrl: string | null;
   endorsement: string | null;
-  updatedAt: string;
+  createdAt: string;
 }
 
 /**
@@ -163,7 +163,7 @@ export async function listOwnEndorsedVouchers(): Promise<EndorsedVoucher[]> {
         displayName: nameById.get(r.match_user_id)?.trim() || "Member",
         photoSignedUrl: url,
         endorsement: r.endorsement,
-        updatedAt: r.created_at,
+        createdAt: r.created_at,
       } satisfies EndorsedVoucher;
     }),
   );
