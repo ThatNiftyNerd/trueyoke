@@ -31,7 +31,6 @@ interface Props {
   canGoBack: boolean;
 }
 
-
 function codeForCountryName(name: string): string {
   return COUNTRIES.find((c) => c.name === name)?.code ?? "";
 }
