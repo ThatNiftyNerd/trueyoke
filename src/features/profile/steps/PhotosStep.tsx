@@ -133,7 +133,9 @@ export function PhotosStep({ onNext, onBack, canGoBack, required = false }: Prop
         </div>
       ) : (
         <p className="text-sm text-app-ink/60">
-          {required ? "Required — add at least one photo." : "No photos yet. This step is optional."}
+          {required
+            ? "Required — add at least one photo."
+            : "No photos yet. This step is optional."}
         </p>
       )}
     </StepShell>
