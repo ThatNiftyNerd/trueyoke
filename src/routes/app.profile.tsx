@@ -183,12 +183,14 @@ function ProfileScreen() {
         >
           {exporting ? "Preparing…" : "Download my data"}
         </button>
-        <Link
-          to="/diagnostics"
-          className="block rounded-md border border-app-ink/20 px-4 py-3 text-center text-sm font-medium text-app-ink"
-        >
-          Connection diagnostics
-        </Link>
+        {isAdmin ? (
+          <Link
+            to="/diagnostics"
+            className="block rounded-md border border-app-ink/20 px-4 py-3 text-center text-sm font-medium text-app-ink"
+          >
+            Connection diagnostics
+          </Link>
+        ) : null}
         <MarketingPreferenceToggle />
         <DisplaySettingsPanel />
         <BugReportDrawer />
