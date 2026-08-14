@@ -97,28 +97,23 @@ export const STEPS: readonly StepMeta[] = [
 ];
 
 /**
- * Mentor wizard (PRD Rev 8 §3.2): mentors are not dating — they only need an
- * identity (full name), a photo for the mentor directory, and their leadership
- * credentials. No bio, faith picker, life verse, or voice intro.
+ * Mentor wizard (PRD Rev 8 §3.2): mentors are not dating — they only need the
+ * details a match sees when requesting an endorsement, plus a photo.
+ * No bio, faith picker, life verse, or voice intro.
  */
 export const MENTOR_STEPS: readonly StepMeta[] = [
   {
-    key: "demographics",
+    key: "mentor-details",
     title: "About you",
-    description: "Your full name and a few optional details.",
-    requiredFields: ["full_name"],
+    description: "A few details matches see when requesting your endorsement.",
+    requiredFields: ["full_name", "nationality", "church_affiliation", "mentor_role", "email"],
   },
   {
     key: "photos",
     title: "Photo",
-    description: "Matches see your name, photo, and congregation when requesting a voucher.",
+    description:
+      "Required — matches see your name, photo, and church affiliation when requesting a voucher.",
     requiredFields: [],
-  },
-  {
-    key: "credentials",
-    title: "Leadership Credentials",
-    description: "Your official role and the congregation you serve.",
-    requiredFields: ["mentor_role", "congregation"],
   },
 ];
 
