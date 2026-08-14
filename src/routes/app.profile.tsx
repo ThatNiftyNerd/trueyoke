@@ -55,6 +55,7 @@ function ProfileScreen() {
   const [exporting, setExporting] = useState(false);
   const [copied, setCopied] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -67,10 +68,22 @@ function ProfileScreen() {
     getCurrentSession()
       .then((s) => alive && setEmail(s?.user.email ?? null))
       .catch(() => undefined);
+    (async () => {
+      try {
+        const photos = await listOwnPhotos();
+        const first = photos[0];
+        if (!first) return;
+        const url = await getPhotoSignedUrl(first.storage_path);
+        if (alive && url) setAvatarUrl(url);
+      } catch {
+        // Avatar is decorative-optional; fall back to the placeholder circle.
+      }
+    })();
     return () => {
       alive = false;
     };
   }, []);
+
 
   async function handleSignOut() {
     setError(null);
