@@ -84,7 +84,6 @@ function ProfileScreen() {
     };
   }, []);
 
-
   async function handleSignOut() {
     setError(null);
     setSigningOut(true);

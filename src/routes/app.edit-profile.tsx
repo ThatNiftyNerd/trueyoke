@@ -70,7 +70,6 @@ const MENTOR_SECTIONS: readonly SectionDef[] = [
   { key: "photos", title: "Photos", description: "Add or remove your profile photos." },
 ];
 
-
 function EditProfileScreen() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<OnboardingProfile | null>(null);
@@ -121,7 +120,9 @@ function EditProfileScreen() {
 
   const isMatch = profile.account_type === "match";
   const isMentor = profile.account_type === "mentor";
-  const visible = isMentor ? MENTOR_SECTIONS : SECTIONS.filter((s) => s.key !== "photos" || !isMatch);
+  const visible = isMentor
+    ? MENTOR_SECTIONS
+    : SECTIONS.filter((s) => s.key !== "photos" || !isMatch);
   const active = visible.find((s) => s.key === section) ?? null;
 
   const stepProps = {

@@ -27,7 +27,6 @@ export const Route = createFileRoute("/diagnostics")({
   component: DiagnosticsScreen,
 });
 
-
 const PENDING: DiagnosticCheck[] = [
   { id: "env-url", label: "Backend URL configured", status: "pending", detail: "Checking…" },
   { id: "env-key", label: "Publishable key configured", status: "pending", detail: "Checking…" },
