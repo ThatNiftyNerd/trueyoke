@@ -97,9 +97,12 @@ export function emptyToNull<T extends Record<string, unknown>>(
   return out as { [K in keyof T]: T[K] extends string ? string | null : T[K] };
 }
 
-/** Mentor leadership credentials (PRD Rev 8 §3.2). */
-export const credentialsSchema = z.object({
-  mentor_role: z.string().min(1, "Select your official role"),
-  congregation: z.string().trim().min(1, "Enter the congregation you serve").max(120),
+/** Mentor details — the five fields a match sees when requesting an endorsement. */
+export const mentorDetailsSchema = z.object({
+  full_name: z.string().trim().min(1, "Enter your full name"),
+  nationality: z.string().trim().min(1, "Enter your nationality"),
+  church_affiliation: z.string().trim().min(1, "Enter your church affiliation"),
+  mentor_role: z.string().trim().min(1, "Enter your title"),
+  email: z.string().trim().email("Enter a valid email"),
 });
-export type CredentialsValues = z.infer<typeof credentialsSchema>;
+export type MentorDetailsValues = z.infer<typeof mentorDetailsSchema>;

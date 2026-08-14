@@ -8,9 +8,11 @@ interface Props {
   onNext: () => void;
   onBack: () => void;
   canGoBack: boolean;
+  /** Mentors must upload at least one photo — the step can't be skipped. */
+  required?: boolean;
 }
 
-export function PhotosStep({ onNext, onBack, canGoBack }: Props) {
+export function PhotosStep({ onNext, onBack, canGoBack, required = false }: Props) {
   const [photos, setPhotos] = useState<PhotoRow[]>([]);
   const [previews, setPreviews] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);

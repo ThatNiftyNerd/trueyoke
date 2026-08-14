@@ -9,7 +9,7 @@ import { BioStep } from "@/features/profile/steps/BioStep";
 import { FaithStep } from "@/features/profile/steps/FaithStep";
 import { LifeVerseStep } from "@/features/profile/steps/LifeVerseStep";
 import { VoiceIntroStep } from "@/features/profile/steps/VoiceIntroStep";
-import { CredentialsStep } from "@/features/profile/steps/CredentialsStep";
+import { MentorDetailsStep } from "@/features/profile/steps/MentorDetailsStep";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -121,13 +121,18 @@ function OnboardingWizard() {
 
       {step.key === "demographics" && <DemographicsStep {...commonProps} />}
       {step.key === "photos" && (
-        <PhotosStep onNext={goNext} onBack={goBack} canGoBack={canGoBack} />
+        <PhotosStep
+          onNext={goNext}
+          onBack={goBack}
+          canGoBack={canGoBack}
+          required={profile.account_type === "mentor"}
+        />
       )}
       {step.key === "bio" && <BioStep {...commonProps} />}
       {step.key === "faith" && <FaithStep {...commonProps} />}
       {step.key === "life-verse" && <LifeVerseStep {...commonProps} />}
       {step.key === "voice" && <VoiceIntroStep {...commonProps} />}
-      {step.key === "credentials" && <CredentialsStep {...commonProps} />}
+      {step.key === "mentor-details" && <MentorDetailsStep {...commonProps} />}
 
       {finishError ? (
         <p
