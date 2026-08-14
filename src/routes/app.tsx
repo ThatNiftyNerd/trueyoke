@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { requireCompleteProfile } from "@/features/auth/guards";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { Bell } from "lucide-react";
 import { BottomTabs } from "@/components/app/BottomTabs";
 import { NotificationsPane } from "@/features/notifications/NotificationsPane";
 import { UpdateBanner } from "@/features/updates/UpdateBanner";
+import { getOwnProfile } from "@/features/profile/api";
 import type { ActivityItem } from "@/features/notifications/api";
 
 /**
@@ -22,6 +23,19 @@ export const Route = createFileRoute("/app")({
 function AppShell() {
   const [open, setOpen] = useState(false);
   const [badge, setBadge] = useState(0);
+  const [accountType, setAccountType] = useState<"match" | "mentor" | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    getOwnProfile()
+      .then((p) => {
+        if (alive && p) setAccountType(p.account_type as "match" | "mentor");
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   return (
     <div className="min-h-[100dvh] bg-app-canvas">
@@ -29,7 +43,8 @@ function AppShell() {
         type="button"
         aria-label="Notifications"
         onClick={() => setOpen(true)}
-        className="app-glass fixed right-4 top-4 z-40 rounded-full p-2 text-app-ink hover:bg-app-primary/10"
+        style={{ top: "max(1rem, calc(env(safe-area-inset-top) + 0.5rem))" }}
+        className="app-glass fixed right-4 z-40 rounded-full p-2 text-app-ink hover:bg-app-primary/10"
       >
         <Bell className="h-5 w-5" />
         {badge > 0 ? (
@@ -54,11 +69,16 @@ function AppShell() {
         }
       />
 
-      <div className="mx-auto max-w-md pb-[calc(6.5rem+env(safe-area-inset-bottom))]">
+      {/* Single app-wide top-clearance contract: bell height + safe area, so
+          individual screens never need ad-hoc top offsets. */}
+      <div
+        className="mx-auto max-w-md pb-[calc(6.5rem+env(safe-area-inset-bottom))]"
+        style={{ paddingTop: "calc(env(safe-area-inset-top) + 3.25rem)" }}
+      >
         <UpdateBanner />
         <Outlet />
       </div>
-      <BottomTabs />
+      <BottomTabs accountType={accountType} />
     </div>
   );
 }

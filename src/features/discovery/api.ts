@@ -19,7 +19,17 @@ export type Candidate = Pick<
 
 const DECK_BATCH_SIZE = 20;
 
-export async function fetchDeck(): Promise<Candidate[]> {
+/** Location matching is country/city based — the app stores no coordinates. */
+export type LocationScope = "any" | "country" | "city";
+
+export interface DeckFilters {
+  ageMin?: number;
+  ageMax?: number;
+  location?: LocationScope;
+  churchAffiliation?: string;
+}
+
+export async function fetchDeck(filters: DeckFilters = {}): Promise<Candidate[]> {
   const userId = await getCurrentUserId();
   if (!userId) return [];
 
@@ -38,6 +48,23 @@ export async function fetchDeck(): Promise<Candidate[]> {
     .eq("profile_complete", true)
     .neq("id", userId)
     .limit(DECK_BATCH_SIZE);
+
+  if (typeof filters.ageMin === "number") query = query.gte("age", filters.ageMin);
+  if (typeof filters.ageMax === "number") query = query.lte("age", filters.ageMax);
+  if (filters.churchAffiliation) {
+    query = query.eq("church_affiliation", filters.churchAffiliation);
+  }
+
+  // "Same country" / "same country + city" relative to the caller's own row.
+  if (filters.location === "country" || filters.location === "city") {
+    const { data: own } = await supabase
+      .from("profiles")
+      .select("country, city")
+      .eq("id", userId)
+      .maybeSingle();
+    if (own?.country) query = query.eq("country", own.country);
+    if (filters.location === "city" && own?.city) query = query.eq("city", own.city);
+  }
 
   if (excluded.size > 0) {
     const list = Array.from(excluded)

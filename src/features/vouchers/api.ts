@@ -106,3 +106,65 @@ export async function confirmAndEndorse(voucherId: string, endorsement: string):
     .eq("id", voucherId);
   if (error) throw new Error(error.message);
 }
+
+export interface EndorsedVoucher {
+  id: string;
+  matchUserId: string;
+  displayName: string;
+  photoSignedUrl: string | null;
+  endorsement: string | null;
+  createdAt: string;
+}
+
+/**
+ * Vouchers the caller (as mentor) has already approved, joined to each match's
+ * display name + primary photo. Same minimal projection / signed-URL pattern
+ * as `listOnboardedMentors()`. Reads rely on the existing
+ * `vouchers_mentor_read` RLS policy.
+ */
+export async function listOwnEndorsedVouchers(): Promise<EndorsedVoucher[]> {
+  const userId = await getCurrentUserId();
+  if (!userId) return [];
+
+  const { data, error } = await supabase
+    .from("vouchers")
+    .select("id, match_user_id, endorsement, created_at")
+    .eq("mentor_id", userId)
+    .eq("status", "approved")
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  const rows = data ?? [];
+  if (rows.length === 0) return [];
+
+  const ids = Array.from(new Set(rows.map((r) => r.match_user_id)));
+
+  const { data: profiles } = await supabase
+    .from("profiles")
+    .select("id, display_name")
+    .in("id", ids);
+  const nameById = new Map<string, string | null>();
+  for (const p of profiles ?? []) nameById.set(p.id, p.display_name);
+
+  const { data: photos } = await supabase
+    .from("photos")
+    .select("profile_id, storage_path, position")
+    .in("profile_id", ids)
+    .eq("position", 0);
+  const pathById = new Map<string, string>();
+  for (const p of photos ?? []) pathById.set(p.profile_id, p.storage_path);
+
+  return Promise.all(
+    rows.map(async (r) => {
+      const path = pathById.get(r.match_user_id);
+      const url = path ? await getPhotoSignedUrl(path, 3600) : null;
+      return {
+        id: r.id,
+        matchUserId: r.match_user_id,
+        displayName: nameById.get(r.match_user_id)?.trim() || "Member",
+        photoSignedUrl: url,
+        endorsement: r.endorsement,
+        createdAt: r.created_at,
+      } satisfies EndorsedVoucher;
+    }),
+  );
+}

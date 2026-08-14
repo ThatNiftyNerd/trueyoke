@@ -1,8 +1,8 @@
 /**
  * Mobile-first bottom tab bar for the main app shell.
  *
- * Touch-first (no hover-only interactions). Renders three tabs:
- * Discover / Matches / Profile.
+ * Touch-first (no hover-only interactions). Tabs are account-type aware:
+ * mentors get Discover + Profile only (no Matches), matches get all three.
  */
 import { Link } from "@tanstack/react-router";
 import { Compass, Heart, User } from "lucide-react";
@@ -14,13 +14,19 @@ interface TabDef {
   icon: ComponentType<{ className?: string }>;
 }
 
-const TABS: readonly TabDef[] = [
-  { to: "/app/discover", label: "Discover", icon: Compass },
-  { to: "/app/matches", label: "Matches", icon: Heart },
-  { to: "/app/profile", label: "Profile", icon: User },
-];
+const DISCOVER: TabDef = { to: "/app/discover", label: "Discover", icon: Compass };
+const MATCHES: TabDef = { to: "/app/matches", label: "Matches", icon: Heart };
+const PROFILE: TabDef = { to: "/app/profile", label: "Profile", icon: User };
 
-export function BottomTabs() {
+export interface BottomTabsProps {
+  /** Caller's own account type; undefined while it is still loading. */
+  accountType?: "match" | "mentor" | null;
+}
+
+export function BottomTabs({ accountType }: BottomTabsProps) {
+  const tabs: readonly TabDef[] =
+    accountType === "mentor" ? [DISCOVER, PROFILE] : [DISCOVER, MATCHES, PROFILE];
+
   return (
     <nav
       className="app-glass fixed inset-x-0 bottom-0 z-40"
@@ -28,7 +34,7 @@ export function BottomTabs() {
       aria-label="Primary"
     >
       <ul className="mx-auto flex max-w-md items-stretch justify-around">
-        {TABS.map((tab) => {
+        {tabs.map((tab) => {
           const Icon = tab.icon;
           return (
             <li key={tab.to} className="flex-1">

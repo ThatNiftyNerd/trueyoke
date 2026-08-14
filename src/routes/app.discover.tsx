@@ -13,6 +13,11 @@ import { MatchDialog } from "@/features/discovery/MatchDialog";
 import { BlockModal, ReportModal } from "@/features/safety/ReportBlockModals";
 import { blockProfile, reportProfile } from "@/features/safety/api";
 import { formatReason, type ReportReason } from "@/features/safety/logic";
+import { DiscoverFilters } from "@/features/discovery/DiscoverFilters";
+import { EMPTY_FILTERS, activeFilterCount } from "@/features/discovery/logic";
+import type { DeckFilters } from "@/features/discovery/api";
+import { getOwnProfile } from "@/features/profile/api";
+import { MentorLedger } from "@/features/vouchers/MentorLedger";
 
 export const Route = createFileRoute("/app/discover")({
   head: () => ({
@@ -23,8 +28,26 @@ export const Route = createFileRoute("/app/discover")({
       { property: "og:description", content: "Discover marriage-minded members." },
     ],
   }),
-  component: DiscoverScreen,
+  component: DiscoverRoute,
 });
+
+/** Mentors get the voucher ledger here; matches get the swipe deck. */
+function DiscoverRoute() {
+  const [accountType, setAccountType] = useState<"match" | "mentor" | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    getOwnProfile()
+      .then((p) => alive && p && setAccountType(p.account_type as "match" | "mentor"))
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  if (accountType === "mentor") return <MentorLedger />;
+  return <DiscoverScreen />;
+}
 
 function DiscoverScreen() {
   const [deck, setDeck] = useState<Candidate[]>([]);
@@ -35,11 +58,14 @@ function DiscoverScreen() {
   const [matched, setMatched] = useState<Candidate | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
   const [blockOpen, setBlockOpen] = useState(false);
+  const [filters, setFilters] = useState<DeckFilters>(EMPTY_FILTERS);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filterCount = activeFilterCount(filters);
 
   useEffect(() => {
     let alive = true;
     setLoading(true);
-    fetchDeck()
+    fetchDeck(filters)
       .then((rows) => {
         if (!alive) return;
         setDeck(rows);
@@ -53,7 +79,7 @@ function DiscoverScreen() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [filters]);
 
   const current = deck[index] ?? null;
 
@@ -114,11 +140,15 @@ function DiscoverScreen() {
           type="button"
           variant="outline"
           size="sm"
-          disabled
-          className="border-app-ink/30 text-app-ink"
+          onClick={() => setFiltersOpen(true)}
+          className="relative border-app-ink/30 text-app-ink"
         >
-          {/* TODO: open distance / compatibility filter sheet */}
           Filters
+          {filterCount > 0 ? (
+            <span className="ml-2 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-app-primary px-1 text-[10px] font-medium text-app-on-primary">
+              {filterCount}
+            </span>
+          ) : null}
         </Button>
       </header>
 
@@ -148,6 +178,13 @@ function DiscoverScreen() {
           </div>
         )}
       </div>
+
+      <DiscoverFilters
+        open={filtersOpen}
+        onOpenChange={setFiltersOpen}
+        value={filters}
+        onApply={setFilters}
+      />
 
       {matched ? <MatchDialog displayName={matched.display_name} onClose={closeMatch} /> : null}
 
