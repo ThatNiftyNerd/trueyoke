@@ -1,3 +1,5 @@
+import type { DeckFilters } from "./api";
+
 /** Discovery UI helpers (no data access here). */
 import type { Candidate } from "./api";
 
@@ -20,4 +22,16 @@ export function cardSubtitle(c: Candidate): string {
   if (typeof c.age === "number") bits.push(String(c.age));
   if (c.location_label) bits.push(c.location_label);
   return bits.join(" · ");
+}
+
+/** Default (unfiltered) Discover filter state. */
+export const EMPTY_FILTERS: DeckFilters = { location: "any" };
+
+/** Number of filter facets currently narrowing the deck. */
+export function activeFilterCount(f: DeckFilters): number {
+  let n = 0;
+  if (typeof f.ageMin === "number" || typeof f.ageMax === "number") n += 1;
+  if (f.location && f.location !== "any") n += 1;
+  if (f.churchAffiliation) n += 1;
+  return n;
 }
