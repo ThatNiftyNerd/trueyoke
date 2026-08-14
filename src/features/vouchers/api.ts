@@ -128,7 +128,7 @@ export async function listOwnEndorsedVouchers(): Promise<EndorsedVoucher[]> {
 
   const { data, error } = await supabase
     .from("vouchers")
-    .select("id, match_user_id, endorsement, updated_at, created_at")
+    .select("id, match_user_id, endorsement, created_at")
     .eq("mentor_id", userId)
     .eq("status", "approved")
     .order("created_at", { ascending: false });
@@ -163,7 +163,7 @@ export async function listOwnEndorsedVouchers(): Promise<EndorsedVoucher[]> {
         displayName: nameById.get(r.match_user_id)?.trim() || "Member",
         photoSignedUrl: url,
         endorsement: r.endorsement,
-        updatedAt: r.updated_at ?? r.created_at,
+        updatedAt: r.created_at,
       } satisfies EndorsedVoucher;
     }),
   );
