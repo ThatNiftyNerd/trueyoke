@@ -26,7 +26,15 @@ export const Route = createFileRoute("/app/edit-profile")({
   component: EditProfileScreen,
 });
 
-type SectionKey = "name" | "demographics" | "photos" | "bio" | "faith" | "life-verse" | "voice";
+type SectionKey =
+  | "name"
+  | "demographics"
+  | "photos"
+  | "bio"
+  | "faith"
+  | "life-verse"
+  | "voice"
+  | "mentor-details";
 
 interface SectionDef {
   key: SectionKey;
@@ -51,6 +59,16 @@ const SECTIONS: readonly SectionDef[] = [
   { key: "life-verse", title: "Life verse", description: "A verse that anchors you." },
   { key: "voice", title: "Voice intro", description: "Record or replace your spoken intro." },
 ];
+
+const MENTOR_SECTIONS: readonly SectionDef[] = [
+  {
+    key: "mentor-details",
+    title: "About you",
+    description: "Full name, nationality, church affiliation, title, and email.",
+  },
+  { key: "photos", title: "Photos", description: "Add or remove your profile photos." },
+];
+
 
 function EditProfileScreen() {
   const navigate = useNavigate();
