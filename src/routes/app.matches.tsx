@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { getOwnProfile } from "@/features/profile/api";
 import { useEffect, useState } from "react";
 import { ACTIVE_MATCH_CAP, MATCH_EXPIRY_HOURS } from "@/lib/constants";
 import { listOwnMatches, type MatchListItem } from "@/features/matches/api";
@@ -6,6 +7,11 @@ import { partitionByStatus } from "@/features/matches/logic";
 import { MatchRow } from "@/features/matches/MatchRow";
 
 export const Route = createFileRoute("/app/matches")({
+  // Defensive: mentors have no Matches tab, so bounce them to Discover.
+  beforeLoad: async () => {
+    const profile = await getOwnProfile().catch(() => null);
+    if (profile?.account_type === "mentor") throw redirect({ to: "/app/discover" });
+  },
   head: () => ({
     meta: [
       { title: "Matches — TrueYoke" },
