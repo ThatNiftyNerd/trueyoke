@@ -119,7 +119,8 @@ function EditProfileScreen() {
   }
 
   const isMatch = profile.account_type === "match";
-  const visible = SECTIONS.filter((s) => s.key !== "photos" || !isMatch);
+  const isMentor = profile.account_type === "mentor";
+  const visible = isMentor ? MENTOR_SECTIONS : SECTIONS.filter((s) => s.key !== "photos" || !isMatch);
   const active = visible.find((s) => s.key === section) ?? null;
 
   const stepProps = {
