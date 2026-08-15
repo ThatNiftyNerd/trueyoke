@@ -3,7 +3,7 @@
  * open — there is no realtime subscription here by design.
  *
  * Reads reuse the existing feature APIs (`listOwnMatches`,
- * `getOwnMentorRequest`) rather than re-querying those tables, so RLS-scoped
+ * `listOwnMentorRequests`) rather than re-querying those tables, so RLS-scoped
  * behaviour stays in one place. Read markers live in their own `match_reads`
  * table: the client never writes to `matches`.
  */
@@ -11,7 +11,7 @@ import { supabase } from "@/lib/supabase";
 import { getCurrentUserId } from "@/features/auth/api";
 import { getPhotoSignedUrl, listOwnPhotos } from "@/features/profile/api";
 import { listOwnMatches } from "@/features/matches/api";
-import { getOwnMentorRequest } from "@/features/vouchers/api";
+import { listOwnMentorRequests } from "@/features/vouchers/api";
 
 export type ActivityItem =
   | {
@@ -113,18 +113,18 @@ export async function getMatchActivity(): Promise<ActivityItem[]> {
     }
   }
 
-  const request = await getOwnMentorRequest();
-  if (request && request.status === "pending" && request.mentor_id) {
-    const { data: mentor } = await supabase
-      .from("profiles")
-      .select("id, display_name")
-      .eq("id", request.mentor_id)
-      .maybeSingle();
-    items.push({
-      kind: "pending_mentor_request",
-      mentorName: mentor?.display_name?.trim() || "your mentor",
-      status: request.status,
-    });
+  // A match may now have several concurrently active requests (up to
+  // MAX_ACTIVE_MENTOR_REQUESTS) — surface one activity item per pending row,
+  // not just the newest.
+  const requests = await listOwnMentorRequests();
+  for (const r of requests) {
+    if (r.status === "pending") {
+      items.push({
+        kind: "pending_mentor_request",
+        mentorName: r.mentorName,
+        status: r.status,
+      });
+    }
   }
 
   items.push(...(await listAnnouncements()));

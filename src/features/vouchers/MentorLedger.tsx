@@ -72,7 +72,7 @@ export function MentorLedger() {
   }
 
   return (
-    <section className="flex flex-col px-4 pt-6">
+    <section className="flex flex-col px-4">
       <header className="mb-4">
         <h1 className="font-serif text-2xl text-app-ink">Voucher ledger</h1>
         <p className="mt-1 text-sm text-app-ink/70">

@@ -102,7 +102,7 @@ function EditProfileScreen() {
 
   if (loading) {
     return (
-      <section className="px-4 pt-6">
+      <section className="px-4">
         <p className="text-sm text-app-ink/70">Loading…</p>
       </section>
     );
@@ -110,7 +110,7 @@ function EditProfileScreen() {
 
   if (!profile) {
     return (
-      <section className="px-4 pt-6">
+      <section className="px-4">
         <p className="text-sm text-app-ink/70">
           We couldn&apos;t load your profile. Please reload and try again.
         </p>
@@ -134,7 +134,7 @@ function EditProfileScreen() {
   };
 
   return (
-    <section className="flex flex-col px-4 pt-6">
+    <section className="flex flex-col px-4">
       <header className="mb-6">
         <h1 className="font-serif text-2xl text-app-ink">
           {active ? active.title : "Edit your profile"}

@@ -18,6 +18,15 @@ export type MentorOption = Pick<
 
 export type VoucherRow = Tables<"vouchers">;
 
+/**
+ * A match account may have this many concurrently active (pending or
+ * approved) mentor requests. Mirrors the DB-side
+ * `enforce_voucher_request_cap()` trigger, which is the real enforcement —
+ * this constant only lets the UI head off the request before round-tripping
+ * to the server. Declined requests never count toward the cap.
+ */
+export const MAX_ACTIVE_MENTOR_REQUESTS = 7;
+
 /** Onboarded mentors the caller can request an endorsement from. */
 export async function listOnboardedMentors(): Promise<MentorOption[]> {
   const userId = await getCurrentUserId();
@@ -56,26 +65,90 @@ export async function listOnboardedMentors(): Promise<MentorOption[]> {
   );
 }
 
-/** The caller's own current voucher row, if they have already requested one. */
-export async function getOwnMentorRequest(): Promise<VoucherRow | null> {
+export interface OwnMentorRequest {
+  id: string;
+  mentorId: string;
+  mentorName: string;
+  mentorPhotoSignedUrl: string | null;
+  mentorChurchAffiliation: string | null;
+  status: string;
+  requestNote: string | null;
+  endorsement: string | null;
+  createdAt: string;
+}
+
+/**
+ * All of the caller's own mentor endorsement requests (any status), newest
+ * first, joined to each mentor's minimal public profile. Powers the
+ * match-side request ledger — mirrors `listOwnEndorsedVouchers()`'s join
+ * pattern from the mentor side. A match may have up to
+ * `MAX_ACTIVE_MENTOR_REQUESTS` pending/approved rows at once; declined rows
+ * are included here too so the caller can see their full history, but don't
+ * count against the cap.
+ */
+export async function listOwnMentorRequests(): Promise<OwnMentorRequest[]> {
   const userId = await getCurrentUserId();
-  if (!userId) return null;
+  if (!userId) return [];
+
   const { data, error } = await supabase
     .from("vouchers")
-    .select("*")
+    .select("id, mentor_id, status, request_note, endorsement, created_at")
     .eq("match_user_id", userId)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
-  return data;
+  const rows = data ?? [];
+  if (rows.length === 0) return [];
+
+  const ids = Array.from(
+    new Set(rows.map((r) => r.mentor_id).filter((id): id is string => id !== null)),
+  );
+
+  const { data: profiles } = await supabase
+    .from("profiles")
+    .select("id, display_name, church_affiliation")
+    .in("id", ids);
+  const profileById = new Map<string, { displayName: string | null; church: string | null }>();
+  for (const p of profiles ?? []) {
+    profileById.set(p.id, { displayName: p.display_name, church: p.church_affiliation });
+  }
+
+  const { data: photos } = await supabase
+    .from("photos")
+    .select("profile_id, storage_path, position")
+    .in("profile_id", ids)
+    .eq("position", 0);
+  const pathById = new Map<string, string>();
+  for (const p of photos ?? []) pathById.set(p.profile_id, p.storage_path);
+
+  return Promise.all(
+    rows.map(async (r) => {
+      const mentorId = r.mentor_id;
+      const profile = mentorId ? profileById.get(mentorId) : undefined;
+      const path = mentorId ? pathById.get(mentorId) : undefined;
+      const url = path ? await getPhotoSignedUrl(path, 3600) : null;
+      return {
+        id: r.id,
+        mentorId: mentorId ?? "",
+        mentorName: profile?.displayName?.trim() || "Mentor",
+        mentorPhotoSignedUrl: url,
+        mentorChurchAffiliation: profile?.church ?? null,
+        status: r.status,
+        requestNote: r.request_note,
+        endorsement: r.endorsement,
+        createdAt: r.created_at,
+      } satisfies OwnMentorRequest;
+    }),
+  );
 }
 
 /**
  * Requests an endorsement from a mentor, with a short intro note. `status`
- * defaults to 'pending' in the database; the unique (match_user_id, mentor_id)
- * constraint is surfaced as a friendly message rather than a raw Postgres
- * error. The 250-char cap on `request_note` is enforced by a DB CHECK.
+ * defaults to 'pending' in the database. Three DB-side rules are surfaced as
+ * friendly messages rather than raw Postgres errors: the unique
+ * (match_user_id, mentor_id) constraint (you may only ever request a given
+ * mentor once — including after a decline), the 7-active-request cap
+ * enforced by `enforce_voucher_request_cap()`, and the 250-char cap on
+ * `request_note` (also enforced client-side before this is ever called).
  */
 export async function requestMentorVoucher(mentorId: string, note: string): Promise<void> {
   const userId = await getCurrentUserId();
@@ -87,8 +160,13 @@ export async function requestMentorVoucher(mentorId: string, note: string): Prom
   if (!error) return;
 
   const msg = `${error.message} ${error.hint ?? ""} ${error.details ?? ""}`;
+  if (/maximum of 7 mentor requests/i.test(msg)) {
+    throw new Error(
+      "You've reached the maximum of 7 mentor requests. Wait for a decision on an existing request before adding more.",
+    );
+  }
   if (error.code === "23505" || /duplicate key/i.test(msg)) {
-    throw new Error("You already have a pending request with this mentor.");
+    throw new Error("You already have a request with this mentor.");
   }
   throw new Error(error.message);
 }

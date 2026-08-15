@@ -133,7 +133,7 @@ function DiscoverScreen() {
   }
 
   return (
-    <section className="flex min-h-[calc(100dvh-6rem)] flex-col px-4 pt-6">
+    <section className="flex min-h-[calc(100dvh-6rem)] flex-col px-4">
       <header className="mb-4 flex items-center justify-between">
         <h1 className="font-serif text-2xl text-app-ink">Discover</h1>
         <Button
