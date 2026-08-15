@@ -59,7 +59,7 @@ function AdminReviewScreen() {
   }
 
   return (
-    <section className="flex flex-col px-4 pt-6">
+    <section className="flex flex-col px-4">
       <header className="mb-6">
         <Link to="/app/profile" className="text-sm text-app-ink underline">
           ← Back to profile
