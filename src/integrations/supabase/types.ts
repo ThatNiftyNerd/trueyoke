@@ -325,6 +325,54 @@ export type Database = {
         }
         Relationships: []
       }
+      church_verifications: {
+        Row: {
+          created_at: string
+          evidence_path: string
+          id: string
+          profile_id: string
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["church_verification_status"]
+        }
+        Insert: {
+          created_at?: string
+          evidence_path: string
+          id?: string
+          profile_id: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["church_verification_status"]
+        }
+        Update: {
+          created_at?: string
+          evidence_path?: string
+          id?: string
+          profile_id?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["church_verification_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_verifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "church_verifications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -411,54 +459,6 @@ export type Database = {
           used_at?: string | null
         }
         Relationships: []
-      }
-      church_verifications: {
-        Row: {
-          created_at: string
-          evidence_path: string
-          id: string
-          profile_id: string
-          rejection_reason: string | null
-          reviewed_at: string | null
-          reviewed_by: string | null
-          status: Database["public"]["Enums"]["church_verification_status"]
-        }
-        Insert: {
-          created_at?: string
-          evidence_path: string
-          id?: string
-          profile_id: string
-          rejection_reason?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: Database["public"]["Enums"]["church_verification_status"]
-        }
-        Update: {
-          created_at?: string
-          evidence_path?: string
-          id?: string
-          profile_id?: string
-          rejection_reason?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: Database["public"]["Enums"]["church_verification_status"]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "church_verifications_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "church_verifications_reviewed_by_fkey"
-            columns: ["reviewed_by"]
-            isOneToOne: false
-            referencedRelation: "admin_users"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       id_verifications: {
         Row: {
@@ -1212,6 +1212,12 @@ export type Database = {
           mentor_id: string | null
           request_note: string | null
           status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "vouchers"
+          isOneToOne: true
+          isSetofReturn: false
         }
       }
       delete_email: {
