@@ -412,6 +412,54 @@ export type Database = {
         }
         Relationships: []
       }
+      church_verifications: {
+        Row: {
+          created_at: string
+          evidence_path: string
+          id: string
+          profile_id: string
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["church_verification_status"]
+        }
+        Insert: {
+          created_at?: string
+          evidence_path: string
+          id?: string
+          profile_id: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["church_verification_status"]
+        }
+        Update: {
+          created_at?: string
+          evidence_path?: string
+          id?: string
+          profile_id?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["church_verification_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_verifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "church_verifications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       id_verifications: {
         Row: {
           created_at: string
@@ -1182,6 +1230,7 @@ export type Database = {
     }
     Enums: {
       account_type: "match" | "mentor"
+      church_verification_status: "pending" | "verified" | "rejected"
       gender_type: "male" | "female"
       id_status: "none" | "pending" | "verified" | "rejected"
       match_status: "active" | "expired" | "closed"
@@ -1314,6 +1363,7 @@ export const Constants = {
   public: {
     Enums: {
       account_type: ["match", "mentor"],
+      church_verification_status: ["pending", "verified", "rejected"],
       gender_type: ["male", "female"],
       id_status: ["none", "pending", "verified", "rejected"],
       match_status: ["active", "expired", "closed"],

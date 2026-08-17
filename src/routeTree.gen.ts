@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyIdRouteImport } from './routes/verify-id'
+import { Route as VerifyChurchRouteImport } from './routes/verify-church'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
@@ -27,6 +28,11 @@ import { Route as AppAdminReviewRouteImport } from './routes/app.admin-review'
 const VerifyIdRoute = VerifyIdRouteImport.update({
   id: '/verify-id',
   path: '/verify-id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyChurchRoute = VerifyChurchRouteImport.update({
+  id: '/verify-church',
+  path: '/verify-church',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
+  '/verify-church': typeof VerifyChurchRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
+  '/verify-church': typeof VerifyChurchRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -136,6 +144,7 @@ export interface FileRoutesById {
   '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
+  '/verify-church': typeof VerifyChurchRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -154,6 +163,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/onboarding'
     | '/privacy'
+    | '/verify-church'
     | '/verify-id'
     | '/app/admin-review'
     | '/app/discover'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/onboarding'
     | '/privacy'
+    | '/verify-church'
     | '/verify-id'
     | '/app/admin-review'
     | '/app/discover'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/onboarding'
     | '/privacy'
+    | '/verify-church'
     | '/verify-id'
     | '/app/admin-review'
     | '/app/discover'
@@ -203,6 +215,7 @@ export interface RootRouteChildren {
   DiagnosticsRoute: typeof DiagnosticsRoute
   OnboardingRoute: typeof OnboardingRoute
   PrivacyRoute: typeof PrivacyRoute
+  VerifyChurchRoute: typeof VerifyChurchRoute
   VerifyIdRoute: typeof VerifyIdRoute
   ChatMatchIdRoute: typeof ChatMatchIdRoute
 }
@@ -214,6 +227,13 @@ declare module '@tanstack/react-router' {
       path: '/verify-id'
       fullPath: '/verify-id'
       preLoaderRoute: typeof VerifyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-church': {
+      id: '/verify-church'
+      path: '/verify-church'
+      fullPath: '/verify-church'
+      preLoaderRoute: typeof VerifyChurchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -336,6 +356,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiagnosticsRoute: DiagnosticsRoute,
   OnboardingRoute: OnboardingRoute,
   PrivacyRoute: PrivacyRoute,
+  VerifyChurchRoute: VerifyChurchRoute,
   VerifyIdRoute: VerifyIdRoute,
   ChatMatchIdRoute: ChatMatchIdRoute,
 }

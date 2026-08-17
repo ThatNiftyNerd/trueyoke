@@ -54,7 +54,7 @@ export async function redirectIfSignedIn(options?: {
   allowAuth?: boolean;
   allowOnboarding?: boolean;
 }): Promise<void> {
-  if (isRecoveryRedirect) return;
+  if (isRecoveryRedirect()) return;
   const session = await getCurrentSession();
   if (!session) return;
   const target = await signedInLandingPath();

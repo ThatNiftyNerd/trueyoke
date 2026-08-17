@@ -2,6 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { onAuthChange } from "@/features/auth/api";
+import { markRecoveryRedirect } from "@/features/auth/recovery-detect";
 import { restoreSession, startForegroundSessionRefresh } from "@/features/auth/session";
 import { SplashScreen } from "@/features/auth/SplashScreen";
 
@@ -59,7 +60,18 @@ export const getRouter = () => {
     invalidateLater();
   };
 
-  onAuthChange((session) => {
+  onAuthChange((session, event) => {
+    // Fires whenever Supabase establishes a recovery session, regardless of
+    // whether it arrived as a web hash fragment or a native deep-link code
+    // exchange (see recovery-detect.ts). The current route may be anything
+    // — the app could be mid-session on /app/discover when a recovery link
+    // is tapped on native — so this force-navigates to /auth rather than
+    // relying on a component that may not even be mounted to notice.
+    if (event === "PASSWORD_RECOVERY") {
+      markRecoveryRedirect();
+      void router.navigate({ to: "/auth" });
+    }
+
     const userId = session?.user.id ?? null;
     if (userId === lastUserId) return;
     lastUserId = userId;

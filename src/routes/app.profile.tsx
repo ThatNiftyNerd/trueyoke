@@ -134,7 +134,11 @@ function ProfileScreen() {
           <div className="mx-auto h-24 w-24 rounded-full bg-app-accent/20" aria-hidden="true" />
         )}
         <h1 className="mt-3 font-serif text-2xl text-app-ink">Your profile</h1>
-        {/* TODO: display church-verified sage badge when profile.church_verified */}
+        {profile?.church_verified ? (
+          <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-app-accent/15 px-2.5 py-1 text-xs font-medium text-app-on-accent">
+            Church Verified
+          </span>
+        ) : null}
         {email ? <p className="mt-1 text-sm text-app-ink/70">{email}</p> : null}
         <p className="mt-1 text-sm text-app-ink/60">Not yet complete</p>
       </header>
@@ -153,6 +157,14 @@ function ProfileScreen() {
         >
           Verify your ID
         </Link>
+        {!profile?.church_verified ? (
+          <Link
+            to="/verify-church"
+            className="block rounded-md border border-app-accent bg-app-accent/10 px-4 py-3 text-center text-sm font-medium text-app-ink"
+          >
+            Verify your church affiliation
+          </Link>
+        ) : null}
         {profile?.account_type === "match" && profile.profile_complete === true ? (
           <SelfieCapture />
         ) : null}
@@ -165,7 +177,7 @@ function ProfileScreen() {
             to="/app/admin-review"
             className="block rounded-md border border-app-ink/20 px-4 py-3 text-center text-sm font-medium text-app-ink"
           >
-            ID review
+            Verification review
           </Link>
         ) : null}
         <button
