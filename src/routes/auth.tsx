@@ -20,8 +20,8 @@ import {
   requestPasswordReset,
   updatePassword,
 } from "@/features/auth/api";
-import type { Session } from "@supabase/supabase-js";
-import { isRecoveryRedirect } from "@/features/auth/recovery-detect";
+import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
+import { isRecoveryRedirect, clearRecoveryRedirect } from "@/features/auth/recovery-detect";
 import { PasswordInput } from "@/components/ui/password-input";
 import { ErrorBoundary } from "@/components/app/ErrorBoundary";
 
@@ -106,10 +106,14 @@ function AuthScreen() {
   useEffect(() => {
     let handled = false;
 
-    const resolve = (session: Session | null) => {
+    const resolve = (session: Session | null, event?: AuthChangeEvent) => {
       if (!session || handled) return;
       handled = true;
-      if (isRecoveryRedirect) {
+      // event is only present on live auth-state changes (not the initial
+      // getCurrentSession() resolve below), but that's fine: on native the
+      // app-wide listener in router.tsx already called markRecoveryRedirect()
+      // before navigating here, so isRecoveryRedirect() covers that case too.
+      if (event === "PASSWORD_RECOVERY" || isRecoveryRedirect()) {
         setRecoveryPending(true);
         return;
       }
@@ -131,7 +135,7 @@ function AuthScreen() {
     };
 
     const unsubscribe = onAuthChange(resolve);
-    void getCurrentSession().then(resolve);
+    void getCurrentSession().then((session) => resolve(session));
     return unsubscribe;
   }, [navigate]);
 
@@ -148,6 +152,7 @@ function AuthScreen() {
     setSubmitting(true);
     try {
       await updatePassword(newPassword);
+      clearRecoveryRedirect();
       setRecoveryPending(false);
       navigate({ to: await signedInLandingPath() });
     } catch (err) {

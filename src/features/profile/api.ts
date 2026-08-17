@@ -45,7 +45,12 @@ const ONBOARDING_COLUMNS =
  */
 export type OwnProfile = Pick<
   Tables<"profiles">,
-  "id" | "account_type" | "display_name" | "profile_complete"
+  | "id"
+  | "account_type"
+  | "display_name"
+  | "profile_complete"
+  | "church_verified"
+  | "church_affiliation"
 >;
 
 export async function getOwnProfile(): Promise<OwnProfile | null> {
@@ -53,7 +58,7 @@ export async function getOwnProfile(): Promise<OwnProfile | null> {
   if (!userId) return null;
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, account_type, display_name, profile_complete")
+    .select("id, account_type, display_name, profile_complete, church_verified, church_affiliation")
     .eq("id", userId)
     .maybeSingle();
   if (error) throw new Error(error.message);
@@ -265,6 +270,141 @@ export async function submitIdVerification(file: File): Promise<void> {
     .from("id_verifications")
     .insert({ profile_id: userId, document_path: path, status: "pending" });
   if (insErr) throw new Error(insErr.message);
+}
+
+// -------- Church affiliation verification (Level 2 badge) ------------------
+
+export type ChurchVerificationInfo = Pick<
+  Tables<"church_verifications">,
+  "status" | "rejection_reason" | "created_at"
+>;
+
+const CHURCH_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const CHURCH_MAX_BYTES = 8 * 1024 * 1024;
+
+/** Most recent church_verifications row for the caller, or null if never submitted. */
+export async function getChurchVerification(): Promise<ChurchVerificationInfo | null> {
+  const userId = await getCurrentUserId();
+  if (!userId) return null;
+  const { data, error } = await supabase
+    .from("church_verifications")
+    .select("status, rejection_reason, created_at")
+    .eq("profile_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export type ChurchSubmitError = "invalid_type" | "too_large";
+
+/**
+ * Uploads evidence of church membership (a membership card, a letter from
+ * the congregation, or a screenshot of a church directory listing) to the
+ * private `church-verification` bucket and inserts a new pending
+ * church_verifications row. Each submission is a new row so reviewers keep
+ * the full history, same convention as ID verification.
+ */
+export async function submitChurchVerification(file: File): Promise<void> {
+  if (!CHURCH_ALLOWED_TYPES.includes(file.type)) {
+    const err = new Error("Please upload a JPG, PNG, or WebP image.") as Error & {
+      code: ChurchSubmitError;
+    };
+    err.code = "invalid_type";
+    throw err;
+  }
+  if (file.size > CHURCH_MAX_BYTES) {
+    const err = new Error("File must be under 8 MB.") as Error & { code: ChurchSubmitError };
+    err.code = "too_large";
+    throw err;
+  }
+
+  const userId = await getCurrentUserId();
+  if (!userId) throw new Error("Not authenticated");
+
+  const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+  const path = `${userId}/${crypto.randomUUID()}.${ext}`;
+
+  const { error: upErr } = await supabase.storage
+    .from("church-verification")
+    .upload(path, file, { contentType: file.type, upsert: false });
+  if (upErr) throw new Error(upErr.message);
+
+  const { error: insErr } = await supabase
+    .from("church_verifications")
+    .insert({ profile_id: userId, evidence_path: path, status: "pending" });
+  if (insErr) throw new Error(insErr.message);
+}
+
+export interface PendingChurchReview {
+  id: string;
+  profileId: string;
+  displayName: string;
+  claimedChurchAffiliation: string | null;
+  createdAt: string;
+  evidenceSignedUrl: string | null;
+}
+
+/** Oldest-first queue of pending submissions. Admin-only via RLS. */
+export async function listPendingChurchVerifications(): Promise<PendingChurchReview[]> {
+  const { data, error } = await supabase
+    .from("church_verifications")
+    .select(
+      "id, profile_id, evidence_path, created_at, profiles!church_verifications_profile_id_fkey(display_name, church_affiliation)",
+    )
+    .eq("status", "pending")
+    .order("created_at", { ascending: true });
+  if (error) throw new Error(error.message);
+
+  const rows = (data ?? []) as unknown as Array<{
+    id: string;
+    profile_id: string;
+    evidence_path: string;
+    created_at: string;
+    profiles: { display_name: string | null; church_affiliation: string | null } | null;
+  }>;
+
+  return Promise.all(
+    rows.map(async (r) => {
+      const { data: signed } = await supabase.storage
+        .from("church-verification")
+        .createSignedUrl(r.evidence_path, 3600);
+      return {
+        id: r.id,
+        profileId: r.profile_id,
+        displayName: r.profiles?.display_name ?? "Member",
+        claimedChurchAffiliation: r.profiles?.church_affiliation ?? null,
+        createdAt: r.created_at,
+        evidenceSignedUrl: signed?.signedUrl ?? null,
+      };
+    }),
+  );
+}
+
+/**
+ * Approve or reject a submission. `reviewed_by` is always the authenticated
+ * admin's own id. Approval flips `profiles.church_verified` server-side via
+ * the `sync_church_verified` trigger -- this function never writes that
+ * column directly (there's no RLS grant for it either; see migration).
+ */
+export async function reviewChurchVerification(
+  verificationId: string,
+  decision: "verified" | "rejected",
+  rejectionReason?: string,
+): Promise<void> {
+  const adminId = await getCurrentUserId();
+  if (!adminId) throw new Error("Not authenticated");
+  const { error } = await supabase
+    .from("church_verifications")
+    .update({
+      status: decision,
+      reviewed_by: adminId,
+      reviewed_at: new Date().toISOString(),
+      rejection_reason: decision === "rejected" ? rejectionReason?.trim() || null : null,
+    })
+    .eq("id", verificationId);
+  if (error) throw new Error(error.message);
 }
 
 // -------- Admin ------------------------------------------------------------

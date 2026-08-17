@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyIdRouteImport } from './routes/verify-id'
+import { Route as VerifyChurchRouteImport } from './routes/verify-church'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
@@ -17,6 +18,7 @@ import { Route as ChooseTypeRouteImport } from './routes/choose-type'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InviteMentorRouteImport } from './routes/invite.mentor'
 import { Route as ChatMatchIdRouteImport } from './routes/chat.$matchId'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
@@ -27,6 +29,11 @@ import { Route as AppAdminReviewRouteImport } from './routes/app.admin-review'
 const VerifyIdRoute = VerifyIdRouteImport.update({
   id: '/verify-id',
   path: '/verify-id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyChurchRoute = VerifyChurchRouteImport.update({
+  id: '/verify-church',
+  path: '/verify-church',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -62,6 +69,11 @@ const AppRoute = AppRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InviteMentorRoute = InviteMentorRouteImport.update({
+  id: '/invite/mentor',
+  path: '/invite/mentor',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChatMatchIdRoute = ChatMatchIdRouteImport.update({
@@ -103,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
+  '/verify-church': typeof VerifyChurchRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -110,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
   '/chat/$matchId': typeof ChatMatchIdRoute
+  '/invite/mentor': typeof InviteMentorRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -119,6 +133,7 @@ export interface FileRoutesByTo {
   '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
+  '/verify-church': typeof VerifyChurchRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -126,6 +141,7 @@ export interface FileRoutesByTo {
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
   '/chat/$matchId': typeof ChatMatchIdRoute
+  '/invite/mentor': typeof InviteMentorRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -136,6 +152,7 @@ export interface FileRoutesById {
   '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
+  '/verify-church': typeof VerifyChurchRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
   '/app/discover': typeof AppDiscoverRoute
@@ -143,6 +160,7 @@ export interface FileRoutesById {
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
   '/chat/$matchId': typeof ChatMatchIdRoute
+  '/invite/mentor': typeof InviteMentorRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -154,6 +172,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/onboarding'
     | '/privacy'
+    | '/verify-church'
     | '/verify-id'
     | '/app/admin-review'
     | '/app/discover'
@@ -161,6 +180,7 @@ export interface FileRouteTypes {
     | '/app/matches'
     | '/app/profile'
     | '/chat/$matchId'
+    | '/invite/mentor'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -170,6 +190,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/onboarding'
     | '/privacy'
+    | '/verify-church'
     | '/verify-id'
     | '/app/admin-review'
     | '/app/discover'
@@ -177,6 +198,7 @@ export interface FileRouteTypes {
     | '/app/matches'
     | '/app/profile'
     | '/chat/$matchId'
+    | '/invite/mentor'
   id:
     | '__root__'
     | '/'
@@ -186,6 +208,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/onboarding'
     | '/privacy'
+    | '/verify-church'
     | '/verify-id'
     | '/app/admin-review'
     | '/app/discover'
@@ -193,6 +216,7 @@ export interface FileRouteTypes {
     | '/app/matches'
     | '/app/profile'
     | '/chat/$matchId'
+    | '/invite/mentor'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -203,8 +227,10 @@ export interface RootRouteChildren {
   DiagnosticsRoute: typeof DiagnosticsRoute
   OnboardingRoute: typeof OnboardingRoute
   PrivacyRoute: typeof PrivacyRoute
+  VerifyChurchRoute: typeof VerifyChurchRoute
   VerifyIdRoute: typeof VerifyIdRoute
   ChatMatchIdRoute: typeof ChatMatchIdRoute
+  InviteMentorRoute: typeof InviteMentorRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -214,6 +240,13 @@ declare module '@tanstack/react-router' {
       path: '/verify-id'
       fullPath: '/verify-id'
       preLoaderRoute: typeof VerifyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-church': {
+      id: '/verify-church'
+      path: '/verify-church'
+      fullPath: '/verify-church'
+      preLoaderRoute: typeof VerifyChurchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -263,6 +296,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invite/mentor': {
+      id: '/invite/mentor'
+      path: '/invite/mentor'
+      fullPath: '/invite/mentor'
+      preLoaderRoute: typeof InviteMentorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat/$matchId': {
@@ -336,8 +376,10 @@ const rootRouteChildren: RootRouteChildren = {
   DiagnosticsRoute: DiagnosticsRoute,
   OnboardingRoute: OnboardingRoute,
   PrivacyRoute: PrivacyRoute,
+  VerifyChurchRoute: VerifyChurchRoute,
   VerifyIdRoute: VerifyIdRoute,
   ChatMatchIdRoute: ChatMatchIdRoute,
+  InviteMentorRoute: InviteMentorRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
