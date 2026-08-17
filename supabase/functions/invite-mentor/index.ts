@@ -159,8 +159,14 @@ Deno.serve(async (req) => {
       // (e.g. the auth-hook webhook event that triggered it) and is
       // rejected with "run_not_found" if set to anything else -- it's
       // optional in EmailSendRequest and correctly absent for a
-      // plain app-triggered transactional send like this one.
+      // plain app-triggered transactional send like this one. The API
+      // does require ONE of run_id / idempotency_key though, so a plain
+      // app-triggered send must supply idempotency_key alongside
+      // purpose: "transactional" instead (confirmed via the live 400
+      // error: "App emails can omit run_id by providing idempotency_key
+      // with purpose=transactional").
       message_id: messageId,
+      idempotency_key: messageId,
       to: email,
       from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
       sender_domain: SENDER_DOMAIN,
