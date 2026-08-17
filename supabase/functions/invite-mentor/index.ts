@@ -155,7 +155,11 @@ Deno.serve(async (req) => {
   const { error: enqueueError } = await service.rpc("enqueue_email", {
     queue_name: "transactional_emails",
     payload: {
-      run_id: messageId,
+      // No run_id: that field ties an email to a specific Lovable AI run
+      // (e.g. the auth-hook webhook event that triggered it) and is
+      // rejected with "run_not_found" if set to anything else -- it's
+      // optional in EmailSendRequest and correctly absent for a
+      // plain app-triggered transactional send like this one.
       message_id: messageId,
       to: email,
       from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
