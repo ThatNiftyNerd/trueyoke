@@ -18,6 +18,7 @@ import { Route as ChooseTypeRouteImport } from './routes/choose-type'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InviteMentorRouteImport } from './routes/invite.mentor'
 import { Route as ChatMatchIdRouteImport } from './routes/chat.$matchId'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppMatchesRouteImport } from './routes/app.matches'
@@ -70,6 +71,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InviteMentorRoute = InviteMentorRouteImport.update({
+  id: '/invite/mentor',
+  path: '/invite/mentor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChatMatchIdRoute = ChatMatchIdRouteImport.update({
   id: '/chat/$matchId',
   path: '/chat/$matchId',
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
   '/chat/$matchId': typeof ChatMatchIdRoute
+  '/invite/mentor': typeof InviteMentorRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByTo {
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
   '/chat/$matchId': typeof ChatMatchIdRoute
+  '/invite/mentor': typeof InviteMentorRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/app/matches': typeof AppMatchesRoute
   '/app/profile': typeof AppProfileRoute
   '/chat/$matchId': typeof ChatMatchIdRoute
+  '/invite/mentor': typeof InviteMentorRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/app/matches'
     | '/app/profile'
     | '/chat/$matchId'
+    | '/invite/mentor'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/app/matches'
     | '/app/profile'
     | '/chat/$matchId'
+    | '/invite/mentor'
   id:
     | '__root__'
     | '/'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/app/matches'
     | '/app/profile'
     | '/chat/$matchId'
+    | '/invite/mentor'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -218,6 +230,7 @@ export interface RootRouteChildren {
   VerifyChurchRoute: typeof VerifyChurchRoute
   VerifyIdRoute: typeof VerifyIdRoute
   ChatMatchIdRoute: typeof ChatMatchIdRoute
+  InviteMentorRoute: typeof InviteMentorRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -283,6 +296,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invite/mentor': {
+      id: '/invite/mentor'
+      path: '/invite/mentor'
+      fullPath: '/invite/mentor'
+      preLoaderRoute: typeof InviteMentorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat/$matchId': {
@@ -359,6 +379,7 @@ const rootRouteChildren: RootRouteChildren = {
   VerifyChurchRoute: VerifyChurchRoute,
   VerifyIdRoute: VerifyIdRoute,
   ChatMatchIdRoute: ChatMatchIdRoute,
+  InviteMentorRoute: InviteMentorRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

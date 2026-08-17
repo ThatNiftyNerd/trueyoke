@@ -75,6 +75,8 @@ export interface OwnMentorRequest {
   requestNote: string | null;
   endorsement: string | null;
   createdAt: string;
+  /** Set only for a not-yet-claimed email invite (mentor_id is still null). */
+  invitedEmail: string | null;
 }
 
 /**
@@ -92,7 +94,7 @@ export async function listOwnMentorRequests(): Promise<OwnMentorRequest[]> {
 
   const { data, error } = await supabase
     .from("vouchers")
-    .select("id, mentor_id, status, request_note, endorsement, created_at")
+    .select("id, mentor_id, invitee_email, status, request_note, endorsement, created_at")
     .eq("match_user_id", userId)
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
@@ -129,13 +131,16 @@ export async function listOwnMentorRequests(): Promise<OwnMentorRequest[]> {
       return {
         id: r.id,
         mentorId: mentorId ?? "",
-        mentorName: profile?.displayName?.trim() || "Mentor",
+        mentorName:
+          profile?.displayName?.trim() ||
+          (mentorId ? "Mentor" : r.invitee_email || "Invited mentor"),
         mentorPhotoSignedUrl: url,
         mentorChurchAffiliation: profile?.church ?? null,
         status: r.status,
         requestNote: r.request_note,
         endorsement: r.endorsement,
         createdAt: r.created_at,
+        invitedEmail: mentorId ? null : r.invitee_email,
       } satisfies OwnMentorRequest;
     }),
   );
@@ -183,6 +188,71 @@ export async function confirmAndEndorse(voucherId: string, endorsement: string):
     .update({ status: "approved", mentor_confirmed: true, endorsement })
     .eq("id", voucherId);
   if (error) throw new Error(error.message);
+}
+
+/**
+ * WhatsApp invites need a Meta Business account, a dedicated business phone
+ * number, and Meta's pre-approval of the outbound message template -- none
+ * of which exist yet. The send path is built end-to-end (this client, the
+ * invite-mentor Edge Function, the invite_channel/invitee_phone columns) but
+ * stays off until that setup is complete; flip this once it is.
+ */
+export const WHATSAPP_INVITES_ENABLED = false;
+
+/**
+ * Invites someone not yet on TrueYoke to join as a Mentor and pick up this
+ * request. Under the hood this is a `vouchers` row with mentor_id = NULL and
+ * invitee_email set -- so it counts toward the same
+ * `MAX_ACTIVE_MENTOR_REQUESTS` cap as a direct request via the same DB
+ * trigger, with no separate accounting needed. Routed through the
+ * `invite-mentor` Edge Function rather than a direct insert because sending
+ * the notification email requires the service-role-only email queue.
+ */
+export async function inviteMentorByEmail(email: string, note: string): Promise<void> {
+  const { data, error } = await supabase.functions.invoke("invite-mentor", {
+    body: { email: email.trim(), note: note.trim(), channel: "email" },
+  });
+  if (error) {
+    const ctx = (error as { context?: Response }).context;
+    let message: string | null = null;
+    if (ctx) {
+      try {
+        const body = (await ctx.clone().json()) as { error?: string };
+        message = body?.error ?? null;
+      } catch {
+        message = null;
+      }
+    }
+    throw new Error(message ?? "Could not send the invite. Please try again.");
+  }
+  const payload = data as { error?: string } | null;
+  if (payload?.error) throw new Error(payload.error);
+}
+
+/**
+ * Called once a newly-signed-up Mentor holds a valid invite token (see
+ * `src/routes/invite.mentor.tsx`). Attaches the invite's voucher row to the
+ * caller's account via the `claim_mentor_invite` SECURITY DEFINER RPC --
+ * this is the only path that can set `mentor_id` on an invite row, since an
+ * unclaimed invite has no RLS-visible relationship to the invitee yet.
+ */
+export async function claimMentorInvite(inviteToken: string): Promise<void> {
+  const { error } = await supabase.rpc("claim_mentor_invite", { p_token: inviteToken });
+  if (!error) return;
+
+  const msg = error.message;
+  if (/invalid/i.test(msg)) throw new Error("This invite link is invalid.");
+  if (/expired/i.test(msg)) throw new Error("This invite has expired.");
+  if (/already been accepted|no longer valid/i.test(msg)) {
+    throw new Error("This invite has already been used.");
+  }
+  if (/Only a Mentor account/i.test(msg)) {
+    throw new Error("Sign in with a Mentor account to accept this invite.");
+  }
+  if (/already have a request/i.test(msg)) {
+    throw new Error("You already have a request with this member.");
+  }
+  throw new Error(msg);
 }
 
 export interface EndorsedVoucher {

@@ -946,7 +946,11 @@ export type Database = {
           created_at: string
           endorsement: string | null
           id: string
+          invite_channel: string
+          invite_expires_at: string | null
+          invite_token: string | null
           invitee_email: string | null
+          invitee_phone: string | null
           match_user_id: string
           mentor_confirmed: boolean
           mentor_id: string | null
@@ -957,7 +961,11 @@ export type Database = {
           created_at?: string
           endorsement?: string | null
           id?: string
+          invite_channel?: string
+          invite_expires_at?: string | null
+          invite_token?: string | null
           invitee_email?: string | null
+          invitee_phone?: string | null
           match_user_id: string
           mentor_confirmed?: boolean
           mentor_id?: string | null
@@ -968,7 +976,11 @@ export type Database = {
           created_at?: string
           endorsement?: string | null
           id?: string
+          invite_channel?: string
+          invite_expires_at?: string | null
+          invite_token?: string | null
           invitee_email?: string | null
+          invitee_phone?: string | null
           match_user_id?: string
           mentor_confirmed?: boolean
           mentor_id?: string | null
@@ -1183,6 +1195,24 @@ export type Database = {
           match_id: string
           sender_id: string
         }[]
+      }
+      claim_mentor_invite: {
+        Args: { p_token: string }
+        Returns: {
+          created_at: string
+          endorsement: string | null
+          id: string
+          invite_channel: string
+          invite_expires_at: string | null
+          invite_token: string | null
+          invitee_email: string | null
+          invitee_phone: string | null
+          match_user_id: string
+          mentor_confirmed: boolean
+          mentor_id: string | null
+          request_note: string | null
+          status: string
+        }
       }
       delete_email: {
         Args: { message_id: number; queue_name: string }

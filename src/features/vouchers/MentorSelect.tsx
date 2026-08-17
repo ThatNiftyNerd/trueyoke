@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -10,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import {
   MAX_ACTIVE_MENTOR_REQUESTS,
+  inviteMentorByEmail,
   listOnboardedMentors,
   listOwnMentorRequests,
   requestMentorVoucher,
@@ -66,18 +69,23 @@ function statusTone(status: string): string {
 }
 
 function RequestRow({ request }: { request: OwnMentorRequest }) {
+  const isInvite = request.invitedEmail !== null;
   return (
     <li className="space-y-2 rounded-md border border-app-ink/15 px-3 py-3">
       <div className="flex items-center gap-3">
         <MentorAvatar name={request.mentorName} photoUrl={request.mentorPhotoSignedUrl} />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm text-app-ink">{request.mentorName}</p>
-          {request.mentorChurchAffiliation ? (
+          {isInvite ? (
+            <p className="truncate text-xs text-app-ink/60">
+              Invite sent &mdash; not on TrueYoke yet
+            </p>
+          ) : request.mentorChurchAffiliation ? (
             <p className="truncate text-xs text-app-ink/60">{request.mentorChurchAffiliation}</p>
           ) : null}
         </div>
         <span className={`shrink-0 text-xs font-medium ${statusTone(request.status)}`}>
-          {statusLabel(request.status)}
+          {isInvite ? "Invited" : statusLabel(request.status)}
         </span>
       </div>
 
@@ -108,6 +116,12 @@ export function MentorSelect() {
   const [submitting, setSubmitting] = useState(false);
   const [mentorId, setMentorId] = useState<string>("");
   const [note, setNote] = useState("");
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteNote, setInviteNote] = useState("");
+  const [inviting, setInviting] = useState(false);
+  const [inviteError, setInviteError] = useState<string | null>(null);
+  const [inviteSent, setInviteSent] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -157,6 +171,27 @@ export function MentorSelect() {
       setError(err instanceof Error ? err.message : "Could not send your request.");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  const inviteEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inviteEmail.trim());
+  const canInvite = inviteEmailValid && canSubmitRequest(inviteNote) && !inviting && !atCap;
+
+  async function handleInvite() {
+    setInviteError(null);
+    setInviteSent(false);
+    setInviting(true);
+    try {
+      await inviteMentorByEmail(inviteEmail, inviteNote);
+      setRequests(await listOwnMentorRequests());
+      setInviteEmail("");
+      setInviteNote("");
+      setInviteSent(true);
+      setInviteOpen(false);
+    } catch (err) {
+      setInviteError(err instanceof Error ? err.message : "Could not send the invite.");
+    } finally {
+      setInviting(false);
     }
   }
 
@@ -242,6 +277,86 @@ export function MentorSelect() {
               </Button>
             </div>
           )}
+
+          {!atCap ? (
+            <div className="mt-3 border-t border-app-ink/10 pt-3">
+              {inviteOpen ? (
+                <div className="space-y-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="mentorInviteEmail" className="text-xs text-app-ink/70">
+                      Mentor&apos;s email address
+                    </Label>
+                    <Input
+                      id="mentorInviteEmail"
+                      type="email"
+                      inputMode="email"
+                      placeholder="mentor@example.com"
+                      value={inviteEmail}
+                      disabled={inviting}
+                      onChange={(e) => setInviteEmail(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Textarea
+                      aria-label="Note to include with your invite"
+                      placeholder="Introduce yourself and why you're asking…"
+                      maxLength={VOUCHER_TEXT_MAX}
+                      rows={4}
+                      value={inviteNote}
+                      disabled={inviting}
+                      onChange={(e) => setInviteNote(e.target.value)}
+                    />
+                    <p className="mt-1 text-right text-xs font-mono tabular-nums text-app-ink/50">
+                      {counterLabel(inviteNote)}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1"
+                      disabled={inviting}
+                      onClick={() => {
+                        setInviteOpen(false);
+                        setInviteError(null);
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="button"
+                      disabled={!canInvite}
+                      onClick={handleInvite}
+                      className="flex-1 bg-app-primary text-app-on-primary hover:bg-app-primary/90"
+                    >
+                      {inviting ? "Sending…" : "Send invite"}
+                    </Button>
+                  </div>
+                  {inviteError ? (
+                    <p role="alert" className="text-sm text-app-warn">
+                      {inviteError}
+                    </p>
+                  ) : null}
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="text-sm text-app-primary underline underline-offset-2"
+                  onClick={() => {
+                    setInviteSent(false);
+                    setInviteOpen(true);
+                  }}
+                >
+                  Can&apos;t find your mentor? Invite them by email
+                </button>
+              )}
+              {inviteSent && !inviteOpen ? (
+                <p className="mt-2 text-sm text-app-ink/70">
+                  Invite sent — it&apos;ll show up in your list once they join.
+                </p>
+              ) : null}
+            </div>
+          ) : null}
         </>
       )}
 
