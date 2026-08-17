@@ -19,11 +19,14 @@ import {
   onAuthChange,
   requestPasswordReset,
   updatePassword,
+  listVerifiedTotpFactorId,
+  challengeAndVerifyTotp,
 } from "@/features/auth/api";
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { isRecoveryRedirect, clearRecoveryRedirect } from "@/features/auth/recovery-detect";
 import { PasswordInput } from "@/components/ui/password-input";
 import { ErrorBoundary } from "@/components/app/ErrorBoundary";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
 type AuthSearch = {
   type?: AccountType;
@@ -91,6 +94,14 @@ function AuthScreen() {
   const [recoveryPending, setRecoveryPending] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  // Some recovery sessions belong to accounts with MFA enrolled elsewhere
+  // (see listVerifiedTotpFactorId doc comment) and must be stepped up to
+  // AAL2 with a TOTP code before Supabase will allow the password update.
+  // `mfaFactorId === undefined` means "still checking"; `null` means "no
+  // MFA on this account, proceed straight to the password form".
+  const [mfaFactorId, setMfaFactorId] = useState<string | null | undefined>(undefined);
+  const [mfaVerified, setMfaVerified] = useState(false);
+  const [totpCode, setTotpCode] = useState("");
 
   // A confirmed-email or Google session can land here either from the web
   // redirect back to /auth or from the native deep-link exchange. Either way,
@@ -115,6 +126,17 @@ function AuthScreen() {
       // before navigating here, so isRecoveryRedirect() covers that case too.
       if (event === "PASSWORD_RECOVERY" || isRecoveryRedirect()) {
         setRecoveryPending(true);
+        void (async () => {
+          try {
+            setMfaFactorId(await listVerifiedTotpFactorId());
+          } catch {
+            // If the factor lookup itself fails, fall back to the plain
+            // password form -- updatePassword() will surface the AAL2
+            // error there if it turns out to be needed, which is still a
+            // strictly better outcome than getting stuck on a spinner.
+            setMfaFactorId(null);
+          }
+        })();
         return;
       }
       void (async () => {
@@ -157,6 +179,21 @@ function AuthScreen() {
       navigate({ to: await signedInLandingPath() });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not update password. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleVerifyTotp() {
+    setError(null);
+    if (totpCode.length !== 6 || !mfaFactorId) return;
+    setSubmitting(true);
+    try {
+      await challengeAndVerifyTotp(mfaFactorId, totpCode);
+      setMfaVerified(true);
+    } catch (err) {
+      setTotpCode("");
+      setError(err instanceof Error ? err.message : "Incorrect code. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -279,6 +316,71 @@ function AuthScreen() {
   }
 
   if (recoveryPending) {
+    // Still resolving whether this account has MFA enrolled -- keep this
+    // window brief and unobtrusive rather than flashing the password form
+    // first for accounts that are about to need the step-up screen.
+    if (mfaFactorId === undefined) {
+      return (
+        <main
+          className="flex min-h-[100dvh] flex-col items-center justify-center bg-app-canvas px-6 py-10"
+          style={{ paddingTop: "max(2.5rem, calc(env(safe-area-inset-top) + 1.5rem))" }}
+        >
+          <p className="text-sm text-app-ink/60">Loading…</p>
+        </main>
+      );
+    }
+
+    if (mfaFactorId && !mfaVerified) {
+      return (
+        <main
+          className="flex min-h-[100dvh] flex-col justify-center bg-app-canvas px-6 py-10"
+          style={{ paddingTop: "max(2.5rem, calc(env(safe-area-inset-top) + 1.5rem))" }}
+        >
+          <div className="mx-auto w-full max-w-sm">
+            <h1 className="font-serif text-2xl text-app-ink">Verify it's you</h1>
+            <p className="mt-2 text-sm text-app-ink/70">
+              This account has two-factor authentication enabled. Enter the 6-digit code from your
+              authenticator app to continue.
+            </p>
+            <div className="mt-6 flex justify-center">
+              <InputOTP
+                maxLength={6}
+                value={totpCode}
+                onChange={(value) => {
+                  setTotpCode(value);
+                  setError(null);
+                }}
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
+            {error && (
+              <p
+                role="alert"
+                className="mt-4 rounded-md border border-app-warn/40 bg-app-warn/10 px-3 py-2 text-sm text-app-warn"
+              >
+                {error}
+              </p>
+            )}
+            <Button
+              className="mt-6 w-full bg-app-primary text-app-on-primary hover:bg-app-primary/90"
+              disabled={submitting || totpCode.length !== 6}
+              onClick={handleVerifyTotp}
+            >
+              {submitting ? "Verifying…" : "Verify code"}
+            </Button>
+          </div>
+        </main>
+      );
+    }
+
     return (
       <main
         className="flex min-h-[100dvh] flex-col justify-center bg-app-canvas px-6 py-10"
