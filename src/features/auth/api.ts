@@ -197,6 +197,41 @@ export async function updatePassword(newPassword: string): Promise<void> {
 }
 
 /**
+ * True when the current session's account has a verified TOTP factor.
+ *
+ * This app has no MFA enrollment UI of its own -- but this project's
+ * Supabase auth.users pool is shared with the separate "TrueYoke Admin Hub"
+ * app, which *does* require and enroll TOTP for every admin account. If
+ * someone with an admin account (e.g. the founder's own email) goes through
+ * this app's "forgot password" flow, the recovery-link session Supabase
+ * hands back is only AAL1, and `supabase.auth.updateUser({ password })`
+ * fails with `insufficient_aal` ("AAL2 session is required to update email
+ * or password when MFA is enabled") -- Supabase requires an MFA-verified
+ * (AAL2) session before allowing a password change on an MFA-enabled
+ * account, regardless of which app initiated the recovery. We can't avoid
+ * that requirement (nor would we want to -- it's Supabase protecting a
+ * security-sensitive account), so instead we detect it and prompt for the
+ * TOTP code inline before retrying the update.
+ */
+export async function listVerifiedTotpFactorId(): Promise<string | null> {
+  const { data, error } = await supabase.auth.mfa.listFactors();
+  if (error) throw error;
+  const factor = data.totp.find((f) => f.status === "verified");
+  return factor?.id ?? null;
+}
+
+/**
+ * Elevates the current session to AAL2 by verifying a TOTP code against the
+ * given factor. `challengeAndVerify` is used (rather than separate
+ * `challenge()` + `verify()` calls) so there's no intermediate challenge id
+ * to track or expire across a retry.
+ */
+export async function challengeAndVerifyTotp(factorId: string, code: string): Promise<void> {
+  const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId, code });
+  if (error) throw error;
+}
+
+/**
  * Subscribe to auth state changes. Returns an unsubscribe function.
  * Used exactly once at the router layer to invalidate route guards.
  */
