@@ -8,7 +8,7 @@
  */
 import { supabase } from "@/lib/supabase";
 import { getCurrentUserId } from "@/features/auth/api";
-import { getPhotoSignedUrl } from "@/features/profile/api";
+import { getPhotoSignedUrls } from "@/features/profile/api";
 import type { Tables } from "@/integrations/supabase/types";
 
 export type MatchRow = Tables<"matches">;
@@ -50,11 +50,12 @@ async function resolveOthers(otherIds: string[]): Promise<Map<string, OtherParti
 
   // profiles_read may return empty for a blocked-after-match edge case; fall
   // back to a "Member" placeholder for any missing id.
+  const signedUrlByPath = await getPhotoSignedUrls([...photoByProfile.values()], 3600);
   const foundIds = new Set<string>();
   for (const row of profiles ?? []) {
     foundIds.add(row.id);
     const path = photoByProfile.get(row.id);
-    const url = path ? await getPhotoSignedUrl(path, 3600) : null;
+    const url = path ? (signedUrlByPath.get(path) ?? null) : null;
     map.set(row.id, { id: row.id, display_name: row.display_name, photoSignedUrl: url });
   }
   for (const id of uniq) {

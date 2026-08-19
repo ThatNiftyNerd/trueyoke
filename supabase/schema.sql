@@ -2,6 +2,21 @@
 -- TRUEYOKE MVP — Supabase / Postgres schema
 -- Run in the Supabase SQL editor (or `supabase db push`).
 -- Implements the core-loop data model + Intentionality Circuit Breaker.
+--
+-- NOTE (added 2026-08-18, codebase improvement pass): this file is the
+-- ORIGINAL Sprint-0 schema snapshot. It has NOT been kept in sync with
+-- everything applied since via supabase/migrations/*.sql — running this
+-- file alone against an empty database will NOT reproduce the current live
+-- schema. Known gaps as of this note: `profiles` is missing columns added
+-- later (full_name, church_designation, city, country, account_status,
+-- is_admin, email — see migrations dated 2026-08-10 and later), and several
+-- RLS policies/functions referenced by newer migrations (e.g.
+-- has_admin_permission(), admin_users) are defined in the separate
+-- "TrueYoke Admin Hub" project's own migration history, not here — that's
+-- a deliberate cross-repo split (see docs/TrueYoke_Build_Directives_v2.md
+-- §11), not an oversight, but it does mean this file can't be treated as
+-- the sole source of truth. supabase/migrations/*.sql, applied in filename
+-- order after this file, is the authoritative current-state reference.
 -- ============================================================================
 
 -- ---------- enums ----------------------------------------------------------
@@ -490,8 +505,9 @@ create policy "voice_storage_delete_own" on storage.objects for delete to authen
 
 -- ============================================================================
 -- REALTIME — enable live updates for chat (PRD: Supabase Realtime)
--- Applied directly against the project; mirrored here so a fresh environment
--- reproduces it.
+-- Applied directly against the project; mirrored here for a fresh
+-- environment following THIS file alone — but see the schema-drift note at
+-- the top of this file before treating it as fully reproducing current prod.
 -- ============================================================================
 alter publication supabase_realtime add table public.messages;
 alter publication supabase_realtime add table public.matches;

@@ -5,7 +5,7 @@
  */
 import { supabase } from "@/lib/supabase";
 import { getCurrentUserId } from "@/features/auth/api";
-import { getPhotoSignedUrl } from "@/features/profile/api";
+import { getPhotoSignedUrls } from "@/features/profile/api";
 import type { Tables } from "@/integrations/supabase/types";
 
 export type Candidate = Pick<
@@ -106,17 +106,18 @@ export async function fetchDeck(filters: DeckFilters = {}): Promise<Candidate[]>
     }
   }
 
-  const candidates = await Promise.all(
-    rows.map(async (r) => {
-      const path = photoByProfile.get(r.id);
-      const url = path ? await getPhotoSignedUrl(path, 3600) : null;
-      return {
-        ...r,
-        photoSignedUrl: url,
-        endorsement: endorsementByProfile.get(r.id) ?? null,
-      } satisfies Candidate;
-    }),
-  );
+  const photoPaths = [...photoByProfile.values()];
+  const signedUrlByPath = await getPhotoSignedUrls(photoPaths, 3600);
+
+  const candidates = rows.map((r) => {
+    const path = photoByProfile.get(r.id);
+    const url = path ? (signedUrlByPath.get(path) ?? null) : null;
+    return {
+      ...r,
+      photoSignedUrl: url,
+      endorsement: endorsementByProfile.get(r.id) ?? null,
+    } satisfies Candidate;
+  });
   return candidates;
 }
 

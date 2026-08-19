@@ -226,6 +226,31 @@ export async function getPhotoSignedUrl(
   return data.signedUrl;
 }
 
+/**
+ * Batched sibling of getPhotoSignedUrl — one Storage API call for N paths
+ * instead of N separate round trips. Used by list views that render many
+ * profiles/photos at once (discovery deck, matches list). Falls back to
+ * per-path `null` on error, matching getPhotoSignedUrl's single-path
+ * behavior rather than failing the whole batch.
+ */
+export async function getPhotoSignedUrls(
+  paths: string[],
+  expiresInSeconds = 3600,
+): Promise<Map<string, string>> {
+  const result = new Map<string, string>();
+  if (paths.length === 0) return result;
+  const { data, error } = await supabase.storage
+    .from("photos")
+    .createSignedUrls(paths, expiresInSeconds);
+  if (error || !data) return result;
+  for (const entry of data) {
+    if (!entry.error && entry.signedUrl && entry.path) {
+      result.set(entry.path, entry.signedUrl);
+    }
+  }
+  return result;
+}
+
 // -------- Voice intro -----------------------------------------------------
 
 /**
