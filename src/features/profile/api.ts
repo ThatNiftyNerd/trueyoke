@@ -36,9 +36,6 @@ export type OnboardingProfile = Pick<
   | "profile_complete"
 >;
 
-const ONBOARDING_COLUMNS =
-  "id, account_type, display_name, full_name, age, gender, location_label, country, city, blood_group, genotype, nationality, qualification, occupation, bio, marriage_intentions, church_affiliation, church_designation, congregation, spirituality_markers, life_verse, voice_intro_url, mentor_role, email, profile_complete";
-
 /**
  * Legacy narrow shape kept for route guards elsewhere in the app that only
  * need to know whether the profile is complete.
@@ -68,13 +65,68 @@ export async function getOwnProfile(): Promise<OwnProfile | null> {
 export async function getOnboardingProfile(): Promise<OnboardingProfile | null> {
   const userId = await getCurrentUserId();
   if (!userId) return null;
-  const { data, error } = await supabase
-    .from("profiles")
-    .select(ONBOARDING_COLUMNS)
-    .eq("id", userId)
-    .maybeSingle();
+  // Uses get_own_profile_full() rather than a direct select — the row
+  // includes `email`, which is no longer table-grant-readable for peer
+  // profiles (see supabase/migrations/20260819000000_*.sql). This RPC is
+  // hardcoded to auth.uid(), so it can only ever return the caller's own row.
+  const { data, error } = await supabase.rpc("get_own_profile_full");
   if (error) throw new Error(error.message);
-  return data as OnboardingProfile | null;
+  if (!data) return null;
+  const full = data as Tables<"profiles">;
+  const {
+    id,
+    account_type,
+    display_name,
+    full_name,
+    age,
+    gender,
+    location_label,
+    country,
+    city,
+    blood_group,
+    genotype,
+    nationality,
+    qualification,
+    occupation,
+    bio,
+    marriage_intentions,
+    church_affiliation,
+    church_designation,
+    congregation,
+    spirituality_markers,
+    life_verse,
+    voice_intro_url,
+    mentor_role,
+    email,
+    profile_complete,
+  } = full;
+  return {
+    id,
+    account_type,
+    display_name,
+    full_name,
+    age,
+    gender,
+    location_label,
+    country,
+    city,
+    blood_group,
+    genotype,
+    nationality,
+    qualification,
+    occupation,
+    bio,
+    marriage_intentions,
+    church_affiliation,
+    church_designation,
+    congregation,
+    spirituality_markers,
+    life_verse,
+    voice_intro_url,
+    mentor_role,
+    email,
+    profile_complete,
+  };
 }
 
 /**
@@ -413,13 +465,12 @@ export async function reviewChurchVerification(
 export async function isCurrentUserAdmin(): Promise<boolean> {
   const userId = await getCurrentUserId();
   if (!userId) return false;
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", userId)
-    .maybeSingle();
+  // Uses get_own_profile_full() rather than a direct select — is_admin is no
+  // longer table-grant-readable for peer profiles (see
+  // supabase/migrations/20260819000000_*.sql).
+  const { data, error } = await supabase.rpc("get_own_profile_full");
   if (error || !data) return false;
-  return data.is_admin === true;
+  return (data as Tables<"profiles">).is_admin === true;
 }
 
 export interface PendingIdReview {
@@ -500,8 +551,14 @@ export async function exportOwnData(): Promise<string> {
   const userId = await getCurrentUserId();
   if (!userId) throw new Error("Not authenticated");
 
-  const [profileRes, photosRes, idRes, matchesRes, blocksRes, reportsRes] = await Promise.all([
-    supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+  // profileRow uses get_own_profile_full() rather than a direct select("*")
+  // — several columns (email, is_admin, privacy_accepted_at,
+  // privacy_policy_version, status_changed_at, status_changed_by) are no
+  // longer table-grant-readable for peer profiles, but this export is the
+  // NDPA right-of-access feature and must still return every column of the
+  // caller's own row.
+  const [profileRow, photosRes, idRes, matchesRes, blocksRes, reportsRes] = await Promise.all([
+    supabase.rpc("get_own_profile_full"),
     supabase.from("photos").select("*").eq("profile_id", userId).order("position"),
     supabase
       .from("id_verifications")
@@ -516,11 +573,11 @@ export async function exportOwnData(): Promise<string> {
     supabase.from("reports").select("*").eq("reporter_id", userId),
   ]);
 
-  for (const res of [profileRes, photosRes, idRes, matchesRes, blocksRes, reportsRes]) {
+  for (const res of [profileRow, photosRes, idRes, matchesRes, blocksRes, reportsRes]) {
     if (res.error) throw new Error(res.error.message);
   }
 
-  const profile = profileRes.data as Tables<"profiles"> | null;
+  const profile = profileRow.data as Tables<"profiles"> | null;
   const photoRows = photosRes.data ?? [];
   const matchRows = matchesRes.data ?? [];
 
