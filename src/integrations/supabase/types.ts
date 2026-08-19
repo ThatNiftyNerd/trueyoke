@@ -1229,6 +1229,10 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      get_own_profile_full: {
+        Args: never
+        Returns: Database["public"]["Tables"]["profiles"]["Row"]
+      }
       has_admin_permission: {
         Args: { permission_key: string }
         Returns: boolean
