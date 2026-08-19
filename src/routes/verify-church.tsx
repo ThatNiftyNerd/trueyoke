@@ -76,7 +76,7 @@ function VerifyChurchScreen() {
       </header>
 
       {status === null ? (
-        <p className="text-sm text-app-ink/60">Loading…</p>
+        <p className="text-sm text-app-ink/60">Yoking…</p>
       ) : status === "verified" ? (
         <div className="rounded-lg border border-app-accent bg-app-accent/10 p-6 text-center">
           <CheckCircle2 className="mx-auto h-10 w-10 text-app-on-accent" aria-hidden />

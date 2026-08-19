@@ -93,7 +93,7 @@ function OnboardingWizard() {
   if (loading || !profile) {
     return (
       <main className="flex min-h-[100dvh] items-center justify-center bg-app-canvas">
-        <p className="text-sm text-app-ink/70">Loading…</p>
+        <p className="text-sm text-app-ink/70">Yoking…</p>
       </main>
     );
   }

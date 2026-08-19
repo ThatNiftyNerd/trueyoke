@@ -91,7 +91,7 @@ export function MentorLedger() {
 
       <h2 className="mb-2 text-sm font-medium uppercase tracking-wide text-app-ink/60">Pending</h2>
       {pending === null ? (
-        <p className="text-sm text-app-ink/60">Loading…</p>
+        <p className="text-sm text-app-ink/60">Yoking…</p>
       ) : pending.length === 0 ? (
         <p className="text-sm text-app-ink/60">No requests waiting on you.</p>
       ) : (
@@ -114,7 +114,7 @@ export function MentorLedger() {
         Endorsed
       </h2>
       {endorsed === null ? (
-        <p className="text-sm text-app-ink/60">Loading…</p>
+        <p className="text-sm text-app-ink/60">Yoking…</p>
       ) : endorsed.length === 0 ? (
         <p className="text-sm text-app-ink/60">You haven&apos;t endorsed anyone yet.</p>
       ) : (

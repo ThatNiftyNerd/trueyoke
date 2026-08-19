@@ -108,7 +108,7 @@ function EmptyState({ children }: { children: React.ReactNode }) {
 function SectionSkeleton() {
   return (
     <div className="rounded-lg border border-dashed border-app-ink/10 bg-card/30 p-6 text-center text-sm text-app-ink/40">
-      Loading…
+      Yoking…
     </div>
   );
 }

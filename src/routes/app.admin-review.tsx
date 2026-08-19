@@ -109,7 +109,7 @@ function AdminReviewScreen() {
       <h2 className="mb-4 font-serif text-xl text-app-ink">ID review</h2>
 
       {rows === null ? (
-        <p className="text-sm text-app-ink/60">Loading…</p>
+        <p className="text-sm text-app-ink/60">Yoking…</p>
       ) : rows.length === 0 ? (
         <p className="text-sm text-app-ink/60">No pending submissions.</p>
       ) : (
@@ -197,7 +197,7 @@ function AdminReviewScreen() {
       ) : null}
 
       {churchRows === null ? (
-        <p className="text-sm text-app-ink/60">Loading…</p>
+        <p className="text-sm text-app-ink/60">Yoking…</p>
       ) : churchRows.length === 0 ? (
         <p className="text-sm text-app-ink/60">No pending submissions.</p>
       ) : (
