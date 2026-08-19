@@ -45,12 +45,20 @@ export function AboutPanel() {
       {versionLabel ? (
         <p className="mt-2 text-xs text-muted-foreground">Version {versionLabel}</p>
       ) : null}
-      <Link
-        to="/privacy"
-        className="mt-2 inline-block text-sm font-medium text-app-primary underline underline-offset-2"
-      >
-        Privacy Policy
-      </Link>
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+        <Link
+          to="/privacy"
+          className="text-sm font-medium text-app-primary underline underline-offset-2"
+        >
+          Privacy Policy
+        </Link>
+        <Link
+          to="/terms"
+          className="text-sm font-medium text-app-primary underline underline-offset-2"
+        >
+          Terms of Service
+        </Link>
+      </div>
       <CopyrightNotice className="mt-3" />
     </section>
   );

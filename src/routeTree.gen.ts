@@ -9,56 +9,27 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VerifyIdRouteImport } from './routes/verify-id'
-import { Route as VerifyChurchRouteImport } from './routes/verify-church'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
-import { Route as ChooseTypeRouteImport } from './routes/choose-type'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as InviteMentorRouteImport } from './routes/invite.mentor'
-import { Route as ChatMatchIdRouteImport } from './routes/chat.$matchId'
-import { Route as AppProfileRouteImport } from './routes/app.profile'
-import { Route as AppMatchesRouteImport } from './routes/app.matches'
-import { Route as AppEditProfileRouteImport } from './routes/app.edit-profile'
-import { Route as AppDiscoverRouteImport } from './routes/app.discover'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ChooseTypeRouteImport } from './routes/choose-type'
+import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as VerifyChurchRouteImport } from './routes/verify-church'
+import { Route as VerifyIdRouteImport } from './routes/verify-id'
 import { Route as AppAdminReviewRouteImport } from './routes/app.admin-review'
+import { Route as AppDiscoverRouteImport } from './routes/app.discover'
+import { Route as AppEditProfileRouteImport } from './routes/app.edit-profile'
+import { Route as AppMatchesRouteImport } from './routes/app.matches'
+import { Route as AppProfileRouteImport } from './routes/app.profile'
+import { Route as ChatMatchIdRouteImport } from './routes/chat.$matchId'
+import { Route as InviteMentorRouteImport } from './routes/invite.mentor'
 
-const VerifyIdRoute = VerifyIdRouteImport.update({
-  id: '/verify-id',
-  path: '/verify-id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VerifyChurchRoute = VerifyChurchRouteImport.update({
-  id: '/verify-church',
-  path: '/verify-church',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DiagnosticsRoute = DiagnosticsRouteImport.update({
-  id: '/diagnostics',
-  path: '/diagnostics',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChooseTypeRoute = ChooseTypeRouteImport.update({
-  id: '/choose-type',
-  path: '/choose-type',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -66,34 +37,49 @@ const AppRoute = AppRouteImport.update({
   path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InviteMentorRoute = InviteMentorRouteImport.update({
-  id: '/invite/mentor',
-  path: '/invite/mentor',
+const ChooseTypeRoute = ChooseTypeRouteImport.update({
+  id: '/choose-type',
+  path: '/choose-type',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ChatMatchIdRoute = ChatMatchIdRouteImport.update({
-  id: '/chat/$matchId',
-  path: '/chat/$matchId',
+const DiagnosticsRoute = DiagnosticsRouteImport.update({
+  id: '/diagnostics',
+  path: '/diagnostics',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppProfileRoute = AppProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AppRoute,
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AppMatchesRoute = AppMatchesRouteImport.update({
-  id: '/matches',
-  path: '/matches',
-  getParentRoute: () => AppRoute,
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AppEditProfileRoute = AppEditProfileRouteImport.update({
-  id: '/edit-profile',
-  path: '/edit-profile',
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyChurchRoute = VerifyChurchRouteImport.update({
+  id: '/verify-church',
+  path: '/verify-church',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyIdRoute = VerifyIdRouteImport.update({
+  id: '/verify-id',
+  path: '/verify-id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppAdminReviewRoute = AppAdminReviewRouteImport.update({
+  id: '/admin-review',
+  path: '/admin-review',
   getParentRoute: () => AppRoute,
 } as any)
 const AppDiscoverRoute = AppDiscoverRouteImport.update({
@@ -101,10 +87,30 @@ const AppDiscoverRoute = AppDiscoverRouteImport.update({
   path: '/discover',
   getParentRoute: () => AppRoute,
 } as any)
-const AppAdminReviewRoute = AppAdminReviewRouteImport.update({
-  id: '/admin-review',
-  path: '/admin-review',
+const AppEditProfileRoute = AppEditProfileRouteImport.update({
+  id: '/edit-profile',
+  path: '/edit-profile',
   getParentRoute: () => AppRoute,
+} as any)
+const AppMatchesRoute = AppMatchesRouteImport.update({
+  id: '/matches',
+  path: '/matches',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const ChatMatchIdRoute = ChatMatchIdRouteImport.update({
+  id: '/chat/$matchId',
+  path: '/chat/$matchId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InviteMentorRoute = InviteMentorRouteImport.update({
+  id: '/invite/mentor',
+  path: '/invite/mentor',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/verify-church': typeof VerifyChurchRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/verify-church': typeof VerifyChurchRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/diagnostics': typeof DiagnosticsRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/verify-church': typeof VerifyChurchRoute
   '/verify-id': typeof VerifyIdRoute
   '/app/admin-review': typeof AppAdminReviewRoute
@@ -172,6 +181,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/onboarding'
     | '/privacy'
+    | '/terms'
     | '/verify-church'
     | '/verify-id'
     | '/app/admin-review'
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/onboarding'
     | '/privacy'
+    | '/terms'
     | '/verify-church'
     | '/verify-id'
     | '/app/admin-review'
@@ -208,6 +219,7 @@ export interface FileRouteTypes {
     | '/diagnostics'
     | '/onboarding'
     | '/privacy'
+    | '/terms'
     | '/verify-church'
     | '/verify-id'
     | '/app/admin-review'
@@ -227,6 +239,7 @@ export interface RootRouteChildren {
   DiagnosticsRoute: typeof DiagnosticsRoute
   OnboardingRoute: typeof OnboardingRoute
   PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
   VerifyChurchRoute: typeof VerifyChurchRoute
   VerifyIdRoute: typeof VerifyIdRoute
   ChatMatchIdRoute: typeof ChatMatchIdRoute
@@ -235,53 +248,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/verify-id': {
-      id: '/verify-id'
-      path: '/verify-id'
-      fullPath: '/verify-id'
-      preLoaderRoute: typeof VerifyIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/verify-church': {
-      id: '/verify-church'
-      path: '/verify-church'
-      fullPath: '/verify-church'
-      preLoaderRoute: typeof VerifyChurchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/diagnostics': {
-      id: '/diagnostics'
-      path: '/diagnostics'
-      fullPath: '/diagnostics'
-      preLoaderRoute: typeof DiagnosticsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/choose-type': {
-      id: '/choose-type'
-      path: '/choose-type'
-      fullPath: '/choose-type'
-      preLoaderRoute: typeof ChooseTypeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -291,46 +262,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/invite/mentor': {
-      id: '/invite/mentor'
-      path: '/invite/mentor'
-      fullPath: '/invite/mentor'
-      preLoaderRoute: typeof InviteMentorRouteImport
+    '/choose-type': {
+      id: '/choose-type'
+      path: '/choose-type'
+      fullPath: '/choose-type'
+      preLoaderRoute: typeof ChooseTypeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/chat/$matchId': {
-      id: '/chat/$matchId'
-      path: '/chat/$matchId'
-      fullPath: '/chat/$matchId'
-      preLoaderRoute: typeof ChatMatchIdRouteImport
+    '/diagnostics': {
+      id: '/diagnostics'
+      path: '/diagnostics'
+      fullPath: '/diagnostics'
+      preLoaderRoute: typeof DiagnosticsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app/profile': {
-      id: '/app/profile'
-      path: '/profile'
-      fullPath: '/app/profile'
-      preLoaderRoute: typeof AppProfileRouteImport
-      parentRoute: typeof AppRoute
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/app/matches': {
-      id: '/app/matches'
-      path: '/matches'
-      fullPath: '/app/matches'
-      preLoaderRoute: typeof AppMatchesRouteImport
-      parentRoute: typeof AppRoute
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/app/edit-profile': {
-      id: '/app/edit-profile'
-      path: '/edit-profile'
-      fullPath: '/app/edit-profile'
-      preLoaderRoute: typeof AppEditProfileRouteImport
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-church': {
+      id: '/verify-church'
+      path: '/verify-church'
+      fullPath: '/verify-church'
+      preLoaderRoute: typeof VerifyChurchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-id': {
+      id: '/verify-id'
+      path: '/verify-id'
+      fullPath: '/verify-id'
+      preLoaderRoute: typeof VerifyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/admin-review': {
+      id: '/app/admin-review'
+      path: '/admin-review'
+      fullPath: '/app/admin-review'
+      preLoaderRoute: typeof AppAdminReviewRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/discover': {
@@ -340,12 +332,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDiscoverRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/admin-review': {
-      id: '/app/admin-review'
-      path: '/admin-review'
-      fullPath: '/app/admin-review'
-      preLoaderRoute: typeof AppAdminReviewRouteImport
+    '/app/edit-profile': {
+      id: '/app/edit-profile'
+      path: '/edit-profile'
+      fullPath: '/app/edit-profile'
+      preLoaderRoute: typeof AppEditProfileRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/app/matches': {
+      id: '/app/matches'
+      path: '/matches'
+      fullPath: '/app/matches'
+      preLoaderRoute: typeof AppMatchesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/profile': {
+      id: '/app/profile'
+      path: '/profile'
+      fullPath: '/app/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/chat/$matchId': {
+      id: '/chat/$matchId'
+      path: '/chat/$matchId'
+      fullPath: '/chat/$matchId'
+      preLoaderRoute: typeof ChatMatchIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invite/mentor': {
+      id: '/invite/mentor'
+      path: '/invite/mentor'
+      fullPath: '/invite/mentor'
+      preLoaderRoute: typeof InviteMentorRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -376,6 +396,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiagnosticsRoute: DiagnosticsRoute,
   OnboardingRoute: OnboardingRoute,
   PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
   VerifyChurchRoute: VerifyChurchRoute,
   VerifyIdRoute: VerifyIdRoute,
   ChatMatchIdRoute: ChatMatchIdRoute,

@@ -142,6 +142,10 @@ function PrivacyScreen() {
         </Section>
 
         <p className="mt-8 text-center text-sm">
+          <Link to="/terms" className="text-app-ink/70 underline">
+            Terms of Service
+          </Link>
+          {" · "}
           <Link to="/" className="text-app-ink/70 underline">
             Back to TrueYoke
           </Link>
