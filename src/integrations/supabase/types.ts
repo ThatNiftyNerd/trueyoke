@@ -1231,7 +1231,50 @@ export type Database = {
       }
       get_own_profile_full: {
         Args: never
-        Returns: Database["public"]["Tables"]["profiles"]["Row"]
+        Returns: {
+          account_status: string
+          account_type: Database["public"]["Enums"]["account_type"]
+          age: number | null
+          bio: string | null
+          blood_group: string | null
+          church_affiliation: string | null
+          church_designation: string | null
+          church_verified: boolean
+          city: string | null
+          congregation: string | null
+          country: string | null
+          created_at: string
+          display_name: string
+          email: string | null
+          full_name: string | null
+          gender: Database["public"]["Enums"]["gender_type"] | null
+          genotype: string | null
+          id: string
+          is_admin: boolean
+          latitude: number | null
+          life_verse: string | null
+          location_label: string | null
+          longitude: number | null
+          marriage_intentions: string | null
+          mentor_role: string | null
+          nationality: string | null
+          occupation: string | null
+          privacy_accepted_at: string | null
+          privacy_policy_version: string | null
+          profile_complete: boolean | null
+          qualification: string | null
+          spirituality_markers: string[] | null
+          status_changed_at: string | null
+          status_changed_by: string | null
+          updated_at: string
+          voice_intro_url: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       has_admin_permission: {
         Args: { permission_key: string }
