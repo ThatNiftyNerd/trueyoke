@@ -154,7 +154,7 @@ function DiscoverScreen() {
 
       <div className="flex flex-1 flex-col items-center justify-center gap-3 pb-6">
         {loading ? (
-          <p className="text-sm text-app-ink/60">Loading…</p>
+          <p className="text-sm text-app-ink/60">Yoking…</p>
         ) : current ? (
           <>
             <CandidateCard

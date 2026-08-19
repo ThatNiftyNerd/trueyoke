@@ -101,7 +101,7 @@ function ChatScreen() {
   if (item === undefined) {
     return (
       <main className="flex min-h-[100dvh] items-center justify-center bg-app-canvas text-sm text-app-ink/60">
-        Loading…
+        Yoking…
       </main>
     );
   }

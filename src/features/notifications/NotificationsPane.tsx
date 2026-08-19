@@ -88,7 +88,7 @@ export function NotificationsPane({ open, onOpenChange, onItemsChange }: Notific
         </DialogHeader>
 
         {loading ? (
-          <p className="py-6 text-center text-sm text-app-ink/60">Loading…</p>
+          <p className="py-6 text-center text-sm text-app-ink/60">Yoking…</p>
         ) : error ? (
           <p
             role="alert"

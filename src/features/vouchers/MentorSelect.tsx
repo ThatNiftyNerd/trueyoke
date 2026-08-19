@@ -205,7 +205,7 @@ export function MentorSelect() {
       </div>
 
       {loading ? (
-        <p className="mt-2 text-sm text-app-ink/60">Loading…</p>
+        <p className="mt-2 text-sm text-app-ink/60">Yoking…</p>
       ) : (
         <>
           {requests.length > 0 ? (

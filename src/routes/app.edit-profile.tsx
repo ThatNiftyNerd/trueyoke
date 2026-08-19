@@ -103,7 +103,7 @@ function EditProfileScreen() {
   if (loading) {
     return (
       <section className="px-4">
-        <p className="text-sm text-app-ink/70">Loading…</p>
+        <p className="text-sm text-app-ink/70">Yoking…</p>
       </section>
     );
   }

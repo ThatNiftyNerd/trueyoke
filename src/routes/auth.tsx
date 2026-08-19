@@ -325,7 +325,7 @@ function AuthScreen() {
           className="flex min-h-[100dvh] flex-col items-center justify-center bg-app-canvas px-6 py-10"
           style={{ paddingTop: "max(2.5rem, calc(env(safe-area-inset-top) + 1.5rem))" }}
         >
-          <p className="text-sm text-app-ink/60">Loading…</p>
+          <p className="text-sm text-app-ink/60">Yoking…</p>
         </main>
       );
     }

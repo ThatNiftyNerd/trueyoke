@@ -90,7 +90,7 @@ export function SelfieCapture() {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center px-2 text-center text-xs text-app-ink/60">
-            {photo ? "Loading…" : "No photo yet"}
+            {photo ? "Yoking…" : "No photo yet"}
           </div>
         )}
       </div>

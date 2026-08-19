@@ -190,7 +190,7 @@ export function DemographicsStep({ profile, onSaved, onNext, onBack, canGoBack }
                   !country
                     ? "Choose a country first"
                     : citiesLoading
-                      ? "Loading cities…"
+                      ? "Yoking cities…"
                       : "Select your city"
                 }
               />
