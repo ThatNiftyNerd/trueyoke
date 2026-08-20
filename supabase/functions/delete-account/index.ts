@@ -6,7 +6,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
-const BUCKETS = ["photos", "voice-intros", "id-verification"];
+const BUCKETS = ["photos", "voice-intros", "id-verification", "church-verification"];
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {

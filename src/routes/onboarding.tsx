@@ -10,6 +10,7 @@ import { FaithStep } from "@/features/profile/steps/FaithStep";
 import { LifeVerseStep } from "@/features/profile/steps/LifeVerseStep";
 import { VoiceIntroStep } from "@/features/profile/steps/VoiceIntroStep";
 import { MentorDetailsStep } from "@/features/profile/steps/MentorDetailsStep";
+import { SpecialCategoryConsentStep } from "@/features/profile/steps/SpecialCategoryConsentStep";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -122,6 +123,7 @@ function OnboardingWizard() {
         <p className="mt-1 text-sm text-app-ink/70">{step.description}</p>
       </header>
 
+      {step.key === "special-category-consent" && <SpecialCategoryConsentStep {...commonProps} />}
       {step.key === "demographics" && <DemographicsStep {...commonProps} />}
       {step.key === "photos" && (
         <PhotosStep

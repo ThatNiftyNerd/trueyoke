@@ -511,6 +511,7 @@ export type Database = {
       marketing_consents: {
         Row: {
           consent_source: string
+          consent_version: string | null
           consented: boolean
           consented_at: string | null
           email: string
@@ -520,6 +521,7 @@ export type Database = {
         }
         Insert: {
           consent_source?: string
+          consent_version?: string | null
           consented?: boolean
           consented_at?: string | null
           email: string
@@ -529,6 +531,7 @@ export type Database = {
         }
         Update: {
           consent_source?: string
+          consent_version?: string | null
           consented?: boolean
           consented_at?: string | null
           email?: string
@@ -725,6 +728,8 @@ export type Database = {
           privacy_policy_version: string | null
           profile_complete: boolean | null
           qualification: string | null
+          special_category_consent_version: string | null
+          special_category_consented_at: string | null
           spirituality_markers: string[] | null
           status_changed_at: string | null
           status_changed_by: string | null
@@ -763,6 +768,8 @@ export type Database = {
           privacy_policy_version?: string | null
           profile_complete?: boolean | null
           qualification?: string | null
+          special_category_consent_version?: string | null
+          special_category_consented_at?: string | null
           spirituality_markers?: string[] | null
           status_changed_at?: string | null
           status_changed_by?: string | null
@@ -801,6 +808,8 @@ export type Database = {
           privacy_policy_version?: string | null
           profile_complete?: boolean | null
           qualification?: string | null
+          special_category_consent_version?: string | null
+          special_category_consented_at?: string | null
           spirituality_markers?: string[] | null
           status_changed_at?: string | null
           status_changed_by?: string | null
@@ -1263,6 +1272,8 @@ export type Database = {
           privacy_policy_version: string | null
           profile_complete: boolean | null
           qualification: string | null
+          special_category_consent_version: string | null
+          special_category_consented_at: string | null
           spirituality_markers: string[] | null
           status_changed_at: string | null
           status_changed_by: string | null
@@ -1275,6 +1286,22 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      get_own_reports_received: {
+        Args: never
+        Returns: {
+          id: string
+          reason: string | null
+          status: string
+          created_at: string
+        }[]
+      }
+      get_own_blocks_received: {
+        Args: never
+        Returns: {
+          id: string
+          created_at: string
+        }[]
       }
       has_admin_permission: {
         Args: { permission_key: string }

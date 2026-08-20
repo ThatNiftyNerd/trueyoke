@@ -4,6 +4,13 @@
  */
 import { supabase } from "@/lib/supabase";
 
+/**
+ * Version tag stamped onto `marketing_consents.consent_version` whenever a
+ * consent preference is recorded. Bump if the marketing consent copy shown
+ * to the user materially changes, mirroring PRIVACY_POLICY_VERSION.
+ */
+export const MARKETING_CONSENT_VERSION = "v1";
+
 export type ConsentSource = "signup" | "login" | "settings";
 
 export interface UpsertMarketingConsentInput {
@@ -22,6 +29,7 @@ export async function upsertMarketingConsent(input: UpsertMarketingConsentInput)
       consented: input.consented,
       consented_at: input.consented ? new Date().toISOString() : null,
       consent_source: input.source,
+      consent_version: MARKETING_CONSENT_VERSION,
     },
     { onConflict: "profile_id" },
   );
