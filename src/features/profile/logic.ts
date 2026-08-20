@@ -36,8 +36,18 @@ export const CHURCH_DESIGNATIONS: readonly string[] = [
 
 export const CHURCH_DESIGNATION_OTHER = "Other";
 
+/**
+ * Version tag stamped onto `profiles.special_category_consent_version` when
+ * the user completes the dedicated special-category consent step (GDPR
+ * Art. 9 / LGPD "dados sensíveis" / POPIA "special personal information").
+ * Bump this if the consent copy materially changes, mirroring
+ * PRIVACY_POLICY_VERSION in src/features/auth/api.ts.
+ */
+export const SPECIAL_CATEGORY_CONSENT_VERSION = "v1";
+
 /** Wizard step keys, in display order. */
 export const STEP_KEYS = [
+  "special-category-consent",
   "demographics",
   "photos",
   "bio",
@@ -58,6 +68,12 @@ export interface StepMeta {
 }
 
 export const STEPS: readonly StepMeta[] = [
+  {
+    key: "special-category-consent",
+    title: "Sensitive data consent",
+    description: "Explicit consent for genotype, blood group, and faith data.",
+    requiredFields: ["special_category_consented_at"],
+  },
   {
     key: "demographics",
     title: "Demographics",
@@ -102,6 +118,12 @@ export const STEPS: readonly StepMeta[] = [
  * No bio, faith picker, life verse, or voice intro.
  */
 export const MENTOR_STEPS: readonly StepMeta[] = [
+  {
+    key: "special-category-consent",
+    title: "Sensitive data consent",
+    description: "Explicit consent for your church affiliation and faith data.",
+    requiredFields: ["special_category_consented_at"],
+  },
   {
     key: "mentor-details",
     title: "About you",

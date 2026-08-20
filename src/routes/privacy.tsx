@@ -37,7 +37,7 @@ function PrivacyScreen() {
         <header>
           <h1 className="font-serif text-2xl text-app-ink">TRUEYOKE PRIVACY POLICY</h1>
           <p className="mt-1 text-xs uppercase tracking-widest text-app-ink/60">
-            Last updated: 31 July 2026
+            Last updated: 20 August 2026
           </p>
         </header>
 
@@ -65,9 +65,10 @@ function PrivacyScreen() {
             location label, occupation, qualification, bio, and marriage intentions.
           </p>
           <p>
-            Sensitive personal data (the NDPA gives this extra protection — we only process it with
-            your consent, captured when you accept this Privacy Policy before your profile is
-            created): genotype and blood group; church affiliation, congregation, spirituality
+            Sensitive personal data (the NDPA, GDPR, and similar laws worldwide give this extra
+            protection — we only process it with your separate, explicit consent, captured in a
+            dedicated consent step during onboarding, distinct from your acceptance of this Privacy
+            Policy): genotype and blood group; church affiliation, congregation, spirituality
             markers, and life verse (religious belief); your uploaded profile photos and voice
             introduction (biometric-adjacent data); government-issued ID image, if you choose to
             complete identity verification.
@@ -117,7 +118,18 @@ function PrivacyScreen() {
           </p>
         </Section>
 
-        <Section title="7. Your rights">
+        <Section title="7. If something goes wrong">
+          <p>
+            If we become aware of a personal data breach that is likely to result in a risk to your
+            rights and freedoms, we will notify the relevant supervisory authority without undue
+            delay (within the timeframe required by applicable law — for example, 72 hours under the
+            GDPR, or as soon as reasonably practicable under the NDPA) and, where the breach is
+            likely to result in a high risk to you, notify you directly without undue delay,
+            describing what happened, the data involved, and the steps we are taking.
+          </p>
+        </Section>
+
+        <Section title="8. Your rights">
           <p>
             Under the NDPA you have the right to: access the personal data we hold about you;
             correct inaccurate data (edit your profile at any time); delete your account and
@@ -128,7 +140,7 @@ function PrivacyScreen() {
           </p>
         </Section>
 
-        <Section title="8. Children">
+        <Section title="9. Children">
           <p>
             TrueYoke is not for anyone under 18. We require you to confirm your age at sign-up and
             reject profiles outside our accepted range; we do not currently verify age against a
@@ -136,11 +148,42 @@ function PrivacyScreen() {
           </p>
         </Section>
 
-        <Section title="9. Changes to this policy">
+        <Section title="10. Changes to this policy">
           <p>
             We will post material changes here with an updated date, and where changes affect how we
             use sensitive personal data, ask for renewed consent before you can continue using
             TrueYoke.
+          </p>
+        </Section>
+
+        <Section title="11. Notice for California residents (CCPA/CPRA)">
+          <p>
+            If you are a California resident, the CCPA (as amended by the CPRA) gives you additional
+            rights over your personal information, several of which overlap with the NDPA rights
+            described above.
+          </p>
+          <p>
+            <strong>Categories collected and why:</strong> identifiers (email, account ID);
+            characteristics (age, gender); commercial/usage information (matches, messages, swipes);
+            geolocation (location label, city, country); sensory data (voice introduction);
+            professional information (occupation, qualification); and sensitive personal information
+            — health-adjacent (genotype, blood group), religious belief (church affiliation,
+            congregation, spirituality markers, life verse), and government ID (identity
+            verification only). Each category is collected for the purposes described in Section 3
+            above; we do not use sensitive personal information to infer characteristics about you
+            beyond operating the matching service you signed up for.
+          </p>
+          <p>
+            <strong>We do not sell or share your personal information</strong> for cross-context
+            behavioral advertising, and we have not done so in the preceding 12 months.
+          </p>
+          <p>
+            You have the right to know what personal information we hold about you, delete it,
+            correct it, and limit our use of sensitive personal information to what is necessary to
+            provide TrueYoke. You can exercise the access, deletion, and correction rights directly
+            in-app (Settings → Download my data / Delete my account / edit your profile), or by
+            contacting privacy@trueyoke.app. We will not discriminate against you for exercising any
+            of these rights.
           </p>
         </Section>
 

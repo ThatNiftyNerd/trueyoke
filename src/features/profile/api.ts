@@ -34,6 +34,8 @@ export type OnboardingProfile = Pick<
   | "mentor_role"
   | "email"
   | "profile_complete"
+  | "special_category_consented_at"
+  | "special_category_consent_version"
 >;
 
 /**
@@ -99,6 +101,8 @@ export async function getOnboardingProfile(): Promise<OnboardingProfile | null> 
     mentor_role,
     email,
     profile_complete,
+    special_category_consented_at,
+    special_category_consent_version,
   } = full;
   return {
     id,
@@ -126,6 +130,8 @@ export async function getOnboardingProfile(): Promise<OnboardingProfile | null> 
     mentor_role,
     email,
     profile_complete,
+    special_category_consented_at,
+    special_category_consent_version,
   };
 }
 
@@ -582,11 +588,29 @@ export async function exportOwnData(): Promise<string> {
   // longer table-grant-readable for peer profiles, but this export is the
   // NDPA right-of-access feature and must still return every column of the
   // caller's own row.
-  const [profileRow, photosRes, idRes, matchesRes, blocksRes, reportsRes] = await Promise.all([
+  const [
+    profileRow,
+    photosRes,
+    idRes,
+    churchVerifRes,
+    matchesRes,
+    blocksRes,
+    reportsRes,
+    swipesRes,
+    vouchersRes,
+    marketingRes,
+    reportsReceivedRes,
+    blocksReceivedRes,
+  ] = await Promise.all([
     supabase.rpc("get_own_profile_full"),
     supabase.from("photos").select("*").eq("profile_id", userId).order("position"),
     supabase
       .from("id_verifications")
+      .select("id, status, rejection_reason, created_at, reviewed_at")
+      .eq("profile_id", userId)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("church_verifications")
       .select("id, status, rejection_reason, created_at, reviewed_at")
       .eq("profile_id", userId)
       .order("created_at", { ascending: false }),
@@ -596,9 +620,35 @@ export async function exportOwnData(): Promise<string> {
       .or(`user_a_id.eq.${userId},user_b_id.eq.${userId}`),
     supabase.from("blocks").select("*").eq("blocker_id", userId),
     supabase.from("reports").select("*").eq("reporter_id", userId),
+    supabase.from("swipes").select("id, swipee_id, direction, created_at").eq("swiper_id", userId),
+    supabase
+      .from("vouchers")
+      .select(
+        "id, match_user_id, mentor_id, status, invite_channel, endorsement, mentor_confirmed, created_at",
+      )
+      .or(`match_user_id.eq.${userId},mentor_id.eq.${userId}`),
+    supabase.from("marketing_consents").select("*").eq("profile_id", userId).maybeSingle(),
+    // Redacted-read RPCs (GDPR Art. 15(4)): reports/blocks filed AGAINST this
+    // user, without exposing the reporter's/blocker's identity or internal
+    // moderation notes — see supabase/migrations/20260820182238_*.sql.
+    supabase.rpc("get_own_reports_received"),
+    supabase.rpc("get_own_blocks_received"),
   ]);
 
-  for (const res of [profileRow, photosRes, idRes, matchesRes, blocksRes, reportsRes]) {
+  for (const res of [
+    profileRow,
+    photosRes,
+    idRes,
+    churchVerifRes,
+    matchesRes,
+    blocksRes,
+    reportsRes,
+    swipesRes,
+    vouchersRes,
+    marketingRes,
+    reportsReceivedRes,
+    blocksReceivedRes,
+  ]) {
     if (res.error) throw new Error(res.error.message);
   }
 
@@ -656,8 +706,14 @@ export async function exportOwnData(): Promise<string> {
       created_at: m.created_at,
     })),
     messages,
-    blocks: blocksRes.data ?? [],
+    blocks_filed: blocksRes.data ?? [],
     reports_filed: reportsRes.data ?? [],
+    blocks_received: blocksReceivedRes.data ?? [],
+    reports_received: reportsReceivedRes.data ?? [],
+    church_verifications: churchVerifRes.data ?? [],
+    swipes: swipesRes.data ?? [],
+    vouchers: vouchersRes.data ?? [],
+    marketing_consent: marketingRes.data ?? null,
   };
 
   return JSON.stringify(payload, null, 2);
