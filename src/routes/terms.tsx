@@ -70,8 +70,10 @@ function TermsScreen() {
 
         <Section title="2. Eligibility">
           <p>
-            You must be at least 18 years old to create a TrueYoke account. We enforce this at
-            sign-up and it cannot be bypassed. You must provide accurate information and keep it
+            You must be at least 18 years old to create a TrueYoke account. We require you to
+            confirm your age at sign-up and reject profiles outside our accepted range, though we do
+            not currently verify age against a government-issued document unless you complete
+            optional identity verification. You must provide accurate information and keep it
             current; you may only maintain one account, in your own identity &mdash; accounts must
             not be created on behalf of someone else or under a false name.
           </p>
