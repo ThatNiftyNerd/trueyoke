@@ -60,7 +60,7 @@ export function UpdateBanner() {
   return (
     <div
       role="status"
-      className="app-glass mx-auto mb-2 flex max-w-md items-center gap-3 rounded-xl px-3 py-2 text-sm text-app-ink"
+      className="app-glass app-shell-width mb-2 flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-app-ink"
     >
       <span className="flex-1">
         A newer version is available{" "}

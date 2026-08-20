@@ -78,7 +78,7 @@ function DiagnosticsScreen() {
 
   return (
     <main className="min-h-[100dvh] bg-app-canvas">
-      <section className="mx-auto flex max-w-md flex-col px-4 pb-16 pt-6">
+      <section className="app-shell-width flex flex-col px-4 pb-16 pt-6">
         <header className="mb-5">
           <h1 className="font-serif text-2xl text-app-ink">Connection diagnostics</h1>
           <p className="mt-1 text-sm text-app-ink/70">
