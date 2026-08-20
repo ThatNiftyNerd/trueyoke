@@ -33,7 +33,7 @@ export function BottomTabs({ accountType }: BottomTabsProps) {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Primary"
     >
-      <ul className="mx-auto flex max-w-md items-stretch justify-around">
+      <ul className="app-shell-width flex items-stretch justify-around">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (

@@ -72,7 +72,7 @@ function AppShell() {
       {/* Single app-wide top-clearance contract: bell height + safe area, so
           individual screens never need ad-hoc top offsets. */}
       <div
-        className="mx-auto max-w-md pb-[calc(6.5rem+env(safe-area-inset-bottom))]"
+        className="app-shell-width pb-[calc(6.5rem+env(safe-area-inset-bottom))]"
         style={{ paddingTop: "calc(env(safe-area-inset-top) + 3.25rem)" }}
       >
         <UpdateBanner />
