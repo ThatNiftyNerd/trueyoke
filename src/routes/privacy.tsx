@@ -61,15 +61,16 @@ function PrivacyScreen() {
             Account data: email address, authentication method (email/password or Google sign-in).
           </p>
           <p>
-            Profile data: display name, age (18+ only, enforced automatically), gender, location
-            label, occupation, qualification, bio, and marriage intentions.
+            Profile data: display name, age (self-reported, 18+ required at sign-up), gender,
+            location label, occupation, qualification, bio, and marriage intentions.
           </p>
           <p>
             Sensitive personal data (the NDPA gives this extra protection — we only process it with
-            your explicit consent, collected before your profile is created): genotype and blood
-            group; church affiliation, congregation, spirituality markers, and life verse (religious
-            belief); your uploaded profile photos and voice introduction (biometric-adjacent data);
-            government-issued ID image, if you choose to complete identity verification.
+            your consent, captured when you accept this Privacy Policy before your profile is
+            created): genotype and blood group; church affiliation, congregation, spirituality
+            markers, and life verse (religious belief); your uploaded profile photos and voice
+            introduction (biometric-adjacent data); government-issued ID image, if you choose to
+            complete identity verification.
           </p>
           <p>
             Usage data: who you swipe on, match with, message, block, or report, generated
@@ -129,7 +130,9 @@ function PrivacyScreen() {
 
         <Section title="8. Children">
           <p>
-            TrueYoke is not for anyone under 18. Age is enforced at sign-up and cannot be bypassed.
+            TrueYoke is not for anyone under 18. We require you to confirm your age at sign-up and
+            reject profiles outside our accepted range; we do not currently verify age against a
+            government-issued document unless you complete optional identity verification.
           </p>
         </Section>
 
