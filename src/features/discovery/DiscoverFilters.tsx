@@ -49,7 +49,7 @@ export function DiscoverFilters({ open, onOpenChange, value, onApply }: Props) {
         onOpenChange(o);
       }}
     >
-      <SheetContent side="bottom" className="max-h-[85dvh] overflow-y-auto bg-card">
+      <SheetContent side="bottom" className="flex max-h-[85dvh] flex-col bg-card">
         <SheetHeader>
           <SheetTitle className="text-app-ink">Filters</SheetTitle>
           <SheetDescription className="text-app-ink/70">
@@ -57,7 +57,7 @@ export function DiscoverFilters({ open, onOpenChange, value, onApply }: Props) {
           </SheetDescription>
         </SheetHeader>
 
-        <div className="mt-4 space-y-5">
+        <div className="mt-4 min-h-0 flex-1 space-y-5 overflow-y-auto pr-1">
           <div className="space-y-2">
             <Label className="text-app-ink">Age range</Label>
             <div className="flex items-center gap-2">
@@ -123,31 +123,31 @@ export function DiscoverFilters({ open, onOpenChange, value, onApply }: Props) {
               </SelectContent>
             </Select>
           </div>
+        </div>
 
-          <div className="flex gap-2 pt-2">
-            <Button
-              type="button"
-              className="flex-1 bg-app-primary text-app-on-primary hover:bg-app-primary/90"
-              onClick={() => {
-                onApply(draft);
-                onOpenChange(false);
-              }}
-            >
-              Apply
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="border-app-ink/30 text-app-ink"
-              onClick={() => {
-                setDraft(EMPTY_FILTERS);
-                onApply(EMPTY_FILTERS);
-                onOpenChange(false);
-              }}
-            >
-              Clear
-            </Button>
-          </div>
+        <div className="mt-4 flex shrink-0 gap-2 border-t border-app-ink/10 pt-4">
+          <Button
+            type="button"
+            className="flex-1 bg-app-primary text-app-on-primary hover:bg-app-primary/90"
+            onClick={() => {
+              onApply(draft);
+              onOpenChange(false);
+            }}
+          >
+            Apply
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="border-app-ink/30 text-app-ink"
+            onClick={() => {
+              setDraft(EMPTY_FILTERS);
+              onApply(EMPTY_FILTERS);
+              onOpenChange(false);
+            }}
+          >
+            Clear
+          </Button>
         </div>
       </SheetContent>
     </Sheet>
