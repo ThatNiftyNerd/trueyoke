@@ -5,18 +5,19 @@
 // the workspace's Linear OAuth credentials, and this function only ever sends
 // its own server-side gateway keys. The client never sees either.
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { buildCorsHeaders } from "../_shared/cors.ts";
 
 const LINEAR_API = "https://connector-gateway.lovable.dev/linear/graphql";
 const TEAM_ID = "309e992d-fba1-4ba3-95e5-4b6cf005ea9d";
 const LABEL_NAMES = ["Tester Feedback", "Bug"];
 const PRIORITY: Record<string, number> = { critical: 1, medium: 3, low: 4 };
 
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
-  });
+function makeJson(cors: Record<string, string>) {
+  return (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { ...cors, "Content-Type": "application/json" },
+    });
 }
 
 async function linear(
@@ -43,6 +44,8 @@ async function linear(
 
 
 Deno.serve(async (req) => {
+  const corsHeaders = buildCorsHeaders(req);
+  const json = makeJson(corsHeaders);
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
