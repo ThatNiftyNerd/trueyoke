@@ -49,7 +49,7 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig System.getenv("ANDROID_RELEASE_KEYSTORE_PATH") ? signingConfigs.release : null
         }
