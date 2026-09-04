@@ -77,20 +77,9 @@ export async function fetchDeck(filters: DeckFilters = {}): Promise<Candidate[]>
   if (error) throw new Error(error.message);
   const rows = data ?? [];
 
-  // Primary photo (position 0) per candidate — one signed URL each, at render
-  // batch time. Not persisted.
+  // Voice intros — batch-signed per candidate; photos are intentionally not
+  // fetched pre-match (revealed post-match via the matches feature).
   const ids = rows.map((r) => r.id);
-  const photoByProfile = new Map<string, string>();
-  if (ids.length > 0) {
-    const { data: photos } = await supabase
-      .from("photos")
-      .select("profile_id, storage_path, position")
-      .in("profile_id", ids)
-      .eq("position", 0);
-    for (const p of photos ?? []) {
-      photoByProfile.set(p.profile_id, p.storage_path);
-    }
-  }
 
   // Approved mentor endorsements — same in-memory join by id as photos above.
   // Mentor identity is deliberately not selected.
