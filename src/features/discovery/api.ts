@@ -5,14 +5,14 @@
  */
 import { supabase } from "@/lib/supabase";
 import { getCurrentUserId } from "@/features/auth/api";
-import { getPhotoSignedUrls } from "@/features/profile/api";
+import { getVoiceIntroSignedUrls } from "@/features/profile/api";
 import type { Tables } from "@/integrations/supabase/types";
 
 export type Candidate = Pick<
   Tables<"profiles">,
-  "id" | "display_name" | "age" | "location_label" | "bio"
+  "id" | "display_name" | "age" | "gender" | "location_label" | "bio" | "life_verse"
 > & {
-  photoSignedUrl: string | null;
+  voiceIntroSignedUrl: string | null;
   /** Approved mentor endorsement text, if any. Mentor identity is never fetched. */
   endorsement: string | null;
 };
