@@ -95,15 +95,19 @@ export async function fetchDeck(filters: DeckFilters = {}): Promise<Candidate[]>
     }
   }
 
-  const photoPaths = [...photoByProfile.values()];
-  const signedUrlByPath = await getPhotoSignedUrls(photoPaths, 3600);
+  // Voice intro paths — null is normal (voice intro isn't enforced by
+  // profile_complete), only non-null paths are batch-signed.
+  const voicePaths = [
+    ...new Set(rows.map((r) => r.voice_intro_url).filter((p): p is string => !!p)),
+  ];
+  const voiceUrlByPath = await getVoiceIntroSignedUrls(voicePaths, 3600);
 
   const candidates = rows.map((r) => {
-    const path = photoByProfile.get(r.id);
-    const url = path ? (signedUrlByPath.get(path) ?? null) : null;
+    const url = r.voice_intro_url ? (voiceUrlByPath.get(r.voice_intro_url) ?? null) : null;
+    const { voice_intro_url: _voicePath, ...rest } = r;
     return {
-      ...r,
-      photoSignedUrl: url,
+      ...rest,
+      voiceIntroSignedUrl: url,
       endorsement: endorsementByProfile.get(r.id) ?? null,
     } satisfies Candidate;
   });
