@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { MoreVertical } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,22 +21,18 @@ interface Props {
 }
 
 export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, busy }: Props) {
+  const [hasPlayedVoice, setHasPlayedVoice] = useState(false);
+  const canLike = !candidate.voiceIntroSignedUrl || hasPlayedVoice;
+
   return (
     <Card className="w-full max-w-sm overflow-hidden border-app-ink/20 bg-card">
       <div className="relative aspect-[4/5] w-full bg-app-canvas">
-        {candidate.photoSignedUrl ? (
-          <img
-            src={candidate.photoSignedUrl}
-            alt={candidate.display_name ?? "Candidate"}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-app-accent/20">
-            <span className="font-serif text-6xl text-app-ink/60">
-              {initialsOf(candidate.display_name)}
-            </span>
-          </div>
-        )}
+        <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-app-accent/20">
+          <span className="font-serif text-6xl text-app-ink/60">
+            {initialsOf(candidate.display_name)}
+          </span>
+          <span className="text-sm text-app-ink/50">Photos are shared once you match.</span>
+        </div>
         <div className="absolute right-2 top-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -64,6 +61,30 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
             {cardSubtitle(candidate)}
           </p>
         </div>
+
+        <figure className="rounded-md border border-app-accent/40 bg-app-accent/10 px-3 py-2">
+          <figcaption className="text-xs font-medium uppercase tracking-wide text-app-ink/60">
+            Life Verse
+          </figcaption>
+          <blockquote className="mt-1 text-sm italic text-app-ink/80">
+            {candidate.life_verse}
+          </blockquote>
+        </figure>
+
+        {candidate.voiceIntroSignedUrl ? (
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-app-ink/60">
+              Voice Intro
+            </p>
+            <audio
+              controls
+              src={candidate.voiceIntroSignedUrl}
+              className="mt-1 w-full"
+              onPlay={() => setHasPlayedVoice(true)}
+            />
+          </div>
+        ) : null}
+
         {candidate.bio ? (
           <p className="text-sm text-app-ink/80">{bioExcerpt(candidate.bio)}</p>
         ) : null}
@@ -79,24 +100,31 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
         ) : null}
       </div>
 
-      <div className="grid grid-cols-2 gap-2 border-t border-app-ink/10 p-3">
-        <Button
-          type="button"
-          variant="outline"
-          disabled={busy}
-          onClick={onPass}
-          className="border-app-ink/30 text-app-ink"
-        >
-          Pass
-        </Button>
-        <Button
-          type="button"
-          disabled={busy}
-          onClick={onLike}
-          className="bg-app-primary text-app-on-primary hover:bg-app-primary/90"
-        >
-          Like
-        </Button>
+      <div className="border-t border-app-ink/10 p-3">
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={busy}
+            onClick={onPass}
+            className="border-app-ink/30 text-app-ink"
+          >
+            Pass
+          </Button>
+          <Button
+            type="button"
+            disabled={busy || !canLike}
+            onClick={onLike}
+            className="bg-app-primary text-app-on-primary hover:bg-app-primary/90"
+          >
+            Like
+          </Button>
+        </div>
+        {!canLike ? (
+          <p className="mt-2 text-center text-xs text-app-ink/50">
+            Play the voice intro to like this profile.
+          </p>
+        ) : null}
       </div>
     </Card>
   );
