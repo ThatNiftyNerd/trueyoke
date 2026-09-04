@@ -17,9 +17,17 @@ export function bioExcerpt(bio: string | null | undefined, max = 160): string {
   return trimmed.length > max ? `${trimmed.slice(0, max - 1)}…` : trimmed;
 }
 
+export function formatGender(g: string | null | undefined): string {
+  if (g === "male") return "Male";
+  if (g === "female") return "Female";
+  return "";
+}
+
 export function cardSubtitle(c: Candidate): string {
   const bits: string[] = [];
   if (typeof c.age === "number") bits.push(String(c.age));
+  const gender = formatGender(c.gender);
+  if (gender) bits.push(gender);
   if (c.location_label) bits.push(c.location_label);
   return bits.join(" · ");
 }

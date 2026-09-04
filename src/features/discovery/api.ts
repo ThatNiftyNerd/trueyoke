@@ -5,14 +5,14 @@
  */
 import { supabase } from "@/lib/supabase";
 import { getCurrentUserId } from "@/features/auth/api";
-import { getPhotoSignedUrls } from "@/features/profile/api";
+import { getVoiceIntroSignedUrls } from "@/features/profile/api";
 import type { Tables } from "@/integrations/supabase/types";
 
 export type Candidate = Pick<
   Tables<"profiles">,
-  "id" | "display_name" | "age" | "location_label" | "bio"
+  "id" | "display_name" | "age" | "gender" | "location_label" | "bio" | "life_verse"
 > & {
-  photoSignedUrl: string | null;
+  voiceIntroSignedUrl: string | null;
   /** Approved mentor endorsement text, if any. Mentor identity is never fetched. */
   endorsement: string | null;
 };
@@ -43,7 +43,7 @@ export async function fetchDeck(filters: DeckFilters = {}): Promise<Candidate[]>
 
   let query = supabase
     .from("profiles")
-    .select("id, display_name, age, location_label, bio")
+    .select("id, display_name, age, gender, location_label, bio, life_verse, voice_intro_url")
     .eq("account_type", "match")
     .eq("profile_complete", true)
     .neq("id", userId)
@@ -77,20 +77,9 @@ export async function fetchDeck(filters: DeckFilters = {}): Promise<Candidate[]>
   if (error) throw new Error(error.message);
   const rows = data ?? [];
 
-  // Primary photo (position 0) per candidate — one signed URL each, at render
-  // batch time. Not persisted.
+  // Voice intros — batch-signed per candidate; photos are intentionally not
+  // fetched pre-match (revealed post-match via the matches feature).
   const ids = rows.map((r) => r.id);
-  const photoByProfile = new Map<string, string>();
-  if (ids.length > 0) {
-    const { data: photos } = await supabase
-      .from("photos")
-      .select("profile_id, storage_path, position")
-      .in("profile_id", ids)
-      .eq("position", 0);
-    for (const p of photos ?? []) {
-      photoByProfile.set(p.profile_id, p.storage_path);
-    }
-  }
 
   // Approved mentor endorsements — same in-memory join by id as photos above.
   // Mentor identity is deliberately not selected.
@@ -106,15 +95,19 @@ export async function fetchDeck(filters: DeckFilters = {}): Promise<Candidate[]>
     }
   }
 
-  const photoPaths = [...photoByProfile.values()];
-  const signedUrlByPath = await getPhotoSignedUrls(photoPaths, 3600);
+  // Voice intro paths — null is normal (voice intro isn't enforced by
+  // profile_complete), only non-null paths are batch-signed.
+  const voicePaths = [
+    ...new Set(rows.map((r) => r.voice_intro_url).filter((p): p is string => !!p)),
+  ];
+  const voiceUrlByPath = await getVoiceIntroSignedUrls(voicePaths, 3600);
 
   const candidates = rows.map((r) => {
-    const path = photoByProfile.get(r.id);
-    const url = path ? (signedUrlByPath.get(path) ?? null) : null;
+    const url = r.voice_intro_url ? (voiceUrlByPath.get(r.voice_intro_url) ?? null) : null;
+    const { voice_intro_url: _voicePath, ...rest } = r;
     return {
-      ...r,
-      photoSignedUrl: url,
+      ...rest,
+      voiceIntroSignedUrl: url,
       endorsement: endorsementByProfile.get(r.id) ?? null,
     } satisfies Candidate;
   });

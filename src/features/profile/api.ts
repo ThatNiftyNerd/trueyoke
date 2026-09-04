@@ -287,6 +287,24 @@ export async function getVoiceIntroSignedUrl(
   return data.signedUrl;
 }
 
+export async function getVoiceIntroSignedUrls(
+  paths: string[],
+  expiresInSeconds = 3600,
+): Promise<Map<string, string>> {
+  const result = new Map<string, string>();
+  if (paths.length === 0) return result;
+  const { data, error } = await supabase.storage
+    .from("voice-intros")
+    .createSignedUrls(paths, expiresInSeconds);
+  if (error || !data) return result;
+  for (const entry of data) {
+    if (!entry.error && entry.signedUrl && entry.path) {
+      result.set(entry.path, entry.signedUrl);
+    }
+  }
+  return result;
+}
+
 // -------- ID verification -------------------------------------------------
 
 /**
