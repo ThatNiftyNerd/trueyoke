@@ -43,7 +43,7 @@ export async function fetchDeck(filters: DeckFilters = {}): Promise<Candidate[]>
 
   let query = supabase
     .from("profiles")
-    .select("id, display_name, age, location_label, bio")
+    .select("id, display_name, age, gender, location_label, bio, life_verse, voice_intro_url")
     .eq("account_type", "match")
     .eq("profile_complete", true)
     .neq("id", userId)
