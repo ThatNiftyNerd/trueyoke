@@ -75,13 +75,17 @@ Deno.serve(async (req) => {
     return json({ error: archived.error?.message ?? "Could not sign archive upload" }, 500);
   }
 
-  const publicUrl = (path: string) =>
-    `${supabaseUrl}/storage/v1/object/public/${BUCKET}/${path}`;
+  // The bucket is private (public=true buckets are disallowed on this
+  // platform), so the actual public entrypoint is the `download-apk`
+  // redirector, not a bare storage URL. `download-apk` defaults to the
+  // "latest" path with zero query params, and takes an explicit `?path=`
+  // for the versioned archive copy.
+  const downloadBase = `${supabaseUrl}/functions/v1/download-apk`;
 
   return json({
     latest: { signedUrl: latest.data.signedUrl, path: latestPath },
     archived: { signedUrl: archived.data.signedUrl, path: archivedPath },
-    publicUrlLatest: publicUrl(latestPath),
-    publicUrlArchived: publicUrl(archivedPath),
+    publicUrlLatest: downloadBase,
+    publicUrlArchived: `${downloadBase}?path=${encodeURIComponent(archivedPath)}`,
   });
 });

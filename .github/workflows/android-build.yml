@@ -103,3 +103,35 @@ jobs:
             -d '{"version_code": ${{ steps.release_meta.outputs.version_code }}, "version_name": "${{ steps.release_meta.outputs.version_name }}", "platform": "android", "sha256_hash": "${{ steps.release_meta.outputs.sha256_hash }}", "release_notes": "CI build ${{ github.sha }}"}' \
             "$FUNCTION_URL"
 
+      - name: Request APK upload URLs
+        if: ${{ env.HAS_RELEASE_SECRETS == 'true' && env.HAS_MANIFEST_SECRETS == 'true' }}
+        id: apk_upload_urls
+        env:
+          FUNCTION_URL: ${{ secrets.VITE_SUPABASE_URL }}/functions/v1/request-apk-upload
+        run: |
+          RESPONSE=$(curl --fail-with-body -sS \
+            -X POST \
+            -H "Authorization: Bearer ${{ secrets.RELEASE_PUBLISH_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"version_code": ${{ steps.release_meta.outputs.version_code }}, "version_name": "${{ steps.release_meta.outputs.version_name }}"}' \
+            "$FUNCTION_URL")
+          echo "latest_signed_url=$(echo "$RESPONSE" | jq -r '.latest.signedUrl')" >> $GITHUB_OUTPUT
+          echo "archived_signed_url=$(echo "$RESPONSE" | jq -r '.archived.signedUrl')" >> $GITHUB_OUTPUT
+
+      # These signed URLs are single-path, short-expiry, upload-only — not the
+      # broad service-role key — so this step cannot read or write anything
+      # else in the project even if the log or a stray retry leaked the URL.
+      - name: Upload APK to public-releases bucket
+        if: ${{ env.HAS_RELEASE_SECRETS == 'true' && env.HAS_MANIFEST_SECRETS == 'true' }}
+        run: |
+          curl --fail-with-body -sS \
+            -X PUT \
+            -H "Content-Type: application/vnd.android.package-archive" \
+            --data-binary @android/app/build/outputs/apk/release/app-release.apk \
+            "${{ steps.apk_upload_urls.outputs.latest_signed_url }}"
+          curl --fail-with-body -sS \
+            -X PUT \
+            -H "Content-Type: application/vnd.android.package-archive" \
+            --data-binary @android/app/build/outputs/apk/release/app-release.apk \
+            "${{ steps.apk_upload_urls.outputs.archived_signed_url }}"
+
