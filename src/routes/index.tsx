@@ -59,7 +59,7 @@ function Landing() {
       {/* Hero */}
       <div className="relative flex w-full flex-col items-center overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=70"
+          src="https://images.unsplash.com/photo-1541417904950-b855846fe074?auto=format&fit=crop&w=1600&q=70"
           alt=""
           aria-hidden="true"
           loading="eager"
