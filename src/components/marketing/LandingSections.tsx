@@ -101,8 +101,8 @@ export function WhoThisIsFor() {
           </p>
         </div>
         <SunlitImage
-          src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=900&q=70"
-          alt="Two people's silhouetted hands forming a heart shape against a warm sunset — a generic stock photo, not an actual TrueYoke member"
+          src="https://images.unsplash.com/photo-1592599457454-e6ace3370314?auto=format&fit=crop&w=900&q=70"
+          alt="A smiling Black couple embracing warmly on a sunlit street — a generic stock photo, not actual TrueYoke members"
           className="lg:h-80"
         />
       </div>

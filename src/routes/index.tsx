@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { redirectIfSignedIn } from "@/features/auth/guards";
 import { CopyrightNotice } from "@/components/app/CopyrightNotice";
 import { SocialLinks } from "@/components/marketing/SocialLinks";
+import { BrandLockup } from "@/components/marketing/BrandLockup";
 import {
   WhoThisIsFor,
   WhatWeBelieve,
@@ -57,9 +58,10 @@ function Landing() {
 
   return (
     <main className="flex min-h-[100dvh] flex-col items-center bg-app-canvas">
-      {/* Header: just the social links, per the site's minimal-nav style */}
-      <header className="flex w-full justify-end px-6 py-4">
-        <SocialLinks />
+      {/* Header: full brand lockup + social links, both anchored top-right */}
+      <header className="flex w-full flex-col items-end gap-2 px-6 py-4">
+        <BrandLockup />
+        <SocialLinks iconClassName="h-4 w-4" />
       </header>
 
       {/* Hero */}
