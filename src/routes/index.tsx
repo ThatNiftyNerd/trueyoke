@@ -20,17 +20,17 @@ const APK_DOWNLOAD_URL = `${SUPABASE_URL}/functions/v1/download-apk`;
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "TrueYoke — Faith-centered relationships" },
+      { title: "TrueYoke: Faith-centered relationships" },
       {
         name: "description",
         content:
-          "TrueYoke helps Christian singles from any tradition pursue marriage-minded relationships with accountability — verified profiles, church vouching, and intentional matching.",
+          "TrueYoke helps Christian singles from any tradition pursue marriage-minded relationships with accountability: verified profiles, church vouching, and intentional matching.",
       },
-      { property: "og:title", content: "TrueYoke — Faith-centered relationships" },
+      { property: "og:title", content: "TrueYoke: Faith-centered relationships" },
       {
         property: "og:description",
         content:
-          "TrueYoke helps Christian singles from any tradition pursue marriage-minded relationships with accountability — verified profiles, church vouching, and intentional matching.",
+          "TrueYoke helps Christian singles from any tradition pursue marriage-minded relationships with accountability: verified profiles, church vouching, and intentional matching.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
