@@ -58,10 +58,10 @@ function Landing() {
 
   return (
     <main className="flex min-h-[100dvh] flex-col items-center bg-app-canvas">
-      {/* Header: full brand lockup + social links, both anchored top-right */}
-      <header className="flex w-full flex-col items-end gap-2 px-6 py-4">
+      {/* Header: brand lockup top-left, social links top-right */}
+      <header className="flex w-full items-center justify-between px-6 py-4">
         <BrandLockup />
-        <SocialLinks iconClassName="h-4 w-4" />
+        <SocialLinks />
       </header>
 
       {/* Hero */}

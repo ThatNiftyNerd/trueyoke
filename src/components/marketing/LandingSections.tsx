@@ -101,8 +101,8 @@ export function WhoThisIsFor() {
           </p>
         </div>
         <SunlitImage
-          src="https://images.unsplash.com/photo-1592599457454-e6ace3370314?auto=format&fit=crop&w=900&q=70"
-          alt="A smiling Black couple embracing warmly on a sunlit street — a generic stock photo, not actual TrueYoke members"
+          src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=900&q=70"
+          alt="Two people's silhouetted hands forming a heart shape against a warm sunset — a generic stock photo, not an actual TrueYoke member"
           className="lg:h-80"
         />
       </div>
@@ -149,8 +149,8 @@ export function TwoWaysToJoin() {
           </div>
         </div>
         <SunlitImage
-          src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=900&q=70"
-          alt="A diverse group of coworkers collaborating around laptops and a monitor in a bright office — a generic stock photo representing community, not actual TrueYoke members"
+          src="https://images.unsplash.com/photo-1703627775484-95289b546d1b?auto=format&fit=crop&w=900&q=70"
+          alt="An elderly Black couple laughing together in a sunlit garden — a generic stock photo, not actual TrueYoke members"
           className="lg:h-full"
         />
       </div>
