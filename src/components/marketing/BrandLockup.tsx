@@ -61,9 +61,9 @@ function Submark({ className = "h-8 w-8" }: { className?: string }) {
 
 export function BrandLockup({ className = "" }: { className?: string }) {
   return (
-    <div className={`flex items-center gap-2 text-app-primary ${className}`.trim()}>
-      <Submark className="h-8 w-8 shrink-0" />
-      <span className="font-serif text-lg font-semibold tracking-[0.14em] text-app-primary">
+    <div className={`flex items-center gap-1.5 text-app-primary sm:gap-2 ${className}`.trim()}>
+      <Submark className="h-6 w-6 shrink-0 sm:h-8 sm:w-8" />
+      <span className="font-serif text-sm font-semibold tracking-[0.1em] text-app-primary sm:text-lg sm:tracking-[0.14em]">
         TRUEYOKE
       </span>
     </div>

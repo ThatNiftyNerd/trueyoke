@@ -61,22 +61,54 @@ function Section({
   );
 }
 
+type PhotoCredit = {
+  name: string;
+  profileUrl: string;
+  photoUrl: string;
+};
+
 function SunlitImage({
   src,
   alt,
   className = "",
+  credit,
 }: {
   src: string;
   alt: string;
   className?: string;
+  credit?: PhotoCredit;
 }) {
   return (
-    <img
-      src={src}
-      alt={alt}
-      loading="lazy"
-      className={`h-56 w-full rounded-2xl border border-app-accent/30 object-cover shadow-sm sm:h-72 ${className}`}
-    />
+    <figure className="m-0">
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        className={`h-56 w-full rounded-2xl border border-app-accent/30 object-cover shadow-sm sm:h-72 ${className}`}
+      />
+      {credit && (
+        <figcaption className="mt-1 text-right text-xs text-app-ink/50">
+          Photo by{" "}
+          <a
+            href={credit.profileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-app-ink/30 hover:text-app-ink/80"
+          >
+            {credit.name}
+          </a>{" "}
+          on{" "}
+          <a
+            href={credit.photoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-app-ink/30 hover:text-app-ink/80"
+          >
+            Unsplash
+          </a>
+        </figcaption>
+      )}
+    </figure>
   );
 }
 
@@ -149,9 +181,16 @@ export function TwoWaysToJoin() {
           </div>
         </div>
         <SunlitImage
-          src="https://images.unsplash.com/photo-1703627775484-95289b546d1b?auto=format&fit=crop&w=900&q=70"
-          alt="An elderly Black couple laughing together in a sunlit garden — a generic stock photo, not actual TrueYoke members"
+          src="https://images.unsplash.com/photo-1592599457454-e6ace3370314?auto=format&fit=crop&w=900&q=70"
+          alt="A Black man in a cap tenderly kissing a woman's forehead outdoors — a generic stock photo, not actual TrueYoke members"
           className="lg:h-full"
+          credit={{
+            name: "LaShawn Dobbs",
+            profileUrl:
+              "https://unsplash.com/@lashawndobbs?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText",
+            photoUrl:
+              "https://unsplash.com/photos/man-in-black-crew-neck-t-shirt-kissing-woman-in-white-dress-Qx-jCqiTezY?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText",
+          }}
         />
       </div>
     </Section>
