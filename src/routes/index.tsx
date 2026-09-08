@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { redirectIfSignedIn } from "@/features/auth/guards";
 import { CopyrightNotice } from "@/components/app/CopyrightNotice";
+import { SocialLinks } from "@/components/marketing/SocialLinks";
 import {
   WhoThisIsFor,
   WhatWeBelieve,
@@ -56,6 +57,11 @@ function Landing() {
 
   return (
     <main className="flex min-h-[100dvh] flex-col items-center bg-app-canvas">
+      {/* Header: just the social links, per the site's minimal-nav style */}
+      <header className="flex w-full justify-end px-6 py-4">
+        <SocialLinks />
+      </header>
+
       {/* Hero */}
       <div className="relative flex w-full flex-col items-center overflow-hidden">
         <img
@@ -139,7 +145,8 @@ function Landing() {
             I already have an account
           </Link>
         </div>
-        <CopyrightNotice className="mt-4" />
+        <SocialLinks className="mt-2" iconClassName="h-5 w-5" />
+        <CopyrightNotice className="mt-2" />
       </div>
     </main>
   );
