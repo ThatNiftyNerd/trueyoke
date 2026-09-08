@@ -4,6 +4,8 @@ import { redirectIfSignedIn } from "@/features/auth/guards";
 import { CopyrightNotice } from "@/components/app/CopyrightNotice";
 import { SocialLinks } from "@/components/marketing/SocialLinks";
 import { BrandLockup } from "@/components/marketing/BrandLockup";
+import { ThemeToggle } from "@/components/marketing/ThemeToggle";
+import { useTheme } from "@/theme/ThemeProvider";
 import {
   WhoThisIsFor,
   WhatWeBelieve,
@@ -39,29 +41,44 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
+// Mirrors ThemeProvider's own storage key — only read here to check whether
+// a preference has ever been explicitly saved (by this page's toggle or the
+// in-app one), without importing internals from that module.
+const THEME_STORAGE_KEY = "trueyoke-theme";
+
 function Landing() {
-  // This is a public marketing page, so it should never open in dark mode
-  // just because a first-time visitor's OS is set to dark — that reads as
-  // broken/unfinished rather than intentional. Scope the override to this
-  // route's mount lifetime only: strip `.dark` from <html> while mounted,
-  // then restore whatever it was on unmount, so the app's own light/dark
-  // toggle (and the localStorage value it persists) is untouched for every
-  // other screen.
+  const { theme, setTheme } = useTheme();
+
+  // This is a public marketing page, so a first-time visitor should never
+  // land in dark mode just because their OS is set to dark — that reads as
+  // broken/unfinished rather than intentional. If nothing has ever been
+  // explicitly chosen (here or in the app), force light once on mount.
+  // The header toggle lets a visitor switch afterward, and that's a real,
+  // deliberate choice — it persists through the same ThemeProvider/
+  // localStorage key the in-app toggle uses, so it carries over after
+  // signup instead of jarringly resetting to light.
   useEffect(() => {
-    const root = document.documentElement;
-    const hadDark = root.classList.contains("dark");
-    root.classList.remove("dark");
-    return () => {
-      if (hadDark) root.classList.add("dark");
-    };
+    const hasStoredPreference = localStorage.getItem(THEME_STORAGE_KEY) !== null;
+    if (!hasStoredPreference && theme === "dark") {
+      setTheme("light");
+    }
+    // Intentionally mount-only: this is a one-time "no prior choice" check,
+    // not a live sync with theme state (that would fight the toggle).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <main className="flex min-h-[100dvh] flex-col items-center bg-app-canvas">
-      {/* Header: brand lockup top-left, social links top-right */}
-      <header className="flex w-full items-center justify-between px-6 py-4">
+      {/* Header: brand lockup top-left, social links + theme toggle top-right.
+          Sizes step up at sm: the lockup and icons run noticeably smaller on
+          phones so the two clusters don't crowd each other on a narrow
+          viewport. */}
+      <header className="flex w-full items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         <BrandLockup />
-        <SocialLinks />
+        <div className="flex items-center gap-2 sm:gap-4">
+          <SocialLinks gap="gap-2 sm:gap-4" iconClassName="h-4 w-4 sm:h-5 sm:w-5" />
+          <ThemeToggle />
+        </div>
       </header>
 
       {/* Hero */}

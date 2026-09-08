@@ -52,12 +52,14 @@ const SOCIAL_LINKS: SocialLink[] = [
 export function SocialLinks({
   className = "",
   iconClassName = "h-5 w-5",
+  gap = "gap-4",
 }: {
   className?: string;
   iconClassName?: string;
+  gap?: string;
 }) {
   return (
-    <div className={`flex items-center gap-4 ${className}`.trim()}>
+    <div className={`flex items-center ${gap} ${className}`.trim()}>
       {SOCIAL_LINKS.map((s) => (
         <a
           key={s.name}
