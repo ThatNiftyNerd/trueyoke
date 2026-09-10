@@ -18,8 +18,6 @@ export default tseslint.config(
       "src/routeTree.gen.ts",
       // Deno edge function runtime — not part of the Vite/React project.
       "supabase/functions/**",
-      // Superseded v1 prototype (Expo/React Native), reference only.
-      "legacy/**",
     ],
   },
   {
