@@ -18,8 +18,7 @@ lands here as a real commit. (Note: this repo was created by Lovable under the i
 Naming history, continued: the product was renamed again from **Yoked** to **TrueYoke** (final, locked in).
 All user-facing copy, the Capacitor `appId` (`app.trueyoke.mobile`), and the Android app name now read
 TrueYoke, and the GitHub repo itself has since been renamed from `yoked` to `trueyoke`. The
-`docs/YOKED_*` files have been renamed to `docs/TrueYoke_*` as well; only the archived `legacy/`
-prototype keeps its historical names.
+`docs/YOKED_*` files have been renamed to `docs/TrueYoke_*` as well.
 
 ## Current build plan
 
@@ -48,7 +47,6 @@ supabase/             schema.sql (tables, RLS, circuit-breaker triggers), seed.s
 src/                  the app itself (Lovable-synced)
 android/              committed native Capacitor project (Lovable-managed)
 assets/               brand logo + splash reference images
-legacy/               superseded v1 (Expo/React Native + EAS) prototype — reference only
 ```
 
 ## Secrets
