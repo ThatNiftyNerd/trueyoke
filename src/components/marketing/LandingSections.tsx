@@ -1,22 +1,26 @@
-import { useRef, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Reveal, RevealItem, riseItem } from "./motion";
+import { Reveal, RevealItem, riseItem, EASE_OUT } from "./motion";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 /**
- * Presentational content sections for the public "/" landing page. Split out
- * of src/routes/index.tsx to keep that route file small — nothing here reads
- * auth state or makes network calls; it's pure marketing copy plus the two
- * external download links.
- *
- * Photos are hotlinked from Unsplash (royalty-free, no attribution required)
- * and are intentionally generic/stock — never real TrueYoke member photos,
- * consistent with the product's policy of never surfacing real member photos
- * pre-match. Alt text says so explicitly for screen-reader users.
- *
- * Motion lives in ./motion.tsx and is scroll-triggered once per section; the
- * page-level <MotionConfig reducedMotion="user"> makes all of it respect the
- * visitor's OS reduce-motion preference.
- */
+* Presentational content sections for the public "/" landing page. Split out
+* of src/routes/index.tsx to keep that route file small — nothing here reads
+* auth state or makes network calls; it's pure marketing copy plus the two
+* external download links.
+*
+* Photos are hotlinked from Unsplash (royalty-free, no attribution required)
+* and are intentionally generic/stock — never real TrueYoke member photos,
+* consistent with the product's policy of never surfacing real member photos
+* pre-match. Alt text says so explicitly for screen-reader users.
+*
+* Motion lives in ./motion.tsx and is scroll-triggered once per section; the
+* page-level <MotionConfig reducedMotion="user"> makes all of it respect the
+* visitor's OS reduce-motion preference.
+*/
 
 const BELIEFS = [
   {
@@ -38,6 +42,36 @@ const BELIEFS = [
   {
     title: "Scripture sets the tone",
     body: "From the Life Verse on every profile to the culture we ask you to bring, this is a space shaped by Scripture, not just decorated with it.",
+  },
+];
+
+// Grounded strictly in copy that already appears elsewhere on this page —
+// no invented stats, testimonials, or claims. See each answer's source
+// section in a comment.
+const FAQS = [
+  {
+    q: "Is TrueYoke only for one denomination?",
+    a: "No. TrueYoke started inside the Church of Christ, but it's open to any Christian believer, whatever your tradition: Baptist, Catholic, Pentecostal, non-denominational, or otherwise. If Christ is the foundation you want your next relationship built on, you're welcome here.",
+  },
+  {
+    q: "What's a Voucher?",
+    a: "A Voucher is a pastor, elder, deacon, or other church leader who knows a Match personally and submits a short endorsement that appears right on their profile: the kind of accountability a dating app can't fake.",
+  },
+  {
+    q: "How does verification work?",
+    a: "Verification badges confirm you are who your ID says you are, and that your church affiliation is real.",
+  },
+  {
+    q: "What is a Life Verse, and why does my profile need one?",
+    a: "Your Life Verse is a piece of Scripture that's shaped your walk with Christ. It's part of how you share your story and values on TrueYoke: a window into your faith instead of just a photo grid.",
+  },
+  {
+    q: "Is my information private?",
+    a: "Your photos and voice stay private and are never posted to the open internet. Anything sensitive is only ever collected after you've clearly agreed to share it, and you can export or permanently delete everything you've shared in one tap.",
+  },
+  {
+    q: "Is TrueYoke available on iPhone?",
+    a: "Not yet. We're in early testing on Android first, with a signed build straight from our build pipeline ahead of an official Play Store listing. iOS is coming soon.",
   },
 ];
 
@@ -74,6 +108,18 @@ function Section({
   );
 }
 
+// Small ornamental rule used between major page sections. Purely decorative
+// (aria-hidden), so it never interrupts screen-reader flow between headings.
+export function OrnamentalDivider() {
+  return (
+    <div className="flex items-center justify-center gap-3 py-1" aria-hidden="true">
+      <Separator className="w-10 bg-app-accent/40 sm:w-14" />
+      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-app-accent/60" />
+      <Separator className="w-10 bg-app-accent/40 sm:w-14" />
+    </div>
+  );
+}
+
 type PhotoCredit = {
   name: string;
   profileUrl: string;
@@ -85,11 +131,13 @@ function SunlitImage({
   alt,
   className = "",
   credit,
+  ratio,
 }: {
   src: string;
   alt: string;
   className?: string;
   credit?: PhotoCredit;
+  ratio?: number;
 }) {
   // Subtle parallax: the photo drifts a few percent slower than the page.
   const frameRef = useRef<HTMLDivElement>(null);
@@ -99,20 +147,31 @@ function SunlitImage({
   });
   const y = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
 
+  // Slightly oversized so the parallax drift never reveals empty space at
+  // the frame's top/bottom edge.
+  const photo = (
+    <motion.img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      style={{ y }}
+      className="h-[115%] w-full object-cover will-change-transform"
+    />
+  );
+
+  const frameClasses = `overflow-hidden rounded-2xl border border-app-accent/30 shadow-sm ${className}`;
+
   return (
     <figure className="m-0">
-      <div
-        ref={frameRef}
-        className={`h-56 w-full overflow-hidden rounded-2xl border border-app-accent/30 shadow-sm sm:h-72 ${className}`}
-      >
-        <motion.img
-          src={src}
-          alt={alt}
-          loading="lazy"
-          style={{ y }}
-          className="h-[115%] w-full object-cover will-change-transform"
-        />
-      </div>
+      {ratio ? (
+        <AspectRatio ref={frameRef} ratio={ratio} className={`w-full ${frameClasses}`}>
+          {photo}
+        </AspectRatio>
+      ) : (
+        <div ref={frameRef} className={`h-56 w-full sm:h-72 ${frameClasses}`}>
+          {photo}
+        </div>
+      )}
       {credit && (
         <figcaption className="mt-1 text-right text-xs text-app-ink/50">
           Photo by{" "}
@@ -162,7 +221,7 @@ export function WhoThisIsFor() {
         <SunlitImage
           src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=900&q=70"
           alt="Two people's silhouetted hands forming a heart shape against a warm sunset, a generic stock photo, not an actual TrueYoke member"
-          className="lg:h-80"
+          ratio={4 / 3}
         />
       </div>
     </Section>
@@ -191,26 +250,51 @@ export function WhatWeBelieve() {
   );
 }
 
+const JOIN_TABS = {
+  match: {
+    label: "Match",
+    body: "A single believer, marriage-minded, ready to be known: sharing your story, your values, your Life Verse, and, when you're ready, your voice.",
+  },
+  mentor: {
+    label: "Mentor",
+    body: "A pastor, elder, deacon, or other recognized church leader providing the kind of accountability a dating app can't fake.",
+  },
+} as const;
+
 export function TwoWaysToJoin() {
+  const [activeTab, setActiveTab] = useState<keyof typeof JOIN_TABS>("match");
+
   return (
     <Section eyebrow="Joining" title="Two ways to join" wide>
       <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-xl border border-app-accent/40 bg-app-surface p-4">
-            <h3 className="mb-1 font-serif text-base text-app-ink">Match</h3>
-            <p className="text-sm text-app-ink/70">
-              A single believer, marriage-minded, ready to be known: sharing your story, your
-              values, your Life Verse, and, when you're ready, your voice.
-            </p>
-          </div>
-          <div className="rounded-xl border border-app-accent/40 bg-app-surface p-4">
-            <h3 className="mb-1 font-serif text-base text-app-ink">Mentor</h3>
-            <p className="text-sm text-app-ink/70">
-              A pastor, elder, deacon, or other recognized church leader providing the kind of
-              accountability a dating app can't fake.
-            </p>
-          </div>
-        </div>
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as keyof typeof JOIN_TABS)}>
+          <TabsList className="mb-4 bg-app-muted">
+            {(Object.keys(JOIN_TABS) as Array<keyof typeof JOIN_TABS>).map((key) => (
+              <TabsTrigger
+                key={key}
+                value={key}
+                className="data-[state=active]:bg-app-primary data-[state=active]:text-app-on-primary"
+              >
+                {JOIN_TABS[key].label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {(Object.keys(JOIN_TABS) as Array<keyof typeof JOIN_TABS>).map((key) => (
+            <TabsContent key={key} value={key}>
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, ease: EASE_OUT }}
+                className="rounded-xl border border-app-accent/40 bg-app-surface p-4"
+              >
+                <h3 className="mb-1 font-serif text-base text-app-ink">
+                  {JOIN_TABS[key].label}
+                </h3>
+                <p className="text-sm text-app-ink/70">{JOIN_TABS[key].body}</p>
+              </motion.div>
+            </TabsContent>
+          ))}
+        </Tabs>
         <SunlitImage
           src="https://images.unsplash.com/photo-1592599457454-e6ace3370314?auto=format&fit=crop&w=900&q=70"
           alt="A Black man in a cap tenderly kissing a woman's forehead outdoors, a generic stock photo, not actual TrueYoke members"
@@ -254,6 +338,23 @@ export function TrustAndSafety() {
           </p>
         </div>
       </div>
+    </Section>
+  );
+}
+
+export function FAQ() {
+  return (
+    <Section eyebrow="Questions" title="Frequently asked questions">
+      <Accordion type="single" collapsible className="w-full">
+        {FAQS.map((item, i) => (
+          <AccordionItem key={item.q} value={`item-${i}`}>
+            <AccordionTrigger className="font-serif text-base text-app-ink hover:no-underline">
+              {item.q}
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-app-ink/70">{item.a}</AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </Section>
   );
 }
