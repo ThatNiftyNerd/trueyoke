@@ -13,7 +13,9 @@ import {
   WhatWeBelieve,
   TwoWaysToJoin,
   TrustAndSafety,
+  FAQ,
   GetTheApp,
+  OrnamentalDivider,
 } from "@/components/marketing/LandingSections";
 import { SUPABASE_URL } from "@/lib/supabase-env";
 
@@ -206,14 +208,21 @@ function Landing() {
           </RevealItem>
         </Reveal>
 
+        <OrnamentalDivider />
         <WhoThisIsFor />
+        <OrnamentalDivider />
         <div className="w-full bg-app-accent/15">
           <WhatWeBelieve />
         </div>
+        <OrnamentalDivider />
         <TwoWaysToJoin />
+        <OrnamentalDivider />
         <div className="w-full bg-app-accent/15">
           <TrustAndSafety />
         </div>
+        <OrnamentalDivider />
+        <FAQ />
+        <OrnamentalDivider />
         <div className="w-full bg-app-accent/10">
           <GetTheApp apkUrl={APK_DOWNLOAD_URL} />
         </div>
