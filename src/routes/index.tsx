@@ -115,7 +115,12 @@ function Landing() {
             className="absolute inset-0 h-full w-full object-cover will-change-transform"
             initial={{ scale: 1 }}
             animate={{ scale: 1.08 }}
-            transition={{ duration: 20, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut",
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-app-canvas/60 via-app-canvas/85 to-app-canvas" />
           <motion.div
@@ -125,7 +130,10 @@ function Landing() {
             animate="show"
           >
             <div className="max-w-sm space-y-3 sm:max-w-md lg:max-w-xl">
-              <motion.p variants={riseItem} className="text-sm uppercase tracking-widest text-app-on-accent">
+              <motion.p
+                variants={riseItem}
+                className="text-sm uppercase tracking-widest text-app-on-accent"
+              >
                 The TrueYoke Project
               </motion.p>
               <motion.h1
@@ -135,8 +143,8 @@ function Landing() {
                 Do not be unequally yoked.
               </motion.h1>
               <motion.p variants={riseItem} className="text-app-ink/70 sm:text-lg">
-                A marriage-minded space open to every Christian believer, for anyone ready to build a
-                wholesome relationship with another God-fearing individual.
+                A marriage-minded space open to every Christian believer, for anyone ready to build
+                a wholesome relationship with another God-fearing individual.
               </motion.p>
             </div>
             <motion.div
@@ -189,8 +197,8 @@ function Landing() {
         <Reveal as="section" className="w-full bg-app-surface px-6 py-14">
           <RevealItem className="mx-auto max-w-xl text-center">
             <p className="font-serif text-lg italic text-app-ink sm:text-xl">
-              "Do not be unequally yoked with unbelievers. For what partnership has righteousness with
-              lawlessness? Or what fellowship has light with darkness?"
+              "Do not be unequally yoked with unbelievers. For what partnership has righteousness
+              with lawlessness? Or what fellowship has light with darkness?"
             </p>
             <p className="mt-3 text-xs uppercase tracking-widest text-app-ink/50">
               2 Corinthians 6:14
