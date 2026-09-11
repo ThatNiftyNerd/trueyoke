@@ -4,23 +4,28 @@ import { Reveal, RevealItem, riseItem, EASE_OUT } from "./motion";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 /**
-* Presentational content sections for the public "/" landing page. Split out
-* of src/routes/index.tsx to keep that route file small — nothing here reads
-* auth state or makes network calls; it's pure marketing copy plus the two
-* external download links.
-*
-* Photos are hotlinked from Unsplash (royalty-free, no attribution required)
-* and are intentionally generic/stock — never real TrueYoke member photos,
-* consistent with the product's policy of never surfacing real member photos
-* pre-match. Alt text says so explicitly for screen-reader users.
-*
-* Motion lives in ./motion.tsx and is scroll-triggered once per section; the
-* page-level <MotionConfig reducedMotion="user"> makes all of it respect the
-* visitor's OS reduce-motion preference.
-*/
+ * Presentational content sections for the public "/" landing page. Split out
+ * of src/routes/index.tsx to keep that route file small — nothing here reads
+ * auth state or makes network calls; it's pure marketing copy plus the two
+ * external download links.
+ *
+ * Photos are hotlinked from Unsplash (royalty-free, no attribution required)
+ * and are intentionally generic/stock — never real TrueYoke member photos,
+ * consistent with the product's policy of never surfacing real member photos
+ * pre-match. Alt text says so explicitly for screen-reader users.
+ *
+ * Motion lives in ./motion.tsx and is scroll-triggered once per section; the
+ * page-level <MotionConfig reducedMotion="user"> makes all of it respect the
+ * visitor's OS reduce-motion preference.
+ */
 
 const BELIEFS = [
   {
@@ -287,9 +292,7 @@ export function TwoWaysToJoin() {
                 transition={{ duration: 0.35, ease: EASE_OUT }}
                 className="rounded-xl border border-app-accent/40 bg-app-surface p-4"
               >
-                <h3 className="mb-1 font-serif text-base text-app-ink">
-                  {JOIN_TABS[key].label}
-                </h3>
+                <h3 className="mb-1 font-serif text-base text-app-ink">{JOIN_TABS[key].label}</h3>
                 <p className="text-sm text-app-ink/70">{JOIN_TABS[key].body}</p>
               </motion.div>
             </TabsContent>
