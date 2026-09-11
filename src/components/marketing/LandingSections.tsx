@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Reveal, RevealItem, riseItem } from "./motion";
 
 /**
  * Presentational content sections for the public "/" landing page. Split out
@@ -10,6 +12,10 @@ import type { ReactNode } from "react";
  * and are intentionally generic/stock — never real TrueYoke member photos,
  * consistent with the product's policy of never surfacing real member photos
  * pre-match. Alt text says so explicitly for screen-reader users.
+ *
+ * Motion lives in ./motion.tsx and is scroll-triggered once per section; the
+ * page-level <MotionConfig reducedMotion="user"> makes all of it respect the
+ * visitor's OS reduce-motion preference.
  */
 
 const BELIEFS = [
@@ -47,17 +53,24 @@ function Section({
   wide?: boolean;
 }) {
   return (
-    <section
+    <Reveal
+      as="section"
       className={`mx-auto w-full px-6 py-12 sm:py-14 lg:px-10 ${wide ? "max-w-5xl" : "max-w-2xl"}`}
     >
-      <p className="mb-2 text-center text-xs font-medium uppercase tracking-widest text-app-on-accent">
+      <motion.p
+        variants={riseItem}
+        className="mb-2 text-center text-xs font-medium uppercase tracking-widest text-app-on-accent"
+      >
         {eyebrow}
-      </p>
-      <h2 className="mb-6 text-center font-serif text-2xl font-semibold text-app-ink sm:text-3xl">
+      </motion.p>
+      <motion.h2
+        variants={riseItem}
+        className="mb-6 text-center font-serif text-2xl font-semibold text-app-ink sm:text-3xl"
+      >
         {title}
-      </h2>
-      {children}
-    </section>
+      </motion.h2>
+      <RevealItem>{children}</RevealItem>
+    </Reveal>
   );
 }
 
@@ -78,14 +91,28 @@ function SunlitImage({
   className?: string;
   credit?: PhotoCredit;
 }) {
+  // Subtle parallax: the photo drifts a few percent slower than the page.
+  const frameRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: frameRef,
+    offset: ["start end", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
+
   return (
     <figure className="m-0">
-      <img
-        src={src}
-        alt={alt}
-        loading="lazy"
-        className={`h-56 w-full rounded-2xl border border-app-accent/30 object-cover shadow-sm sm:h-72 ${className}`}
-      />
+      <div
+        ref={frameRef}
+        className={`h-56 w-full overflow-hidden rounded-2xl border border-app-accent/30 shadow-sm sm:h-72 ${className}`}
+      >
+        <motion.img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          style={{ y }}
+          className="h-[115%] w-full object-cover will-change-transform"
+        />
+      </div>
       {credit && (
         <figcaption className="mt-1 text-right text-xs text-app-ink/50">
           Photo by{" "}
@@ -147,13 +174,17 @@ export function WhatWeBelieve() {
     <Section eyebrow="What we believe" title="Five convictions shape how this works" wide>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {BELIEFS.map((b) => (
-          <div
+          <motion.div
             key={b.title}
-            className="rounded-xl border border-app-accent/40 bg-app-surface p-4 shadow-sm"
+            tabIndex={0}
+            whileHover={{ y: -6, boxShadow: "0 18px 40px -18px var(--app-accent)" }}
+            whileFocus={{ y: -6, boxShadow: "0 18px 40px -18px var(--app-accent)" }}
+            transition={{ type: "spring", stiffness: 260, damping: 22 }}
+            className="rounded-xl border border-app-accent/40 bg-app-surface p-4 shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-app-accent"
           >
             <h3 className="mb-1 font-serif text-base text-app-on-accent">{b.title}</h3>
             <p className="text-sm text-app-ink/70">{b.body}</p>
-          </div>
+          </motion.div>
         ))}
       </div>
     </Section>
@@ -254,13 +285,16 @@ export function GetTheApp({ apkUrl }: { apkUrl: string }) {
           We're in early testing. This is a signed build straight from our build pipeline, ahead of
           an official Play Store listing.
         </p>
-        <a
+        <motion.a
           href={apkUrl}
+          whileHover={{ y: -2 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
           className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-app-accent bg-app-surface px-6 py-3 text-center font-medium text-app-on-accent transition-colors hover:bg-app-accent/10"
         >
           <AndroidLogo className="h-5 w-5 shrink-0" />
           Download the Android APK (testing build)
-        </a>
+        </motion.a>
         <div className="flex items-center justify-center gap-2 text-sm text-app-ink/50">
           <span className="flex items-center gap-1.5 rounded-full border border-app-accent/40 px-3 py-1">
             <AppleLogo className="h-4 w-4 shrink-0" />
