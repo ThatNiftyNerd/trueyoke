@@ -8,8 +8,7 @@
 //    direct mentor request — an invite is just a vouchers row with
 //    mentor_id = NULL, so it counts toward the same 7-request cap for free.
 //  - `service` (service-role key) is only used for the email_send_log
-//    writes, which are intentionally restricted to service_role
-//    writes are intentionally restricted to service_role.
+//    writes, which are intentionally restricted to service_role.
 //
 // The invitation email itself is sent through Lovable's managed email API via
 // the shared send helper (sender identity is configured there).
