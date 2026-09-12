@@ -9,7 +9,7 @@
 //    mentor_id = NULL, so it counts toward the same 7-request cap for free.
 //  - `service` (service-role key) is only used for the email_send_log
 //    writes, which are intentionally restricted to service_role
-//    (see 20260802185905_email_infra.sql).
+//    writes are intentionally restricted to service_role.
 //
 // The invitation email itself is sent through Lovable's managed email API via
 // the shared send helper (sender identity is configured there).
