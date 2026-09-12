@@ -7,9 +7,12 @@
 //    `enforce_voucher_request_cap()` trigger apply exactly as they do for a
 //    direct mentor request — an invite is just a vouchers row with
 //    mentor_id = NULL, so it counts toward the same 7-request cap for free.
-//  - `service` (service-role key) is only used for enqueue_email /
-//    email_send_log, which are intentionally restricted to service_role
+//  - `service` (service-role key) is only used for the email_send_log
+//    writes, which are intentionally restricted to service_role
 //    (see 20260802185905_email_infra.sql).
+//
+// The invitation email itself is sent through Lovable's managed email API via
+// the shared send helper (sender identity is configured there).
 //
 // WhatsApp is scaffolded (invite_channel column, invitee_phone column) but
 // gated off here until Meta Business verification + template approval are
@@ -18,9 +21,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { buildCorsHeaders } from "../_shared/cors.ts";
 import { sendTemplateEmail } from "../_shared/transactional-email-templates/send-email.ts";
 
-const SITE_NAME = "trueyoke";
-const FROM_DOMAIN = "trueyoke.app";
-const SENDER_DOMAIN = "notify.trueyoke.app";
+const SITE_NAME = "TrueYoke";
 const ROOT_DOMAIN = "trueyoke.app";
 const NOTE_MAX = 250;
 const EMAIL_MAX = 254;
