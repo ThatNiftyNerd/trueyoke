@@ -127,70 +127,34 @@ Deno.serve(async (req) => {
   }
 
   const inviteUrl = `https://${ROOT_DOMAIN}/invite/mentor?token=${inviteToken}`;
-  const html = await renderAsync(
-    React.createElement(MentorInviteEmail, {
-      siteName: SITE_NAME,
-      inviterName,
-      note: note || null,
-      inviteUrl,
-    }),
-  );
-  const text = await renderAsync(
-    React.createElement(MentorInviteEmail, {
-      siteName: SITE_NAME,
-      inviterName,
-      note: note || null,
-      inviteUrl,
-    }),
-    { plainText: true },
-  );
 
   const service = createClient(supabaseUrl, serviceKey);
   const messageId = crypto.randomUUID();
 
-  await service.from("email_send_log").insert({
-    message_id: messageId,
-    template_name: "mentor_invite",
-    recipient_email: email,
-    status: "pending",
-  });
+  try {
+    const result = await sendTemplateEmail("mentor-invite", email, {
+      templateData: { siteName: SITE_NAME, inviterName, note: note || null, inviteUrl },
+      idempotencyKey: messageId,
+    });
 
-  const { error: enqueueError } = await service.rpc("enqueue_email", {
-    queue_name: "transactional_emails",
-    payload: {
-      // No run_id: that field ties an email to a specific Lovable AI run
-      // (e.g. the auth-hook webhook event that triggered it) and is
-      // rejected with "run_not_found" if set to anything else -- it's
-      // optional in EmailSendRequest and correctly absent for a
-      // plain app-triggered transactional send like this one. The API
-      // does require ONE of run_id / idempotency_key though, so a plain
-      // app-triggered send must supply idempotency_key alongside
-      // purpose: "transactional" instead (confirmed via the live 400
-      // error: "App emails can omit run_id by providing idempotency_key
-      // with purpose=transactional").
+    const { error: logError } = await service.from("email_send_log").insert({
       message_id: messageId,
-      idempotency_key: messageId,
-      to: email,
-      from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
-      sender_domain: SENDER_DOMAIN,
-      subject: `${inviterName} invited you to be their TrueYoke mentor`,
-      html,
-      text,
-      purpose: "transactional",
-      label: "mentor_invite",
-      queued_at: new Date().toISOString(),
-    },
-  });
-
-  if (enqueueError) {
-    console.error("invite-mentor: enqueue failed", enqueueError);
-    await service.from("email_send_log").insert({
+      template_name: "mentor_invite",
+      recipient_email: email,
+      status: result.sent ? "sent" : "suppressed",
+    });
+    if (logError) console.error("invite-mentor: email_send_log insert failed", logError);
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error("invite-mentor: send failed", errorMsg);
+    const { error: logError } = await service.from("email_send_log").insert({
       message_id: messageId,
       template_name: "mentor_invite",
       recipient_email: email,
       status: "failed",
-      error_message: "Failed to enqueue email",
+      error_message: errorMsg.slice(0, 1000),
     });
+    if (logError) console.error("invite-mentor: email_send_log insert failed", logError);
     // The vouchers row (and its cap slot) stays in place — the invite exists
     // and its link is valid even though the notification email didn't go
     // out; surfacing this as an error tells the sender to try again rather
