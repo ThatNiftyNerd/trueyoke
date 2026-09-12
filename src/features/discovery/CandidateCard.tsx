@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MoreVertical } from "lucide-react";
+import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +26,12 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
   const canLike = !candidate.voiceIntroSignedUrl || hasPlayedVoice;
 
   return (
-    <Card className="w-full max-w-sm overflow-hidden border-app-ink/20 bg-card">
+    <motion.div
+      className="w-full max-w-sm rounded-lg transition-shadow hover:shadow-xl focus-within:shadow-xl"
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.24, ease: "easeOut" }}
+    >
+    <Card className="w-full overflow-hidden border-app-ink/20 bg-card">
       <div className="relative aspect-[4/5] w-full bg-app-canvas">
         <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-app-accent/20">
           <span className="font-serif text-6xl text-app-ink/60">
@@ -127,5 +133,6 @@ export function CandidateCard({ candidate, onLike, onPass, onReport, onBlock, bu
         ) : null}
       </div>
     </Card>
+    </motion.div>
   );
 }
