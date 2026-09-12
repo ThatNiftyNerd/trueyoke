@@ -14,11 +14,9 @@
 // WhatsApp is scaffolded (invite_channel column, invitee_phone column) but
 // gated off here until Meta Business verification + template approval are
 // done and META_WHATSAPP_TOKEN / META_WHATSAPP_PHONE_NUMBER_ID secrets exist.
-import * as React from "npm:react@18.3.1";
-import { renderAsync } from "npm:@react-email/components@0.0.22";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { buildCorsHeaders } from "../_shared/cors.ts";
-import { MentorInviteEmail } from "../_shared/email-templates/mentor-invite.tsx";
+import { sendTemplateEmail } from "../_shared/transactional-email-templates/send-email.ts";
 
 const SITE_NAME = "trueyoke";
 const FROM_DOMAIN = "trueyoke.app";
