@@ -5,6 +5,7 @@ import { ACTIVE_MATCH_CAP, MATCH_EXPIRY_HOURS } from "@/lib/constants";
 import { listOwnMatches, type MatchListItem } from "@/features/matches/api";
 import { partitionByStatus } from "@/features/matches/logic";
 import { MatchRow } from "@/features/matches/MatchRow";
+import { AppReveal, AppRevealItem } from "@/components/app/motion";
 
 export const Route = createFileRoute("/app/matches")({
   // Defensive: mentors have no Matches tab, so bounce them to Discover.
@@ -47,22 +48,29 @@ function MatchesScreen() {
 
   return (
     <section className="flex flex-col px-4 pb-8">
-      <header className="mb-4">
-        <h1 className="font-serif text-2xl text-app-ink">Matches</h1>
-        <p className={`mt-1 text-sm ${atCap ? "text-app-warn font-medium" : "text-app-warn"}`}>
-          <span className="font-mono tabular-nums">{activeCount}</span> of{" "}
-          <span className="font-mono tabular-nums">{ACTIVE_MATCH_CAP}</span> active conversations
-          {atCap ? " — cap reached" : ""}
-        </p>
-      </header>
+      <AppReveal>
+        <AppRevealItem>
+          <header className="mb-4">
+            <h1 className="font-serif text-2xl text-app-ink">Matches</h1>
+            <p
+              className={`mt-1 text-sm ${atCap ? "text-app-warn font-medium" : "text-app-warn"}`}
+            >
+              <span className="font-mono tabular-nums">{activeCount}</span> of{" "}
+              <span className="font-mono tabular-nums">{ACTIVE_MATCH_CAP}</span> active conversations
+              {atCap ? " — cap reached" : ""}
+            </p>
+          </header>
+        </AppRevealItem>
 
-      {error ? (
-        <p className="mb-4 rounded border border-app-warn/40 bg-card/60 p-3 text-sm text-app-warn">
-          {error}
-        </p>
-      ) : null}
+        {error ? (
+          <AppRevealItem>
+            <p className="mb-4 rounded border border-app-warn/40 bg-card/60 p-3 text-sm text-app-warn">
+              {error}
+            </p>
+          </AppRevealItem>
+        ) : null}
 
-      <div className="mb-6">
+      <AppRevealItem className="mb-6">
         <h2 className="mb-2 text-xs uppercase tracking-wider text-app-ink/60">Active</h2>
         {items === null ? (
           <SectionSkeleton />
@@ -77,9 +85,9 @@ function MatchesScreen() {
             ))}
           </div>
         )}
-      </div>
+      </AppRevealItem>
 
-      <div>
+      <AppRevealItem>
         <h2 className="mb-2 text-xs uppercase tracking-wider text-app-ink/60">Expired</h2>
         {items === null ? (
           <SectionSkeleton />
@@ -92,7 +100,8 @@ function MatchesScreen() {
             ))}
           </div>
         )}
-      </div>
+      </AppRevealItem>
+      </AppReveal>
     </section>
   );
 }
