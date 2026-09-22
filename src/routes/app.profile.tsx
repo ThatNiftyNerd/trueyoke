@@ -73,7 +73,10 @@ function ProfileScreen() {
           <div className="mx-auto h-24 w-24 rounded-full bg-app-accent/20" aria-hidden="true" />
         )}
         <h1 className="mt-3 font-serif text-2xl text-app-ink">Your profile</h1>
-        {profile?.church_verified ? (
+        {/* Church verification is a Mentor-only function (a Mentor's endorsement
+            covers this for Matches, on top of what a Match already submits at
+            signup) — the badge only ever means something for a Mentor account. */}
+        {profile?.account_type === "mentor" && profile?.church_verified ? (
           <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-app-accent/15 px-2.5 py-1 text-xs font-medium text-app-on-accent">
             Church Verified
           </span>
@@ -96,7 +99,7 @@ function ProfileScreen() {
         >
           Verify your ID
         </Link>
-        {!profile?.church_verified ? (
+        {profile?.account_type === "mentor" && !profile?.church_verified ? (
           <Link
             to="/verify-church"
             className="block rounded-md border border-app-accent bg-app-accent/10 px-4 py-3 text-center text-sm font-medium text-app-ink"

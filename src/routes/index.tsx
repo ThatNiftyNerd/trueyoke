@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, MotionConfig } from "framer-motion";
-import { redirectIfSignedIn } from "@/features/auth/guards";
+import { redirectIfSignedIn, redirectNativeAnonymousToAuth } from "@/features/auth/guards";
 import { CopyrightNotice } from "@/components/app/CopyrightNotice";
 import { SocialLinks } from "@/components/marketing/SocialLinks";
 import { BrandLockup } from "@/components/marketing/BrandLockup";
@@ -40,8 +40,13 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  // Public welcome screen; signed-in users go straight to the app.
-  beforeLoad: () => redirectIfSignedIn(),
+  // Public welcome screen; signed-in users go straight to the app. Native
+  // (installed APK) visitors skip this marketing page entirely when
+  // signed out — see redirectNativeAnonymousToAuth for why.
+  beforeLoad: async () => {
+    await redirectNativeAnonymousToAuth();
+    await redirectIfSignedIn();
+  },
   component: Landing,
 });
 

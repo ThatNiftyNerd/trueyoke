@@ -1,9 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { requireAuth } from "@/features/auth/guards";
-import { getChurchVerification, submitChurchVerification } from "@/features/profile/api";
+import {
+  getChurchVerification,
+  getOwnProfile,
+  submitChurchVerification,
+} from "@/features/profile/api";
 import type { Database } from "@/integrations/supabase/types";
 
 type ChurchStatus = Database["public"]["Enums"]["church_verification_status"] | "none";
@@ -23,7 +27,18 @@ export const Route = createFileRoute("/verify-church")({
       },
     ],
   }),
-  beforeLoad: requireAuth,
+  // Church verification is a Mentor-only function: a Mentor's endorsement of
+  // a Match already covers verification, on top of what a Match submits at
+  // signup, so a Match account has no reason to be on this screen. Grandfathered:
+  // this only blocks a Match from starting a *new* submission going forward — an
+  // existing verified/pending row for a Match account, if one somehow exists, is
+  // left untouched (see the matching RLS tightening in the church_verifications
+  // migration, which is the real enforcement boundary; this is defense-in-depth).
+  beforeLoad: async () => {
+    await requireAuth();
+    const profile = await getOwnProfile().catch(() => null);
+    if (profile?.account_type === "match") throw redirect({ to: "/app/profile" });
+  },
   component: VerifyChurchScreen,
 });
 
