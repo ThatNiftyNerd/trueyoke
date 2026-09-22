@@ -1,0 +1,26 @@
+-- ============================================================================
+-- Close a gap left by 20260819000000_own_profile_rpc_and_column_grants.sql:
+-- full_name was not included in that migration's column-SELECT restriction,
+-- so anon and authenticated retained table-wide SELECT on it even though
+-- it's exactly the kind of column that migration was written to lock down
+-- (a real/legal name, not the public-facing display_name shown in
+-- discovery). RLS on profiles allows any authenticated caller to read any
+-- non-blocked profile row (profiles_read), and grants are not row-aware, so
+-- any signed-in member could read any other member's full_name via a
+-- crafted select= parameter — flagged by Lovable's pre-publish security scan
+-- (2026-09-13) and confirmed live against production before this migration
+-- was written.
+--
+-- Already applied directly against production ahead of this migration
+-- landing (see chat history 2026-09-13) because the finding blocked
+-- publishing and is a live PII exposure; this file exists to keep the
+-- tracked migration history in sync with that hotfix. The REVOKE is
+-- idempotent, so re-applying it here is safe.
+--
+-- No app-code changes needed: src/features/profile/api.ts
+-- getOnboardingProfile() already reads full_name via get_own_profile_full()
+-- (the same self-scoped SECURITY DEFINER RPC added in the Aug 19 migration),
+-- not a direct table select — confirmed no client code path selects
+-- full_name from the base table for anyone other than the caller's own row.
+-- ============================================================================
+revoke select (full_name) on public.profiles from anon, authenticated;
