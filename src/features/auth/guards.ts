@@ -6,6 +6,7 @@
  * the session auto-restore module) — no extra auth context provider.
  */
 import { redirect } from "@tanstack/react-router";
+import { Capacitor } from "@capacitor/core";
 import { getCurrentSession } from "./api";
 import { isRecoveryRedirect } from "./recovery-detect";
 import { getOwnProfile } from "@/features/profile/api";
@@ -44,6 +45,24 @@ export async function requireCompleteProfile(): Promise<void> {
   if (!profile.profile_complete) {
     throw redirect({ to: "/onboarding" });
   }
+}
+
+/**
+ * Native-only: "/" is TrueYoke's public marketing/welcome page, shared
+ * verbatim with the trueyoke.app website (same bundle, same route). That's
+ * the right default for a browser tab, but an installed APK has no reason
+ * to ever show marketing copy, an APK download button, or outbound social
+ * links to someone who already has the app open — it reads as "this app
+ * just wraps the website" instead of a standalone product. A signed-out
+ * native visitor is sent straight to sign-in/sign-up instead; a signed-in
+ * native visitor is unaffected (redirectIfSignedIn already moves them
+ * along). Web (browser) visitors never hit this — Capacitor.isNativePlatform()
+ * is false there — so trueyoke.app's own landing page is untouched.
+ */
+export async function redirectNativeAnonymousToAuth(): Promise<void> {
+  if (!Capacitor.isNativePlatform()) return;
+  const session = await getCurrentSession();
+  if (!session) throw redirect({ to: "/auth" });
 }
 
 /**
