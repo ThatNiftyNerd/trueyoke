@@ -34,8 +34,19 @@ jobs:
           distribution: temurin
           java-version: "21"
 
+      # Google removed the legacy standalone "tools" package from the SDK
+      # repository; android-actions/setup-android@v3 still requests it by
+      # default and fails the whole job with "Failed to find package
+      # 'tools'" / sdkmanager exit code 1 even though nothing in this
+      # workflow needs it. Gradle resolves build-tools/platforms itself via
+      # its own SDK auto-download once ANDROID_HOME and licenses are in
+      # place, so pinning the explicit package list to platform-tools (which
+      # this action does still install correctly) skips the broken default
+      # install without losing anything the build actually uses.
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: "platform-tools"
 
       # The native Android project is already committed (Lovable manages it
       # directly), so this syncs the fresh web build into it rather than
@@ -134,4 +145,3 @@ jobs:
             -H "Content-Type: application/vnd.android.package-archive" \
             --data-binary @android/app/build/outputs/apk/release/app-release.apk \
             "${{ steps.apk_upload_urls.outputs.archived_signed_url }}"
-
