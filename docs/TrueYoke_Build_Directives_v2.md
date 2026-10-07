@@ -116,12 +116,13 @@ Flag and fix on sight: duplicate fetch logic for the same table in two+ files; c
 - `npm test` (unit tests for `features/*/logic.ts` — circuit breaker, expiry, match-eligibility logic; these are the only pieces of client logic with real branching, so they're the only ones that must have tests before this deadline)
 - `npm run build` (Vite production build — catches anything that only worked in Lovable's dev preview)
 
-**`android-build.yml`** — runs on push to `main` (or manually dispatched). **This is where the native Android build actually happens** — Lovable's own sandbox has no Android SDK/Gradle/JDK/emulator and cannot produce an APK; its job ends at a verified static, Capacitor-syncable `dist/` (SPA mode on, no SSR — see §0). This workflow picks up from there:
-- Checkout → `npm ci` (or `bun install`, matching whatever Lovable's TanStack Start scaffold uses) → `npm run build` (SPA-mode static build)
-- `npx cap sync android`
-- Set up JDK + Android SDK (via `android-actions/setup-android`)
-- `./gradlew assembleDebug` always runs, producing `yoked-debug-apk`. `./gradlew assembleRelease` also runs whenever the `ANDROID_RELEASE_KEYSTORE_BASE64` secret is present, producing a properly signed `yoked-release-apk` — this is the artifact that should be distributed for testing/sideloading. If release secrets aren't configured on a fork, the release steps are skipped automatically and the debug build still succeeds.
-- Upload the `.apk` as a workflow artifact (and optionally to a GitHub Release) so it's downloadable without a local build
+**`android-build.yml`** — runs on push to `main` (or manually dispatched). **This is where the native Android build actually happens** — Lovable's own sandbox has no Android SDK/Gradle/JDK/emulator and cannot produce an APK; its job ends at a verified static, Capacitor-syncable `dist/` (SPA mode on, no SSR — see §0). This workflow enforces a mandatory two-stage pipeline:
+- **Stage 1 (Quality Gate):** Checks out code, installs dependencies with pinned Bun, runs ESLint (`bunx eslint .`), compiles static Vite web bundle, and verifies strict TypeScript (`bunx tsc --noEmit`). If any check fails, the workflow terminates immediately.
+- **Stage 2 (`build-apk`, depends on Stage 1):**
+  - `npx cap sync android`
+  - Set up JDK + Android SDK (via `android-actions/setup-android`)
+  - `./gradlew assembleDebug` always runs, producing `yoked-debug-apk`. `./gradlew assembleRelease` also runs whenever the `ANDROID_RELEASE_KEYSTORE_BASE64` secret is present, producing a properly signed `yoked-release-apk` — this is the artifact that should be distributed for testing/sideloading.
+  - Upload the `.apk` as a workflow artifact and, if manifest secrets are configured, publish the release manifest and upload the APK to the public releases storage bucket.
 
 This is the whole CI/CD system: **GitHub Actions is both your quality gate and your build server.** No separate build service needed. If you want a faster local smoke test before pushing, running the same `cap sync` → `./gradlew assembleDebug` steps in **Android Studio** is equivalent and fine — but the GitHub Actions run is the canonical, reproducible build of record.
 
