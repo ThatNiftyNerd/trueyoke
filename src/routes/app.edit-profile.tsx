@@ -154,6 +154,7 @@ function EditProfileScreen() {
               onNext={() => closeSection(active.title)}
               onBack={() => closeSection()}
               canGoBack
+              required={isMentor}
             />
           )}
           {active.key === "bio" && <BioStep {...stepProps} />}
@@ -196,7 +197,7 @@ function EditProfileScreen() {
               <p className="mb-3 text-xs text-app-ink/60">
                 Match accounts use a live selfie instead of a photo gallery.
               </p>
-              <SelfieCapture />
+              <SelfieCapture embedded />
             </div>
           ) : null}
 

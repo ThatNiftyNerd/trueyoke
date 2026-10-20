@@ -3,20 +3,9 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { getCurrentSession } from "@/features/auth/api";
 import { getOwnProfile } from "@/features/profile/api";
-import { claimMentorInvite } from "@/features/vouchers/api";
+import { claimMentorInvite, INVITE_TOKEN_STORAGE_KEY } from "@/features/vouchers/api";
 
-/**
- * Persisted so the token survives the signup -> email-confirmation ->
- * first-sign-in round trip on the same device (mirrors the general shape of
- * the account_type/display_name-at-signup problem this codebase already
- * solves elsewhere, but via localStorage rather than user_metadata since
- * this route -- unlike the auth screen -- is reachable before any account
- * exists at all). Read by the router's global auth listener, which attempts
- * the claim as soon as a session appears; also read directly here so a
- * visitor who is *already* signed in as a Mentor can claim immediately
- * without a round trip through signup at all.
- */
-export const INVITE_TOKEN_STORAGE_KEY = "ty_pending_mentor_invite";
+export { INVITE_TOKEN_STORAGE_KEY };
 
 type InviteSearch = { token?: string };
 

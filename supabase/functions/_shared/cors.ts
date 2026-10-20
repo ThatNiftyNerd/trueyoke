@@ -7,6 +7,9 @@
 export const ALLOWED_ORIGINS = [
   "https://trueyoke.app",
   "https://superad.trueyoke.app",
+  // Capacitor native WebView origins (Android uses https://localhost, iOS uses capacitor://localhost).
+  "https://localhost",
+  "capacitor://localhost",
 ] as const;
 
 const BASE_HEADERS: Record<string, string> = {

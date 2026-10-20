@@ -4,7 +4,11 @@
  */
 import { useEffect, useState } from "react";
 import { VoucherRequestItem } from "@/features/vouchers/VoucherRequestItem";
-import { confirmAndEndorse, listOwnEndorsedVouchers } from "@/features/vouchers/api";
+import {
+  confirmAndEndorse,
+  listOwnEndorsedVouchers,
+  tryClaimPendingMentorInvite,
+} from "@/features/vouchers/api";
 import type { EndorsedVoucher } from "@/features/vouchers/api";
 import {
   getMentorActivity,
@@ -24,6 +28,7 @@ export function MentorLedger() {
     let alive = true;
     (async () => {
       try {
+        await tryClaimPendingMentorInvite();
         const [activity, approved] = await Promise.all([
           getMentorActivity(),
           listOwnEndorsedVouchers(),

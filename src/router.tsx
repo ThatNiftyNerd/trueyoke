@@ -5,8 +5,7 @@ import { onAuthChange } from "@/features/auth/api";
 import { markRecoveryRedirect } from "@/features/auth/recovery-detect";
 import { restoreSession, startForegroundSessionRefresh } from "@/features/auth/session";
 import { SplashScreen } from "@/features/auth/SplashScreen";
-import { INVITE_TOKEN_STORAGE_KEY } from "@/routes/invite.mentor";
-import { claimMentorInvite } from "@/features/vouchers/api";
+import { tryClaimPendingMentorInvite } from "@/features/vouchers/api";
 
 export const getRouter = () => {
   const queryClient = new QueryClient();
@@ -91,24 +90,7 @@ export const getRouter = () => {
     // expired, or this is an unrelated sign-in) should never block or
     // surface an error here.
     if (event === "SIGNED_IN") {
-      let pendingToken: string | null = null;
-      try {
-        pendingToken = localStorage.getItem(INVITE_TOKEN_STORAGE_KEY);
-      } catch {
-        pendingToken = null;
-      }
-      if (pendingToken) {
-        try {
-          localStorage.removeItem(INVITE_TOKEN_STORAGE_KEY);
-        } catch {
-          /* noop */
-        }
-        void claimMentorInvite(pendingToken).catch(() => {
-          // Silent: /invite/mentor itself surfaces a real error message if
-          // the visitor is looking at it when this fails; a background
-          // attempt after an unrelated sign-in should not.
-        });
-      }
+      void tryClaimPendingMentorInvite();
     }
   });
 

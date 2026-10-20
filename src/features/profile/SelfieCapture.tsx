@@ -8,12 +8,22 @@ import {
 } from "@/features/profile/api";
 import { PHOTO_MAX_BYTES, extensionForImage } from "@/features/profile/logic";
 
+interface SelfieCaptureProps {
+  /**
+   * When rendered inside an already-bordered section (e.g. `EditProfileScreen`),
+   * omit the duplicate outer border and show a calm explanation when selfie
+   * capture is still locked behind the first active match.
+   */
+  embedded?: boolean;
+}
+
 /**
  * Live selfie capture for "match" accounts. Renders nothing until the member
- * has at least one active match — before that there is no camera UI at all.
- * A match keeps exactly one current photo (see `replaceOwnSelfie`).
+ * has at least one active match (unless `embedded` is true) — before that
+ * there is no camera UI at all. A match keeps exactly one current photo (see
+ * `replaceOwnSelfie`).
  */
-export function SelfieCapture() {
+export function SelfieCapture({ embedded = false }: SelfieCaptureProps = {}) {
   const [loading, setLoading] = useState(true);
   const [eligible, setEligible] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,12 +84,22 @@ export function SelfieCapture() {
     }
   }
 
-  if (loading) return null;
-  if (!eligible) return null;
+  if (loading) {
+    return embedded ? <p className="text-xs text-app-ink/60">Checking match status…</p> : null;
+  }
+  if (!eligible) {
+    return embedded ? (
+      <p className="text-xs text-app-ink/60">
+        Live selfie capture unlocks once you have an active match.
+      </p>
+    ) : null;
+  }
 
   return (
-    <div className="rounded-md border border-app-ink/20 px-4 py-3 text-left">
-      <h2 className="text-sm font-medium text-app-ink">Your photo</h2>
+    <div
+      className={embedded ? "text-left" : "rounded-md border border-app-ink/20 px-4 py-3 text-left"}
+    >
+      {!embedded ? <h2 className="text-sm font-medium text-app-ink">Your photo</h2> : null}
 
       <div className="mt-2 h-28 w-28 overflow-hidden rounded-md border border-app-ink/10 bg-app-primary/5">
         {previewUrl ? (

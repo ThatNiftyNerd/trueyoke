@@ -38,13 +38,25 @@ function DiscoverRoute() {
   useEffect(() => {
     let alive = true;
     getOwnProfile()
-      .then((p) => alive && p && setAccountType(p.account_type as "match" | "mentor"))
-      .catch(() => undefined);
+      .then((p) => {
+        if (!alive) return;
+        setAccountType((p?.account_type as "match" | "mentor" | undefined) ?? "match");
+      })
+      .catch(() => {
+        if (alive) setAccountType("match");
+      });
     return () => {
       alive = false;
     };
   }, []);
 
+  if (accountType === null) {
+    return (
+      <section className="flex min-h-[calc(100dvh-6rem)] flex-col items-center justify-center px-4">
+        <p className="text-sm text-app-ink/60">Yoking…</p>
+      </section>
+    );
+  }
   if (accountType === "mentor") return <MentorLedger />;
   return <DiscoverScreen />;
 }
@@ -158,6 +170,7 @@ function DiscoverScreen() {
         ) : current ? (
           <>
             <CandidateCard
+              key={current.id}
               candidate={current}
               onLike={() => handleSwipe("like")}
               onPass={() => handleSwipe("pass")}

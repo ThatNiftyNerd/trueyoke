@@ -72,7 +72,9 @@ function ProfileScreen() {
         ) : (
           <div className="mx-auto h-24 w-24 rounded-full bg-app-accent/20" aria-hidden="true" />
         )}
-        <h1 className="mt-3 font-serif text-2xl text-app-ink">Your profile</h1>
+        <h1 className="mt-3 font-serif text-2xl text-app-ink">
+          {profile?.display_name?.trim() || "Your profile"}
+        </h1>
         {/* Church verification is a Mentor-only function (a Mentor's endorsement
             covers this for Matches, on top of what a Match already submits at
             signup) — the badge only ever means something for a Mentor account. */}
@@ -82,7 +84,11 @@ function ProfileScreen() {
           </span>
         ) : null}
         {email ? <p className="mt-1 text-sm text-app-ink/70">{email}</p> : null}
-        <p className="mt-1 text-sm text-app-ink/60">Not yet complete</p>
+        {profile ? (
+          <p className="mt-1 text-sm text-app-ink/60">
+            {profile.profile_complete ? "Profile complete" : "Not yet complete"}
+          </p>
+        ) : null}
       </header>
 
       <div className="space-y-3">

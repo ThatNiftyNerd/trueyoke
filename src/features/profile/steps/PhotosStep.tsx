@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { StepShell } from "./StepShell";
-import { getPhotoSignedUrl, listOwnPhotos, uploadOwnPhoto, type PhotoRow } from "../api";
+import {
+  deleteOwnPhoto,
+  getPhotoSignedUrl,
+  listOwnPhotos,
+  uploadOwnPhoto,
+  type PhotoRow,
+} from "../api";
 import { PHOTO_MAX_BYTES, PHOTO_MAX_COUNT, extensionForImage } from "../logic";
 
 interface Props {
@@ -49,11 +56,12 @@ export function PhotosStep({ onNext, onBack, canGoBack, required = false }: Prop
     setError(null);
     setBusy(true);
     try {
-      let position = photos.length;
+      const usedPositions = new Set(photos.map((p) => p.position));
+      let count = photos.length;
       const added: PhotoRow[] = [];
       const addedUrls: Record<string, string> = {};
       for (const file of files) {
-        if (position >= PHOTO_MAX_COUNT) {
+        if (count >= PHOTO_MAX_COUNT) {
           setError(`You can add up to ${PHOTO_MAX_COUNT} photos.`);
           break;
         }
@@ -66,18 +74,42 @@ export function PhotosStep({ onNext, onBack, canGoBack, required = false }: Prop
           setError("Each photo must be under 5 MB.");
           continue;
         }
+        let position = 0;
+        while (usedPositions.has(position)) {
+          position += 1;
+        }
         const row = await uploadOwnPhoto(file, ext, position);
+        usedPositions.add(position);
         added.push(row);
         const url = await getPhotoSignedUrl(row.storage_path);
         if (url) addedUrls[row.id] = url;
-        position += 1;
+        count += 1;
       }
       if (added.length) {
-        setPhotos((p) => [...p, ...added]);
+        setPhotos((p) => [...p, ...added].sort((a, b) => a.position - b.position));
         setPreviews((p) => ({ ...p, ...addedUrls }));
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleRemove = async (photo: PhotoRow) => {
+    if (busy) return;
+    setError(null);
+    setBusy(true);
+    try {
+      await deleteOwnPhoto(photo.id, photo.storage_path);
+      setPhotos((prev) => prev.filter((item) => item.id !== photo.id));
+      setPreviews((prev) => {
+        const next = { ...prev };
+        delete next[photo.id];
+        return next;
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not remove photo.");
     } finally {
       setBusy(false);
     }
@@ -117,7 +149,7 @@ export function PhotosStep({ onNext, onBack, canGoBack, required = false }: Prop
           {photos.map((p) => (
             <div
               key={p.id}
-              className="aspect-square overflow-hidden rounded-md border border-app-ink/10 bg-card/60"
+              className="relative aspect-square overflow-hidden rounded-md border border-app-ink/10 bg-card/60"
             >
               {previews[p.id] ? (
                 <img
@@ -128,6 +160,15 @@ export function PhotosStep({ onNext, onBack, canGoBack, required = false }: Prop
               ) : (
                 <div className="h-full w-full animate-pulse bg-app-primary/5" />
               )}
+              <button
+                type="button"
+                aria-label="Remove photo"
+                disabled={busy}
+                onClick={() => handleRemove(p)}
+                className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-app-primary/80 text-app-on-primary shadow-sm hover:bg-app-primary disabled:opacity-50"
+              >
+                <X className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
             </div>
           ))}
         </div>

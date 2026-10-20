@@ -9,6 +9,7 @@ import { Browser } from "@capacitor/browser";
 import { ACCOUNT_TYPES, type AccountType } from "@/lib/constants";
 import { peekSession, restoreSession, setCachedSession } from "./session";
 import { upsertMarketingConsent } from "@/features/marketing/api";
+import { tryClaimPendingMentorInvite } from "@/features/vouchers/api";
 
 /**
  * Deep link the OAuth provider redirects back to on Android. This is an
@@ -133,6 +134,8 @@ export async function signUpWithEmail(input: SignUpInput): Promise<void> {
       consented: input.marketingConsent === true,
       source: "signup",
     });
+
+    await tryClaimPendingMentorInvite();
   }
 }
 
@@ -171,6 +174,8 @@ export async function ensureProfileExists(input: EnsureProfileInput): Promise<vo
     display_name: input.displayName,
   });
   if (insErr) throw new Error(insErr.message);
+
+  await tryClaimPendingMentorInvite();
 }
 
 export async function signOut(): Promise<void> {
@@ -381,6 +386,8 @@ export async function ensureOAuthProfile(consent: OAuthConsentInput): Promise<vo
     consented,
     source: "signup",
   });
+
+  await tryClaimPendingMentorInvite();
 }
 
 /**

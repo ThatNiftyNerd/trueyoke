@@ -230,6 +230,12 @@ export async function inviteMentorByEmail(email: string, note: string): Promise<
 }
 
 /**
+ * Persisted so the token survives the signup -> email-confirmation ->
+ * first-sign-in round trip on the same device.
+ */
+export const INVITE_TOKEN_STORAGE_KEY = "ty_pending_mentor_invite";
+
+/**
  * Called once a newly-signed-up Mentor holds a valid invite token (see
  * `src/routes/invite.mentor.tsx`). Attaches the invite's voucher row to the
  * caller's account via the `claim_mentor_invite` SECURITY DEFINER RPC --
@@ -253,6 +259,60 @@ export async function claimMentorInvite(inviteToken: string): Promise<void> {
     throw new Error("You already have a request with this member.");
   }
   throw new Error(msg);
+}
+
+let claimInFlight: Promise<void> | null = null;
+
+/**
+ * Best-effort background claim for a pending mentor invite token stored in
+ * `localStorage`. Safe to call from `onAuthChange("SIGNED_IN")`, profile
+ * bootstrap (`signUpWithEmail`, `ensureProfileExists`, `ensureOAuthProfile`),
+ * and `MentorLedger` mount:
+ *  - If no `profiles` row exists yet (e.g. `SIGNED_IN` fired mid-signup before
+ *    the profile row is inserted) or the current user is not a Mentor, the
+ *    token is left in `localStorage` so the post-bootstrap call can claim it.
+ *  - Once a Mentor profile row exists, the token is removed from
+ *    `localStorage` and passed to `claimMentorInvite`.
+ */
+export async function tryClaimPendingMentorInvite(): Promise<void> {
+  if (claimInFlight) return claimInFlight;
+  claimInFlight = (async () => {
+    let pendingToken: string | null = null;
+    try {
+      pendingToken = localStorage.getItem(INVITE_TOKEN_STORAGE_KEY);
+    } catch {
+      pendingToken = null;
+    }
+    if (!pendingToken) return;
+
+    const userId = await getCurrentUserId();
+    if (!userId) return;
+
+    const { data: profile, error: profileErr } = await supabase
+      .from("profiles")
+      .select("account_type")
+      .eq("id", userId)
+      .maybeSingle();
+    if (profileErr || !profile || profile.account_type !== "mentor") {
+      return;
+    }
+
+    try {
+      localStorage.removeItem(INVITE_TOKEN_STORAGE_KEY);
+    } catch {
+      /* noop */
+    }
+
+    try {
+      await claimMentorInvite(pendingToken);
+    } catch {
+      // Silent in background flows; direct visits to /invite/mentor surface
+      // explicit errors through `claimMentorInvite` directly.
+    }
+  })().finally(() => {
+    claimInFlight = null;
+  });
+  return claimInFlight;
 }
 
 export interface EndorsedVoucher {

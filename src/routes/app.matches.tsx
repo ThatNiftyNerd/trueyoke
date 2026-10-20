@@ -52,11 +52,10 @@ function MatchesScreen() {
         <AppRevealItem>
           <header className="mb-4">
             <h1 className="font-serif text-2xl text-app-ink">Matches</h1>
-            <p
-              className={`mt-1 text-sm ${atCap ? "text-app-warn font-medium" : "text-app-warn"}`}
-            >
+            <p className={`mt-1 text-sm ${atCap ? "text-app-warn font-medium" : "text-app-warn"}`}>
               <span className="font-mono tabular-nums">{activeCount}</span> of{" "}
-              <span className="font-mono tabular-nums">{ACTIVE_MATCH_CAP}</span> active conversations
+              <span className="font-mono tabular-nums">{ACTIVE_MATCH_CAP}</span> active
+              conversations
               {atCap ? " — cap reached" : ""}
             </p>
           </header>
@@ -70,37 +69,37 @@ function MatchesScreen() {
           </AppRevealItem>
         ) : null}
 
-      <AppRevealItem className="mb-6">
-        <h2 className="mb-2 text-xs uppercase tracking-wider text-app-ink/60">Active</h2>
-        {items === null ? (
-          <SectionSkeleton />
-        ) : active.length === 0 ? (
-          <EmptyState>
-            No active matches yet. Matches expire after {MATCH_EXPIRY_HOURS} hours of no activity.
-          </EmptyState>
-        ) : (
-          <div className="space-y-2">
-            {active.map((it) => (
-              <MatchRow key={it.match.id} item={it} />
-            ))}
-          </div>
-        )}
-      </AppRevealItem>
+        <AppRevealItem className="mb-6">
+          <h2 className="mb-2 text-xs uppercase tracking-wider text-app-ink/60">Active</h2>
+          {items === null ? (
+            <SectionSkeleton />
+          ) : active.length === 0 ? (
+            <EmptyState>
+              No active matches yet. Matches expire after {MATCH_EXPIRY_HOURS} hours of no activity.
+            </EmptyState>
+          ) : (
+            <div className="space-y-2">
+              {active.map((it) => (
+                <MatchRow key={it.match.id} item={it} />
+              ))}
+            </div>
+          )}
+        </AppRevealItem>
 
-      <AppRevealItem>
-        <h2 className="mb-2 text-xs uppercase tracking-wider text-app-ink/60">Expired</h2>
-        {items === null ? (
-          <SectionSkeleton />
-        ) : expired.length === 0 ? (
-          <EmptyState>Nothing here.</EmptyState>
-        ) : (
-          <div className="space-y-2">
-            {expired.map((it) => (
-              <MatchRow key={it.match.id} item={it} dim />
-            ))}
-          </div>
-        )}
-      </AppRevealItem>
+        <AppRevealItem>
+          <h2 className="mb-2 text-xs uppercase tracking-wider text-app-ink/60">Expired</h2>
+          {items === null ? (
+            <SectionSkeleton />
+          ) : expired.length === 0 ? (
+            <EmptyState>Nothing here.</EmptyState>
+          ) : (
+            <div className="space-y-2">
+              {expired.map((it) => (
+                <MatchRow key={it.match.id} item={it} dim />
+              ))}
+            </div>
+          )}
+        </AppRevealItem>
       </AppReveal>
     </section>
   );
